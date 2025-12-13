@@ -41,8 +41,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        android.util.Log.d("WattRamp", "=== onCreate called ===")
-
         preferencesRepository = PreferencesRepository(this)
 
         // Apply saved language setting on app start
@@ -58,8 +56,6 @@ class MainActivity : ComponentActivity() {
         sessionTestStarted = false
         sessionHasNavigated = false
         demoTestState.value = TestState.Idle
-
-        android.util.Log.d("WattRamp", "State reset: demoTestState=${demoTestState.value}, sessionTestStarted=$sessionTestStarted")
 
         setContent {
             // Observe settings for theme
@@ -77,13 +73,11 @@ class MainActivity : ComponentActivity() {
                         testStateFlow = if (isDemoMode) demoTestState else
                             WattRampExtension.instance?.testEngine?.state ?: demoTestState,
                         onStartTest = { protocol ->
-                            android.util.Log.d("WattRamp", "START TEST! Setting sessionTestStarted=true")
                             sessionTestStarted = true
                             sessionHasNavigated = false
                             startTest(protocol)
                         },
                         onDismissResults = {
-                            android.util.Log.d("WattRamp", "Dismiss results! Resetting flags")
                             sessionTestStarted = false
                             sessionHasNavigated = false
                             dismissResults()
@@ -131,7 +125,6 @@ class MainActivity : ComponentActivity() {
 
                 // Show running state
                 demoTestState.value = demoRunningState
-                android.util.Log.d("WattRamp", "Demo: Set to Running state")
 
                 // Simulate progress updates
                 for (i in 1..3) {
@@ -142,7 +135,6 @@ class MainActivity : ComponentActivity() {
                         currentStep = if (protocol == ProtocolType.RAMP) i + 1 else null
                     )
                     demoTestState.value = progressState
-                    android.util.Log.d("WattRamp", "Demo: Progress update $i")
                 }
 
                 // Generate demo result
@@ -170,7 +162,6 @@ class MainActivity : ComponentActivity() {
                     saved = false
                 )
 
-                android.util.Log.d("WattRamp", "Demo: Set to Completed state")
                 demoTestState.value = TestState.Completed(demoResult)
             }
         } else {
@@ -216,25 +207,20 @@ fun WattRampApp(
     val testStarted = getTestStarted()
     val hasNavigated = getHasNavigated()
 
-    android.util.Log.d("WattRamp", "Composing: testState=$testState, testStarted=$testStarted, hasNavigated=$hasNavigated")
-
     // Navigate based on test state changes
     LaunchedEffect(testState) {
         val currentTestStarted = getTestStarted()
         val currentHasNavigated = getHasNavigated()
         val currentRoute = navController.currentDestination?.route
-        android.util.Log.d("WattRamp", "LaunchedEffect: testState=$testState, testStarted=$currentTestStarted, hasNavigated=$currentHasNavigated, route=$currentRoute")
 
         when {
             // Navigate to running screen when test starts
             testState is TestState.Running && currentTestStarted && currentRoute == "home" -> {
-                android.util.Log.d("WattRamp", "Navigating to running screen")
                 navController.navigate("running")
             }
             // Navigate to result screen when test completes (from home or running)
             testState is TestState.Completed && currentTestStarted && !currentHasNavigated &&
                 (currentRoute == "home" || currentRoute == "running") -> {
-                android.util.Log.d("WattRamp", "Navigating to result screen from $currentRoute")
                 setHasNavigated(true)
                 navController.navigate("result") {
                     popUpTo("home")
@@ -357,7 +343,6 @@ fun WattRampApp(
                 )
             } else if (testState is TestState.Completed) {
                 // Test completed, will navigate via LaunchedEffect
-                android.util.Log.d("WattRamp", "Running screen: test completed, waiting for navigation")
             } else {
                 // Invalid state, go back home
                 LaunchedEffect(Unit) {
@@ -373,11 +358,8 @@ fun WattRampApp(
             val scope = rememberCoroutineScope()
             val currentTestStarted = getTestStarted()
 
-            android.util.Log.d("WattRamp", "Result composable: completedState=$completedState, testStarted=$currentTestStarted")
-
             // If we're on this route but there's no completed test OR we didn't start a test, go back home
             if (completedState == null || !currentTestStarted) {
-                android.util.Log.d("WattRamp", "Result screen: invalid state, going home")
                 LaunchedEffect(Unit) {
                     navController.navigate("home") {
                         popUpTo("home") { inclusive = true }

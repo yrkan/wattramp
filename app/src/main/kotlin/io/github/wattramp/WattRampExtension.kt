@@ -12,8 +12,6 @@ import kotlinx.coroutines.cancel
 class WattRampExtension : KarooExtension("wattramp", "1.0.0") {
 
     companion object {
-        const val TAG = "WattRamp"
-
         @Volatile
         var instance: WattRampExtension? = null
             private set
@@ -32,9 +30,7 @@ class WattRampExtension : KarooExtension("wattramp", "1.0.0") {
         super.onCreate()
         instance = this
         karooSystem = KarooSystemService(this)
-        karooSystem.connect { connected ->
-            android.util.Log.d(TAG, "KarooSystem connected: $connected")
-        }
+        karooSystem.connect { }
     }
 
     override fun onDestroy() {
