@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WattRamp</string>
+    <string name="extension_name">WattRamp Teste FTP</string>
+
+    <!-- Home Screen -->
+    <string name="home_ftp">FTP</string>
+    <string name="home_select_test">SELECIONAR TESTE</string>
+    <string name="home_start">INICIAR</string>
+
+    <!-- Protocol names and info -->
+    <string name="protocol_ramp">RAMPA</string>
+    <string name="protocol_ramp_formula">MÁX×0.75</string>
+    <string name="protocol_ramp_duration">~20m</string>
+
+    <string name="protocol_20min">20-MIN</string>
+    <string name="protocol_20min_formula">MÉD×0.95</string>
+    <string name="protocol_20min_duration">~60m</string>
+
+    <string name="protocol_8min">2×8-MIN</string>
+    <string name="protocol_8min_formula">MÉD×0.90</string>
+    <string name="protocol_8min_duration">~50m</string>
+
+    <!-- Result Screen -->
+    <string name="result_complete">TESTE CONCLUÍDO</string>
+    <string name="result_new_ftp">NOVO FTP</string>
+    <string name="result_save">SALVAR</string>
+    <string name="result_discard">DESCARTAR</string>
+    <string name="result_test">TESTE</string>
+    <string name="result_time">TEMPO</string>
+    <string name="result_max">MÁX</string>
+    <string name="result_avg">MÉD</string>
+    <string name="result_prev">ANT</string>
+    <string name="result_coeff">COEF</string>
+
+    <!-- History Screen -->
+    <string name="history_title">HISTÓRICO</string>
+    <string name="history_tests">%d TESTES</string>
+    <string name="history_no_tests">SEM TESTES</string>
+    <string name="history_no_tests_hint">Complete um teste FTP para acompanhar seu progresso</string>
+    <string name="history_current_ftp">FTP ATUAL</string>
+    <string name="history_ftp_progress">PROGRESSO FTP</string>
+    <string name="history_statistics">ESTATÍSTICAS</string>
+    <string name="history_best_ftp">MELHOR FTP</string>
+    <string name="history_average">MÉDIA</string>
+    <string name="history_total_gain">GANHO TOTAL</string>
+    <string name="history_all_tests">TODOS OS TESTES</string>
+
+    <!-- Zones Screen -->
+    <string name="zones_title">ZONAS DE POTÊNCIA</string>
+    <string name="zones_zone">ZONA</string>
+    <string name="zones_watts">WATTS</string>
+
+    <!-- Zone names -->
+    <string name="zone_1">Recuperação Ativa</string>
+    <string name="zone_2">Resistência</string>
+    <string name="zone_3">Tempo</string>
+    <string name="zone_4">Limiar</string>
+    <string name="zone_5">VO2máx</string>
+    <string name="zone_6">Anaeróbico</string>
+    <string name="zone_7">Neuromuscular</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">CONFIGURAÇÕES</string>
+    <string name="settings_power">POTÊNCIA</string>
+    <string name="settings_current_ftp">FTP ATUAL</string>
+    <string name="settings_ftp_desc">Potência de Limiar Funcional</string>
+    <string name="settings_ramp_test">TESTE RAMPA</string>
+    <string name="settings_start_power">POTÊNCIA INICIAL</string>
+    <string name="settings_start_power_desc">Potência inicial da rampa</string>
+    <string name="settings_step_increment">INCREMENTO</string>
+    <string name="settings_step_increment_desc">Aumento de potência por minuto</string>
+    <string name="settings_duration">DURAÇÃO</string>
+    <string name="settings_warmup">AQUECIMENTO</string>
+    <string name="settings_warmup_desc">Tempo de preparação</string>
+    <string name="settings_cooldown">RESFRIAMENTO</string>
+    <string name="settings_cooldown_desc">Tempo de recuperação</string>
+    <string name="settings_alerts">ALERTAS &amp; TELA</string>
+    <string name="settings_sound_alerts">ALERTAS SONOROS</string>
+    <string name="settings_screen_on">TELA LIGADA</string>
+    <string name="settings_motivation">MOTIVAÇÃO</string>
+    <string name="settings_language">IDIOMA</string>
+    <string name="settings_app_language">IDIOMA DO APP</string>
+    <string name="settings_language_desc">Selecionar idioma de exibição</string>
+    <string name="settings_on">SIM</string>
+    <string name="settings_off">NÃO</string>
+    <string name="settings_theme">TEMA</string>
+    <string name="settings_color_scheme">Esquema de cores</string>
+    <string name="theme_orange">Laranja</string>
+    <string name="theme_blue">Azul</string>
+    <string name="settings_data">DADOS</string>
+    <string name="settings_clear_history">LIMPAR HISTÓRICO</string>
+    <string name="settings_clear_history_confirm">Redefinir dados?</string>
+    <string name="settings_cancel">CANCELAR</string>
+    <string name="settings_clear">LIMPAR</string>
+
+    <!-- Running Screen -->
+    <string name="running_warmup">AQUECIMENTO</string>
+    <string name="running_testing">TESTANDO</string>
+    <string name="running_cooldown">RESFRIAMENTO</string>
+    <string name="running_recovery">RECUPERAÇÃO</string>
+    <string name="running_blowout">ESFORÇO INTENSO</string>
+    <string name="running_step">ETAPA %d</string>
+    <string name="running_target">ALVO</string>
+    <string name="running_current">ATUAL</string>
+    <string name="running_max_effort">ESFORÇO MÁXIMO</string>
+    <string name="running_stop">PARAR</string>
+    <string name="running_power">POTÊNCIA</string>
+    <string name="running_time">TEMPO</string>
+    <string name="running_hr">FC</string>
+    <string name="running_hr_zone">FC Z%d</string>
+    <string name="running_cad">CAD</string>
+    <string name="running_dev">DESV</string>
+    <string name="running_prog">PROG</string>
+
+    <!-- Units -->
+    <string name="unit_watts">W</string>
+    <string name="unit_watts_min">W/min</string>
+    <string name="unit_min">min</string>
+    <string name="unit_minutes">%dm</string>
+
+    <!-- Tutorial Screen -->
+    <string name="tutorial_link">Tutorial</string>
+    <string name="tutorial_title">COMO USAR</string>
+    <string name="tutorial_how_to_use">PRIMEIROS PASSOS</string>
+    <string name="tutorial_step1">Configure seu FTP atual nas Configurações</string>
+    <string name="tutorial_step2">Escolha um protocolo de teste na tela inicial</string>
+    <string name="tutorial_step3">Pressione INICIAR e siga os alvos</string>
+    <string name="tutorial_step4">Salve o resultado para atualizar seu FTP</string>
+    <string name="tutorial_tests">PROTOCOLOS DE TESTE</string>
+    <string name="tutorial_ramp_desc">Teste rápido ~20min. A potência aumenta a cada minuto até a exaustão.</string>
+    <string name="tutorial_20min_desc">Teste clássico ~60min. Esforço máximo de 20 minutos após aquecimento.</string>
+    <string name="tutorial_8min_desc">Dois intervalos de 8 minutos ~50min total. Bom para praticar ritmo.</string>
+    <string name="tutorial_tips">DICAS</string>
+    <string name="tutorial_tip1">Aqueça bem antes de começar o teste</string>
+    <string name="tutorial_tip2">Use o modo ERG no seu rolo para melhores resultados</string>
+    <string name="tutorial_tip3">Pare quando não conseguir manter a potência alvo</string>
+
+    <!-- General -->
+    <string name="back">Voltar</string>
+    <string name="edit">Editar</string>
+    <string name="increase">Aumentar</string>
+    <string name="decrease">Diminuir</string>
+
+    <!-- DataType names for Karoo -->
+    <string name="datatype_interval_name">Intervalo Atual</string>
+    <string name="datatype_interval_desc">Mostra o intervalo atual com potência alvo e tempo restante</string>
+    <string name="datatype_target_name">Potência Alvo</string>
+    <string name="datatype_target_desc">Potência alvo para o intervalo atual</string>
+    <string name="datatype_progress_name">Progresso do Teste</string>
+    <string name="datatype_progress_desc">Etapa atual ou progresso de tempo no teste</string>
+    <string name="datatype_zone_name">Zona de Potência</string>
+    <string name="datatype_zone_desc">Mostra se a potência atual está na zona alvo</string>
+    <string name="datatype_ftp_prediction_name">Previsão FTP</string>
+    <string name="datatype_ftp_prediction_desc">FTP estimado baseado no desempenho atual</string>
+</resources>

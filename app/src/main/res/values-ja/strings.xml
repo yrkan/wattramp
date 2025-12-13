@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WattRamp</string>
+    <string name="extension_name">WattRamp FTPテスト</string>
+
+    <!-- Home Screen -->
+    <string name="home_ftp">FTP</string>
+    <string name="home_select_test">テスト選択</string>
+    <string name="home_start">スタート</string>
+
+    <!-- Protocol names and info -->
+    <string name="protocol_ramp">ランプ</string>
+    <string name="protocol_ramp_formula">最大×0.75</string>
+    <string name="protocol_ramp_duration">約20分</string>
+
+    <string name="protocol_20min">20分</string>
+    <string name="protocol_20min_formula">平均×0.95</string>
+    <string name="protocol_20min_duration">約60分</string>
+
+    <string name="protocol_8min">2×8分</string>
+    <string name="protocol_8min_formula">平均×0.90</string>
+    <string name="protocol_8min_duration">約50分</string>
+
+    <!-- Result Screen -->
+    <string name="result_complete">テスト完了</string>
+    <string name="result_new_ftp">新しいFTP</string>
+    <string name="result_save">保存</string>
+    <string name="result_discard">破棄</string>
+    <string name="result_test">テスト</string>
+    <string name="result_time">時間</string>
+    <string name="result_max">最大</string>
+    <string name="result_avg">平均</string>
+    <string name="result_prev">前回</string>
+    <string name="result_coeff">係数</string>
+
+    <!-- History Screen -->
+    <string name="history_title">履歴</string>
+    <string name="history_tests">%d テスト</string>
+    <string name="history_no_tests">テストなし</string>
+    <string name="history_no_tests_hint">FTPテストを完了して進捗を追跡</string>
+    <string name="history_current_ftp">現在のFTP</string>
+    <string name="history_ftp_progress">FTP推移</string>
+    <string name="history_statistics">統計</string>
+    <string name="history_best_ftp">最高FTP</string>
+    <string name="history_average">平均</string>
+    <string name="history_total_gain">総獲得</string>
+    <string name="history_all_tests">全テスト</string>
+
+    <!-- Zones Screen -->
+    <string name="zones_title">パワーゾーン</string>
+    <string name="zones_zone">ゾーン</string>
+    <string name="zones_watts">ワット</string>
+
+    <!-- Zone names -->
+    <string name="zone_1">アクティブリカバリー</string>
+    <string name="zone_2">エンデュランス</string>
+    <string name="zone_3">テンポ</string>
+    <string name="zone_4">閾値</string>
+    <string name="zone_5">VO2max</string>
+    <string name="zone_6">無酸素</string>
+    <string name="zone_7">神経筋</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">設定</string>
+    <string name="settings_power">パワー</string>
+    <string name="settings_current_ftp">現在のFTP</string>
+    <string name="settings_ftp_desc">機能的閾値パワー</string>
+    <string name="settings_ramp_test">ランプテスト</string>
+    <string name="settings_start_power">開始パワー</string>
+    <string name="settings_start_power_desc">ランプ開始パワー</string>
+    <string name="settings_step_increment">ステップ増加</string>
+    <string name="settings_step_increment_desc">1分あたりのパワー増加</string>
+    <string name="settings_duration">時間</string>
+    <string name="settings_warmup">ウォームアップ</string>
+    <string name="settings_warmup_desc">準備時間</string>
+    <string name="settings_cooldown">クールダウン</string>
+    <string name="settings_cooldown_desc">回復時間</string>
+    <string name="settings_alerts">アラートと表示</string>
+    <string name="settings_sound_alerts">サウンドアラート</string>
+    <string name="settings_screen_on">画面オン維持</string>
+    <string name="settings_motivation">モチベーション</string>
+    <string name="settings_language">言語</string>
+    <string name="settings_app_language">アプリの言語</string>
+    <string name="settings_language_desc">表示言語を選択</string>
+    <string name="settings_on">オン</string>
+    <string name="settings_off">オフ</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_color_scheme">カラースキーム</string>
+    <string name="theme_orange">オレンジ</string>
+    <string name="theme_blue">ブルー</string>
+    <string name="settings_data">データ</string>
+    <string name="settings_clear_history">履歴を消去</string>
+    <string name="settings_clear_history_confirm">全データをリセット?</string>
+    <string name="settings_cancel">キャンセル</string>
+    <string name="settings_clear">リセット</string>
+
+    <!-- Running Screen -->
+    <string name="running_warmup">ウォームアップ</string>
+    <string name="running_testing">テスト中</string>
+    <string name="running_cooldown">クールダウン</string>
+    <string name="running_recovery">リカバリー</string>
+    <string name="running_blowout">ブローアウト</string>
+    <string name="running_step">ステップ %d</string>
+    <string name="running_target">目標</string>
+    <string name="running_current">現在</string>
+    <string name="running_max_effort">全力</string>
+    <string name="running_stop">停止</string>
+    <string name="running_power">パワー</string>
+    <string name="running_time">時間</string>
+    <string name="running_hr">心拍</string>
+    <string name="running_hr_zone">心拍Z%d</string>
+    <string name="running_cad">ケイ</string>
+    <string name="running_dev">偏差</string>
+    <string name="running_prog">進捗</string>
+
+    <!-- Units -->
+    <string name="unit_watts">W</string>
+    <string name="unit_watts_min">W/分</string>
+    <string name="unit_min">分</string>
+    <string name="unit_minutes">%d分</string>
+
+    <!-- Tutorial Screen -->
+    <string name="tutorial_link">チュートリアル</string>
+    <string name="tutorial_title">使い方</string>
+    <string name="tutorial_how_to_use">はじめに</string>
+    <string name="tutorial_step1">設定で現在のFTPを設定</string>
+    <string name="tutorial_step2">ホーム画面でテストプロトコルを選択</string>
+    <string name="tutorial_step3">スタートを押してターゲットに従う</string>
+    <string name="tutorial_step4">結果を保存してFTPを更新</string>
+    <string name="tutorial_tests">テストプロトコル</string>
+    <string name="tutorial_ramp_desc">約20分の短時間テスト。限界まで毎分パワーが増加。</string>
+    <string name="tutorial_20min_desc">約60分の定番テスト。ウォームアップ後20分間の全力走。</string>
+    <string name="tutorial_8min_desc">8分インターバル2本、合計約50分。ペース配分の練習に最適。</string>
+    <string name="tutorial_tips">ヒント</string>
+    <string name="tutorial_tip1">テスト前にしっかりウォームアップ</string>
+    <string name="tutorial_tip2">最良の結果のためにERGモードを使用</string>
+    <string name="tutorial_tip3">目標パワーを維持できなくなったら停止</string>
+
+    <!-- General -->
+    <string name="back">戻る</string>
+    <string name="edit">編集</string>
+    <string name="increase">増加</string>
+    <string name="decrease">減少</string>
+
+    <!-- DataType names for Karoo -->
+    <string name="datatype_interval_name">現在のインターバル</string>
+    <string name="datatype_interval_desc">目標パワーと残り時間を含む現在のテストインターバルを表示</string>
+    <string name="datatype_target_name">目標パワー</string>
+    <string name="datatype_target_desc">現在のインターバルの目標パワー</string>
+    <string name="datatype_progress_name">テスト進捗</string>
+    <string name="datatype_progress_desc">テストの現在のステップまたは時間進捗</string>
+    <string name="datatype_zone_name">パワーゾーン</string>
+    <string name="datatype_zone_desc">現在のパワーが目標ゾーンにあるかを表示</string>
+    <string name="datatype_ftp_prediction_name">FTP予測</string>
+    <string name="datatype_ftp_prediction_desc">現在のパフォーマンスに基づく推定FTP</string>
+</resources>

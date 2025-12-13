@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/datafield_bg"
+    android:padding="8dp">
+
+    <!-- Phase name -->
+    <TextView
+        android:id="@+id/phase_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/datafield_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="WARMUP"
+        android:gravity="center" />
+
+    <!-- Interval progress bar -->
+    <ProgressBar
+        android:id="@+id/interval_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_marginTop="4dp"
+        android:progressDrawable="@drawable/progress_bar_drawable"
+        android:progress="50"
+        android:max="100" />
+
+    <!-- Target power -->
+    <TextView
+        android:id="@+id/target_power"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/datafield_text"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:text="Target: 200W"
+        android:gravity="center" />
+
+    <!-- Time remaining -->
+    <TextView
+        android:id="@+id/time_remaining"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/datafield_text"
+        android:textSize="14sp"
+        android:text="2:30 remaining"
+        android:gravity="center" />
+
+    <!-- Overall test progress -->
+    <ProgressBar
+        android:id="@+id/test_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="8dp"
+        android:progressDrawable="@drawable/progress_bar_drawable"
+        android:progress="30"
+        android:max="100" />
+
+    <!-- Progress percentage -->
+    <TextView
+        android:id="@+id/progress_percent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/datafield_text"
+        android:textSize="12sp"
+        android:text="30%"
+        android:gravity="center" />
+
+</LinearLayout>

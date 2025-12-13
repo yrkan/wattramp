@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExtensionInfo
+    id="wattramp"
+    displayName="@string/extension_name"
+    icon="@drawable/ic_wattramp">
+
+    <DataType
+        typeId="current-interval"
+        description="@string/datatype_interval_desc"
+        displayName="@string/datatype_interval_name"
+        graphical="true"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="target-power"
+        description="@string/datatype_target_desc"
+        displayName="@string/datatype_target_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="test-progress"
+        description="@string/datatype_progress_desc"
+        displayName="@string/datatype_progress_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="power-zone"
+        description="@string/datatype_zone_desc"
+        displayName="@string/datatype_zone_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+</ExtensionInfo>

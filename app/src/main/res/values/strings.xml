@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WattRamp</string>
+    <string name="extension_name">WattRamp FTP Test</string>
+
+    <!-- Home Screen -->
+    <string name="home_ftp">FTP</string>
+    <string name="home_select_test">SELECT TEST</string>
+    <string name="home_start">START</string>
+
+    <!-- Protocol names and info -->
+    <string name="protocol_ramp">RAMP</string>
+    <string name="protocol_ramp_formula">MAX×0.75</string>
+    <string name="protocol_ramp_duration">~20m</string>
+
+    <string name="protocol_20min">20-MIN</string>
+    <string name="protocol_20min_formula">AVG×0.95</string>
+    <string name="protocol_20min_duration">~60m</string>
+
+    <string name="protocol_8min">2×8-MIN</string>
+    <string name="protocol_8min_formula">AVG×0.90</string>
+    <string name="protocol_8min_duration">~50m</string>
+
+    <!-- Result Screen -->
+    <string name="result_complete">TEST COMPLETE</string>
+    <string name="result_new_ftp">NEW FTP</string>
+    <string name="result_save">SAVE</string>
+    <string name="result_discard">DISCARD</string>
+    <string name="result_test">TEST</string>
+    <string name="result_time">TIME</string>
+    <string name="result_max">MAX</string>
+    <string name="result_avg">AVG</string>
+    <string name="result_prev">PREV</string>
+    <string name="result_coeff">COEFF</string>
+
+    <!-- History Screen -->
+    <string name="history_title">HISTORY</string>
+    <string name="history_tests">%d TESTS</string>
+    <string name="history_no_tests">NO TESTS YET</string>
+    <string name="history_no_tests_hint">Complete an FTP test to track progress</string>
+    <string name="history_current_ftp">CURRENT FTP</string>
+    <string name="history_ftp_progress">FTP PROGRESS</string>
+    <string name="history_statistics">STATISTICS</string>
+    <string name="history_best_ftp">BEST FTP</string>
+    <string name="history_average">AVERAGE</string>
+    <string name="history_total_gain">TOTAL GAIN</string>
+    <string name="history_all_tests">ALL TESTS</string>
+
+    <!-- Zones Screen -->
+    <string name="zones_title">POWER ZONES</string>
+    <string name="zones_zone">ZONE</string>
+    <string name="zones_watts">WATTS</string>
+
+    <!-- Zone names -->
+    <string name="zone_1">Active Recovery</string>
+    <string name="zone_2">Endurance</string>
+    <string name="zone_3">Tempo</string>
+    <string name="zone_4">Threshold</string>
+    <string name="zone_5">VO2max</string>
+    <string name="zone_6">Anaerobic</string>
+    <string name="zone_7">Neuromuscular</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_power">POWER</string>
+    <string name="settings_current_ftp">CURRENT FTP</string>
+    <string name="settings_ftp_desc">Functional Threshold Power</string>
+    <string name="settings_ramp_test">RAMP TEST</string>
+    <string name="settings_start_power">START POWER</string>
+    <string name="settings_start_power_desc">Initial ramp power</string>
+    <string name="settings_step_increment">STEP INCREMENT</string>
+    <string name="settings_step_increment_desc">Power increase per minute</string>
+    <string name="settings_duration">DURATION</string>
+    <string name="settings_warmup">WARMUP</string>
+    <string name="settings_warmup_desc">Preparation time</string>
+    <string name="settings_cooldown">COOLDOWN</string>
+    <string name="settings_cooldown_desc">Recovery time</string>
+    <string name="settings_alerts">ALERTS &amp; DISPLAY</string>
+    <string name="settings_sound_alerts">SOUND ALERTS</string>
+    <string name="settings_screen_on">KEEP SCREEN ON</string>
+    <string name="settings_motivation">MOTIVATION</string>
+    <string name="settings_language">LANGUAGE</string>
+    <string name="settings_app_language">APP LANGUAGE</string>
+    <string name="settings_language_desc">Select display language</string>
+    <string name="settings_on">ON</string>
+    <string name="settings_off">OFF</string>
+    <string name="settings_theme">THEME</string>
+    <string name="settings_color_scheme">Color Scheme</string>
+    <string name="theme_orange">Orange</string>
+    <string name="theme_blue">Blue</string>
+    <string name="settings_data">DATA</string>
+    <string name="settings_clear_history">CLEAR HISTORY</string>
+    <string name="settings_clear_history_confirm">Reset all data?</string>
+    <string name="settings_cancel">CANCEL</string>
+    <string name="settings_clear">RESET</string>
+
+    <!-- About Section -->
+    <string name="settings_about">ABOUT</string>
+    <string name="settings_version">VERSION</string>
+    <string name="settings_github">SOURCE CODE</string>
+    <string name="settings_github_desc">View on GitHub</string>
+    <string name="settings_privacy">PRIVACY POLICY</string>
+    <string name="settings_contact">CONTACT</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
+
+    <!-- Running Screen -->
+    <string name="running_warmup">WARMUP</string>
+    <string name="running_testing">TESTING</string>
+    <string name="running_cooldown">COOLDOWN</string>
+    <string name="running_recovery">RECOVERY</string>
+    <string name="running_blowout">BLOW-OUT</string>
+    <string name="running_step">STEP %d</string>
+    <string name="running_target">TARGET</string>
+    <string name="running_current">CURRENT</string>
+    <string name="running_max_effort">MAX EFFORT</string>
+    <string name="running_stop">STOP</string>
+    <string name="running_power">POWER</string>
+    <string name="running_time">TIME</string>
+    <string name="running_hr">HR</string>
+    <string name="running_hr_zone">HR Z%d</string>
+    <string name="running_cad">CAD</string>
+    <string name="running_dev">DEV</string>
+    <string name="running_prog">PROG</string>
+
+    <!-- Units -->
+    <string name="unit_watts">W</string>
+    <string name="unit_watts_min">W/min</string>
+    <string name="unit_min">min</string>
+    <string name="unit_minutes">%dm</string>
+
+    <!-- Tutorial Screen -->
+    <string name="tutorial_link">Tutorial</string>
+    <string name="tutorial_title">HOW TO USE</string>
+    <string name="tutorial_how_to_use">GETTING STARTED</string>
+    <string name="tutorial_step1">Set your current FTP in Settings</string>
+    <string name="tutorial_step2">Choose a test protocol on home screen</string>
+    <string name="tutorial_step3">Press START and follow the targets</string>
+    <string name="tutorial_step4">Save result to update your FTP</string>
+    <string name="tutorial_tests">TEST PROTOCOLS</string>
+    <string name="tutorial_ramp_desc">Quick ~20min test. Power increases every minute until exhaustion.</string>
+    <string name="tutorial_20min_desc">Classic ~60min test. 20-minute max effort after warmup.</string>
+    <string name="tutorial_8min_desc">Two 8-minute intervals ~50min total. Good for pacing practice.</string>
+    <string name="tutorial_tips">TIPS</string>
+    <string name="tutorial_tip1">Warm up well before starting the test</string>
+    <string name="tutorial_tip2">Use ERG mode on your trainer for best results</string>
+    <string name="tutorial_tip3">Stop when you cannot maintain the target power</string>
+
+    <!-- General -->
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="increase">Increase</string>
+    <string name="decrease">Decrease</string>
+
+    <!-- DataType names for Karoo -->
+    <string name="datatype_interval_name">Current Interval</string>
+    <string name="datatype_interval_desc">Shows current test interval with target power and time remaining</string>
+    <string name="datatype_target_name">Target Power</string>
+    <string name="datatype_target_desc">Target power for current interval</string>
+    <string name="datatype_progress_name">Test Progress</string>
+    <string name="datatype_progress_desc">Current step or time progress in the test</string>
+    <string name="datatype_zone_name">Power Zone</string>
+    <string name="datatype_zone_desc">Shows if current power is in target zone</string>
+    <string name="datatype_ftp_prediction_name">FTP Prediction</string>
+    <string name="datatype_ftp_prediction_desc">Estimated FTP based on current performance</string>
+</resources>

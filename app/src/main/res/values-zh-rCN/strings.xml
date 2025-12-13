@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WattRamp</string>
+    <string name="extension_name">WattRamp FTP测试</string>
+
+    <!-- Home Screen -->
+    <string name="home_ftp">FTP</string>
+    <string name="home_select_test">选择测试</string>
+    <string name="home_start">开始</string>
+
+    <!-- Protocol names and info -->
+    <string name="protocol_ramp">递增</string>
+    <string name="protocol_ramp_formula">最大×0.75</string>
+    <string name="protocol_ramp_duration">约20分钟</string>
+
+    <string name="protocol_20min">20分钟</string>
+    <string name="protocol_20min_formula">平均×0.95</string>
+    <string name="protocol_20min_duration">约60分钟</string>
+
+    <string name="protocol_8min">2×8分钟</string>
+    <string name="protocol_8min_formula">平均×0.90</string>
+    <string name="protocol_8min_duration">约50分钟</string>
+
+    <!-- Result Screen -->
+    <string name="result_complete">测试完成</string>
+    <string name="result_new_ftp">新FTP</string>
+    <string name="result_save">保存</string>
+    <string name="result_discard">放弃</string>
+    <string name="result_test">测试</string>
+    <string name="result_time">时间</string>
+    <string name="result_max">最大</string>
+    <string name="result_avg">平均</string>
+    <string name="result_prev">上次</string>
+    <string name="result_coeff">系数</string>
+
+    <!-- History Screen -->
+    <string name="history_title">历史记录</string>
+    <string name="history_tests">%d 个测试</string>
+    <string name="history_no_tests">暂无测试</string>
+    <string name="history_no_tests_hint">完成FTP测试以追踪进度</string>
+    <string name="history_current_ftp">当前FTP</string>
+    <string name="history_ftp_progress">FTP进展</string>
+    <string name="history_statistics">统计</string>
+    <string name="history_best_ftp">最佳FTP</string>
+    <string name="history_average">平均</string>
+    <string name="history_total_gain">总增益</string>
+    <string name="history_all_tests">所有测试</string>
+
+    <!-- Zones Screen -->
+    <string name="zones_title">功率区间</string>
+    <string name="zones_zone">区间</string>
+    <string name="zones_watts">瓦特</string>
+
+    <!-- Zone names -->
+    <string name="zone_1">积极恢复</string>
+    <string name="zone_2">耐力</string>
+    <string name="zone_3">节奏</string>
+    <string name="zone_4">阈值</string>
+    <string name="zone_5">最大摄氧量</string>
+    <string name="zone_6">无氧</string>
+    <string name="zone_7">神经肌肉</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">设置</string>
+    <string name="settings_power">功率</string>
+    <string name="settings_current_ftp">当前FTP</string>
+    <string name="settings_ftp_desc">功能性阈值功率</string>
+    <string name="settings_ramp_test">递增测试</string>
+    <string name="settings_start_power">起始功率</string>
+    <string name="settings_start_power_desc">递增起始功率</string>
+    <string name="settings_step_increment">阶梯增量</string>
+    <string name="settings_step_increment_desc">每分钟功率增加</string>
+    <string name="settings_duration">时长</string>
+    <string name="settings_warmup">热身</string>
+    <string name="settings_warmup_desc">准备时间</string>
+    <string name="settings_cooldown">放松</string>
+    <string name="settings_cooldown_desc">恢复时间</string>
+    <string name="settings_alerts">提醒与显示</string>
+    <string name="settings_sound_alerts">声音提醒</string>
+    <string name="settings_screen_on">保持屏幕常亮</string>
+    <string name="settings_motivation">激励</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_app_language">应用语言</string>
+    <string name="settings_language_desc">选择显示语言</string>
+    <string name="settings_on">开</string>
+    <string name="settings_off">关</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_color_scheme">配色方案</string>
+    <string name="theme_orange">橙色</string>
+    <string name="theme_blue">蓝色</string>
+    <string name="settings_data">数据</string>
+    <string name="settings_clear_history">清除历史</string>
+    <string name="settings_clear_history_confirm">重置所有数据?</string>
+    <string name="settings_cancel">取消</string>
+    <string name="settings_clear">重置</string>
+
+    <!-- Running Screen -->
+    <string name="running_warmup">热身</string>
+    <string name="running_testing">测试中</string>
+    <string name="running_cooldown">放松</string>
+    <string name="running_recovery">恢复</string>
+    <string name="running_blowout">爆发</string>
+    <string name="running_step">第 %d 阶</string>
+    <string name="running_target">目标</string>
+    <string name="running_current">当前</string>
+    <string name="running_max_effort">全力输出</string>
+    <string name="running_stop">停止</string>
+    <string name="running_power">功率</string>
+    <string name="running_time">时间</string>
+    <string name="running_hr">心率</string>
+    <string name="running_hr_zone">心率Z%d</string>
+    <string name="running_cad">踏频</string>
+    <string name="running_dev">偏差</string>
+    <string name="running_prog">进度</string>
+
+    <!-- Units -->
+    <string name="unit_watts">W</string>
+    <string name="unit_watts_min">W/分钟</string>
+    <string name="unit_min">分钟</string>
+    <string name="unit_minutes">%d分钟</string>
+
+    <!-- Tutorial Screen -->
+    <string name="tutorial_link">教程</string>
+    <string name="tutorial_title">使用说明</string>
+    <string name="tutorial_how_to_use">开始使用</string>
+    <string name="tutorial_step1">在设置中设置当前FTP</string>
+    <string name="tutorial_step2">在主屏幕选择测试协议</string>
+    <string name="tutorial_step3">按开始并跟随目标</string>
+    <string name="tutorial_step4">保存结果以更新FTP</string>
+    <string name="tutorial_tests">测试协议</string>
+    <string name="tutorial_ramp_desc">快速~20分钟测试。功率每分钟递增直到力竭。</string>
+    <string name="tutorial_20min_desc">经典~60分钟测试。热身后20分钟全力输出。</string>
+    <string name="tutorial_8min_desc">两个8分钟间歇，总计~50分钟。适合配速练习。</string>
+    <string name="tutorial_tips">建议</string>
+    <string name="tutorial_tip1">测试前充分热身</string>
+    <string name="tutorial_tip2">使用骑行台的ERG模式获得最佳效果</string>
+    <string name="tutorial_tip3">无法维持目标功率时停止</string>
+
+    <!-- General -->
+    <string name="back">返回</string>
+    <string name="edit">编辑</string>
+    <string name="increase">增加</string>
+    <string name="decrease">减少</string>
+
+    <!-- DataType names for Karoo -->
+    <string name="datatype_interval_name">当前间隔</string>
+    <string name="datatype_interval_desc">显示当前测试间隔的目标功率和剩余时间</string>
+    <string name="datatype_target_name">目标功率</string>
+    <string name="datatype_target_desc">当前间隔的目标功率</string>
+    <string name="datatype_progress_name">测试进度</string>
+    <string name="datatype_progress_desc">测试中的当前阶段或时间进度</string>
+    <string name="datatype_zone_name">功率区间</string>
+    <string name="datatype_zone_desc">显示当前功率是否在目标区间</string>
+    <string name="datatype_ftp_prediction_name">FTP预测</string>
+    <string name="datatype_ftp_prediction_desc">基于当前表现的预估FTP</string>
+</resources>

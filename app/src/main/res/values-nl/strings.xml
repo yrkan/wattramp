@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WattRamp</string>
+    <string name="extension_name">WattRamp FTP-Test</string>
+
+    <!-- Home Screen -->
+    <string name="home_ftp">FTP</string>
+    <string name="home_select_test">KIES TEST</string>
+    <string name="home_start">START</string>
+
+    <!-- Protocol names and info -->
+    <string name="protocol_ramp">OPLOOP</string>
+    <string name="protocol_ramp_formula">MAX×0.75</string>
+    <string name="protocol_ramp_duration">~20m</string>
+
+    <string name="protocol_20min">20-MIN</string>
+    <string name="protocol_20min_formula">GEM×0.95</string>
+    <string name="protocol_20min_duration">~60m</string>
+
+    <string name="protocol_8min">2×8-MIN</string>
+    <string name="protocol_8min_formula">GEM×0.90</string>
+    <string name="protocol_8min_duration">~50m</string>
+
+    <!-- Result Screen -->
+    <string name="result_complete">TEST VOLTOOID</string>
+    <string name="result_new_ftp">NIEUWE FTP</string>
+    <string name="result_save">OPSLAAN</string>
+    <string name="result_discard">ANNULEREN</string>
+    <string name="result_test">TEST</string>
+    <string name="result_time">TIJD</string>
+    <string name="result_max">MAX</string>
+    <string name="result_avg">GEM</string>
+    <string name="result_prev">VOOR</string>
+    <string name="result_coeff">COËF</string>
+
+    <!-- History Screen -->
+    <string name="history_title">GESCHIEDENIS</string>
+    <string name="history_tests">%d TESTS</string>
+    <string name="history_no_tests">GEEN TESTS</string>
+    <string name="history_no_tests_hint">Voltooi een FTP-test om je voortgang te volgen</string>
+    <string name="history_current_ftp">HUIDIGE FTP</string>
+    <string name="history_ftp_progress">FTP VOORTGANG</string>
+    <string name="history_statistics">STATISTIEKEN</string>
+    <string name="history_best_ftp">BESTE FTP</string>
+    <string name="history_average">GEMIDDELD</string>
+    <string name="history_total_gain">TOTALE WINST</string>
+    <string name="history_all_tests">ALLE TESTS</string>
+
+    <!-- Zones Screen -->
+    <string name="zones_title">VERMOGENSZONES</string>
+    <string name="zones_zone">ZONE</string>
+    <string name="zones_watts">WATT</string>
+
+    <!-- Zone names -->
+    <string name="zone_1">Actief Herstel</string>
+    <string name="zone_2">Duurtraining</string>
+    <string name="zone_3">Tempo</string>
+    <string name="zone_4">Drempel</string>
+    <string name="zone_5">VO2max</string>
+    <string name="zone_6">Anaeroob</string>
+    <string name="zone_7">Neuromusculair</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">INSTELLINGEN</string>
+    <string name="settings_power">VERMOGEN</string>
+    <string name="settings_current_ftp">HUIDIGE FTP</string>
+    <string name="settings_ftp_desc">Functioneel Drempelvermogen</string>
+    <string name="settings_ramp_test">OPLOOP TEST</string>
+    <string name="settings_start_power">STARTVERMOGEN</string>
+    <string name="settings_start_power_desc">Beginvermogen van de oploop</string>
+    <string name="settings_step_increment">STAPVERHOGING</string>
+    <string name="settings_step_increment_desc">Vermogenstoename per minuut</string>
+    <string name="settings_duration">DUUR</string>
+    <string name="settings_warmup">WARMING-UP</string>
+    <string name="settings_warmup_desc">Voorbereidingstijd</string>
+    <string name="settings_cooldown">COOLING-DOWN</string>
+    <string name="settings_cooldown_desc">Hersteltijd</string>
+    <string name="settings_alerts">MELDINGEN &amp; SCHERM</string>
+    <string name="settings_sound_alerts">GELUIDSMELDINGEN</string>
+    <string name="settings_screen_on">SCHERM AAN</string>
+    <string name="settings_motivation">MOTIVATIE</string>
+    <string name="settings_language">TAAL</string>
+    <string name="settings_app_language">APP-TAAL</string>
+    <string name="settings_language_desc">Selecteer weergavetaal</string>
+    <string name="settings_on">AAN</string>
+    <string name="settings_off">UIT</string>
+    <string name="settings_theme">THEMA</string>
+    <string name="settings_color_scheme">Kleurenschema</string>
+    <string name="theme_orange">Oranje</string>
+    <string name="theme_blue">Blauw</string>
+    <string name="settings_data">GEGEVENS</string>
+    <string name="settings_clear_history">GESCHIEDENIS WISSEN</string>
+    <string name="settings_clear_history_confirm">Alle data resetten?</string>
+    <string name="settings_cancel">ANNULEER</string>
+    <string name="settings_clear">WISSEN</string>
+
+    <!-- Running Screen -->
+    <string name="running_warmup">WARMING-UP</string>
+    <string name="running_testing">TESTEN</string>
+    <string name="running_cooldown">COOLING-DOWN</string>
+    <string name="running_recovery">HERSTEL</string>
+    <string name="running_blowout">UITRIJDEN</string>
+    <string name="running_step">STAP %d</string>
+    <string name="running_target">DOEL</string>
+    <string name="running_current">HUIDIG</string>
+    <string name="running_max_effort">MAXIMALE INSPANNING</string>
+    <string name="running_stop">STOP</string>
+    <string name="running_power">VERMOGEN</string>
+    <string name="running_time">TIJD</string>
+    <string name="running_hr">HF</string>
+    <string name="running_hr_zone">HF Z%d</string>
+    <string name="running_cad">KAD</string>
+    <string name="running_dev">AFW</string>
+    <string name="running_prog">PROG</string>
+
+    <!-- Units -->
+    <string name="unit_watts">W</string>
+    <string name="unit_watts_min">W/min</string>
+    <string name="unit_min">min</string>
+    <string name="unit_minutes">%dm</string>
+
+    <!-- Tutorial Screen -->
+    <string name="tutorial_link">Handleiding</string>
+    <string name="tutorial_title">HANDLEIDING</string>
+    <string name="tutorial_how_to_use">AAN DE SLAG</string>
+    <string name="tutorial_step1">Stel je huidige FTP in bij Instellingen</string>
+    <string name="tutorial_step2">Kies een testprotocol op het startscherm</string>
+    <string name="tutorial_step3">Druk op START en volg de doelen</string>
+    <string name="tutorial_step4">Sla het resultaat op om je FTP bij te werken</string>
+    <string name="tutorial_tests">TESTPROTOCOLLEN</string>
+    <string name="tutorial_ramp_desc">Snelle ~20min test. Vermogen stijgt elke minuut tot uitputting.</string>
+    <string name="tutorial_20min_desc">Klassieke ~60min test. 20-minuten maximale inspanning na warming-up.</string>
+    <string name="tutorial_8min_desc">Twee 8-minuten intervallen ~50min totaal. Goed voor pacing oefenen.</string>
+    <string name="tutorial_tips">TIPS</string>
+    <string name="tutorial_tip1">Warm goed op voor je begint met de test</string>
+    <string name="tutorial_tip2">Gebruik ERG-modus op je trainer voor beste resultaten</string>
+    <string name="tutorial_tip3">Stop wanneer je het doelvermogen niet kunt vasthouden</string>
+
+    <!-- General -->
+    <string name="back">Terug</string>
+    <string name="edit">Bewerken</string>
+    <string name="increase">Verhogen</string>
+    <string name="decrease">Verlagen</string>
+
+    <!-- DataType names for Karoo -->
+    <string name="datatype_interval_name">Huidig Interval</string>
+    <string name="datatype_interval_desc">Toont huidig testinterval met doelvermogen en resterende tijd</string>
+    <string name="datatype_target_name">Doelvermogen</string>
+    <string name="datatype_target_desc">Doelvermogen voor huidig interval</string>
+    <string name="datatype_progress_name">Testvoortgang</string>
+    <string name="datatype_progress_desc">Huidige stap of tijdsvoortgang in de test</string>
+    <string name="datatype_zone_name">Vermogenszone</string>
+    <string name="datatype_zone_desc">Toont of huidig vermogen in de doelzone ligt</string>
+    <string name="datatype_ftp_prediction_name">FTP Voorspelling</string>
+    <string name="datatype_ftp_prediction_desc">Geschatte FTP gebaseerd op huidige prestatie</string>
+</resources>

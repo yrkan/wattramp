@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WattRamp</string>
+    <string name="extension_name">WattRamp Тест FTP</string>
+
+    <!-- Home Screen -->
+    <string name="home_ftp">FTP</string>
+    <string name="home_select_test">ВЫБРАТЬ ТЕСТ</string>
+    <string name="home_start">СТАРТ</string>
+
+    <!-- Protocol names and info -->
+    <string name="protocol_ramp">РАМПА</string>
+    <string name="protocol_ramp_formula">МАКС×0.75</string>
+    <string name="protocol_ramp_duration">~20м</string>
+
+    <string name="protocol_20min">20-МИН</string>
+    <string name="protocol_20min_formula">СР×0.95</string>
+    <string name="protocol_20min_duration">~60м</string>
+
+    <string name="protocol_8min">2×8-МИН</string>
+    <string name="protocol_8min_formula">СР×0.90</string>
+    <string name="protocol_8min_duration">~50м</string>
+
+    <!-- Result Screen -->
+    <string name="result_complete">ТЕСТ ЗАВЕРШЁН</string>
+    <string name="result_new_ftp">НОВЫЙ FTP</string>
+    <string name="result_save">СОХРАНИТЬ</string>
+    <string name="result_discard">ОТМЕНИТЬ</string>
+    <string name="result_test">ТЕСТ</string>
+    <string name="result_time">ВРЕМЯ</string>
+    <string name="result_max">МАКС</string>
+    <string name="result_avg">СР</string>
+    <string name="result_prev">ПРЕД</string>
+    <string name="result_coeff">КОЭФ</string>
+
+    <!-- History Screen -->
+    <string name="history_title">ИСТОРИЯ</string>
+    <string name="history_tests">%d ТЕСТОВ</string>
+    <string name="history_no_tests">НЕТ ТЕСТОВ</string>
+    <string name="history_no_tests_hint">Пройдите тест FTP для отслеживания прогресса</string>
+    <string name="history_current_ftp">ТЕКУЩИЙ FTP</string>
+    <string name="history_ftp_progress">ПРОГРЕСС FTP</string>
+    <string name="history_statistics">СТАТИСТИКА</string>
+    <string name="history_best_ftp">ЛУЧШИЙ FTP</string>
+    <string name="history_average">СРЕДНЕЕ</string>
+    <string name="history_total_gain">ОБЩИЙ ПРИРОСТ</string>
+    <string name="history_all_tests">ВСЕ ТЕСТЫ</string>
+
+    <!-- Zones Screen -->
+    <string name="zones_title">ЗОНЫ МОЩНОСТИ</string>
+    <string name="zones_zone">ЗОНА</string>
+    <string name="zones_watts">ВАТТ</string>
+
+    <!-- Zone names -->
+    <string name="zone_1">Активное восстановление</string>
+    <string name="zone_2">Выносливость</string>
+    <string name="zone_3">Темпо</string>
+    <string name="zone_4">Порог</string>
+    <string name="zone_5">VO2max</string>
+    <string name="zone_6">Анаэробная</string>
+    <string name="zone_7">Нервно-мышечная</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">НАСТРОЙКИ</string>
+    <string name="settings_power">МОЩНОСТЬ</string>
+    <string name="settings_current_ftp">ТЕКУЩИЙ FTP</string>
+    <string name="settings_ftp_desc">Функциональная пороговая мощность</string>
+    <string name="settings_ramp_test">ТЕСТ РАМПА</string>
+    <string name="settings_start_power">СТАРТОВАЯ МОЩНОСТЬ</string>
+    <string name="settings_start_power_desc">Начальная мощность рампы</string>
+    <string name="settings_step_increment">ШАГ УВЕЛИЧЕНИЯ</string>
+    <string name="settings_step_increment_desc">Прирост мощности в минуту</string>
+    <string name="settings_duration">ДЛИТЕЛЬНОСТЬ</string>
+    <string name="settings_warmup">РАЗМИНКА</string>
+    <string name="settings_warmup_desc">Время подготовки</string>
+    <string name="settings_cooldown">ЗАМИНКА</string>
+    <string name="settings_cooldown_desc">Время восстановления</string>
+    <string name="settings_alerts">ОПОВЕЩЕНИЯ И ЭКРАН</string>
+    <string name="settings_sound_alerts">ЗВУКОВЫЕ ОПОВЕЩЕНИЯ</string>
+    <string name="settings_screen_on">ЭКРАН ВКЛЮЧЁН</string>
+    <string name="settings_motivation">МОТИВАЦИЯ</string>
+    <string name="settings_language">ЯЗЫК</string>
+    <string name="settings_app_language">ЯЗЫК ПРИЛОЖЕНИЯ</string>
+    <string name="settings_language_desc">Выберите язык интерфейса</string>
+    <string name="settings_on">ВКЛ</string>
+    <string name="settings_off">ВЫКЛ</string>
+    <string name="settings_theme">ТЕМА</string>
+    <string name="settings_color_scheme">Цветовая схема</string>
+    <string name="theme_orange">Оранжевая</string>
+    <string name="theme_blue">Синяя</string>
+    <string name="settings_data">ДАННЫЕ</string>
+    <string name="settings_clear_history">ОЧИСТИТЬ ИСТОРИЮ</string>
+    <string name="settings_clear_history_confirm">Сбросить все данные?</string>
+    <string name="settings_cancel">ОТМЕНА</string>
+    <string name="settings_clear">СБРОС</string>
+
+    <!-- Running Screen -->
+    <string name="running_warmup">РАЗМИНКА</string>
+    <string name="running_testing">ТЕСТИРОВАНИЕ</string>
+    <string name="running_cooldown">ЗАМИНКА</string>
+    <string name="running_recovery">ВОССТАНОВЛЕНИЕ</string>
+    <string name="running_blowout">ВЫКЛАДКА</string>
+    <string name="running_step">ШАГ %d</string>
+    <string name="running_target">ЦЕЛЬ</string>
+    <string name="running_current">ТЕКУЩАЯ</string>
+    <string name="running_max_effort">МАКСИМУМ</string>
+    <string name="running_stop">СТОП</string>
+    <string name="running_power">МОЩНОСТЬ</string>
+    <string name="running_time">ВРЕМЯ</string>
+    <string name="running_hr">ЧСС</string>
+    <string name="running_hr_zone">ЧСС З%d</string>
+    <string name="running_cad">КАД</string>
+    <string name="running_dev">ОТКЛ</string>
+    <string name="running_prog">ПРОГ</string>
+
+    <!-- Units -->
+    <string name="unit_watts">Вт</string>
+    <string name="unit_watts_min">Вт/мин</string>
+    <string name="unit_min">мин</string>
+    <string name="unit_minutes">%dм</string>
+
+    <!-- Tutorial Screen -->
+    <string name="tutorial_link">Обучение</string>
+    <string name="tutorial_title">КАК ИСПОЛЬЗОВАТЬ</string>
+    <string name="tutorial_how_to_use">НАЧАЛО РАБОТЫ</string>
+    <string name="tutorial_step1">Установите текущий FTP в Настройках</string>
+    <string name="tutorial_step2">Выберите протокол теста на главном экране</string>
+    <string name="tutorial_step3">Нажмите СТАРТ и следуйте целям</string>
+    <string name="tutorial_step4">Сохраните результат для обновления FTP</string>
+    <string name="tutorial_tests">ПРОТОКОЛЫ ТЕСТОВ</string>
+    <string name="tutorial_ramp_desc">Быстрый тест ~20мин. Мощность растёт каждую минуту до отказа.</string>
+    <string name="tutorial_20min_desc">Классический тест ~60мин. 20-минутное максимальное усилие после разминки.</string>
+    <string name="tutorial_8min_desc">Два 8-минутных интервала ~50мин. Хорош для практики пейсинга.</string>
+    <string name="tutorial_tips">СОВЕТЫ</string>
+    <string name="tutorial_tip1">Хорошо разомнитесь перед тестом</string>
+    <string name="tutorial_tip2">Используйте режим ERG на тренажёре</string>
+    <string name="tutorial_tip3">Остановитесь, когда не можете держать целевую мощность</string>
+
+    <!-- General -->
+    <string name="back">Назад</string>
+    <string name="edit">Изменить</string>
+    <string name="increase">Увеличить</string>
+    <string name="decrease">Уменьшить</string>
+
+    <!-- DataType names for Karoo -->
+    <string name="datatype_interval_name">Текущий интервал</string>
+    <string name="datatype_interval_desc">Показывает текущий интервал теста с целевой мощностью и оставшимся временем</string>
+    <string name="datatype_target_name">Целевая мощность</string>
+    <string name="datatype_target_desc">Целевая мощность для текущего интервала</string>
+    <string name="datatype_progress_name">Прогресс теста</string>
+    <string name="datatype_progress_desc">Текущий шаг или временной прогресс теста</string>
+    <string name="datatype_zone_name">Зона мощности</string>
+    <string name="datatype_zone_desc">Показывает, находится ли текущая мощность в целевой зоне</string>
+    <string name="datatype_ftp_prediction_name">Прогноз FTP</string>
+    <string name="datatype_ftp_prediction_desc">Расчётный FTP на основе текущих показателей</string>
+</resources>
