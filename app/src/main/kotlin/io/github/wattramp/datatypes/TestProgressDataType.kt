@@ -19,46 +19,60 @@ class TestProgressDataType(
     private val wattRampExtension: WattRampExtension
 ) : DataTypeImpl("wattramp", "test-progress") {
 
-    private var streamJob: Job? = null
+    private var streamScope: CoroutineScope? = null
 
     // Store additional info for formatting
+    @Volatile
     private var currentStep: Int = 0
+    @Volatile
     private var estimatedSteps: Int = 0
+    @Volatile
     private var elapsedSeconds: Int = 0
+    @Volatile
     private var protocol: ProtocolType? = null
 
     override fun startStream(emitter: Emitter<StreamState>) {
-        streamJob = CoroutineScope(Dispatchers.Main).launch {
+        // Cancel any existing scope first
+        streamScope?.cancel()
+
+        // Create new scope with SupervisorJob for proper lifecycle management
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        streamScope = scope
+
+        scope.launch {
             wattRampExtension.testEngine.state.collectLatest { state ->
-                val value = when (state) {
-                    is TestState.Running -> {
-                        protocol = state.protocol
-                        currentStep = state.currentStep ?: 0
-                        estimatedSteps = state.estimatedTotalSteps ?: 15
-                        elapsedSeconds = (state.elapsedMs / 1000).toInt()
+                if (isActive) {
+                    val value = when (state) {
+                        is TestState.Running -> {
+                            protocol = state.protocol
+                            currentStep = state.currentStep ?: 0
+                            estimatedSteps = state.estimatedTotalSteps ?: 15
+                            elapsedSeconds = (state.elapsedMs / 1000).toInt()
 
-                        // Return progress percentage for numeric display
-                        state.progressPercent
+                            // Return progress percentage for numeric display
+                            state.progressPercent
+                        }
+                        is TestState.Completed -> {
+                            100.0
+                        }
+                        else -> {
+                            protocol = null
+                            0.0
+                        }
                     }
-                    is TestState.Completed -> {
-                        100.0
-                    }
-                    else -> {
-                        protocol = null
-                        0.0
-                    }
-                }
 
-                emitter.onNext(
-                    StreamState.Streaming(
-                        DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
+                    emitter.onNext(
+                        StreamState.Streaming(
+                            DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
+                        )
                     )
-                )
+                }
             }
         }
 
         emitter.setCancellable {
-            streamJob?.cancel()
+            streamScope?.cancel()
+            streamScope = null
         }
     }
 

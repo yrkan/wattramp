@@ -17,31 +17,41 @@ class ElapsedTimeDataType(
     private val wattRampExtension: WattRampExtension
 ) : DataTypeImpl("wattramp", "elapsed-time") {
 
-    private var streamJob: Job? = null
+    private var streamScope: CoroutineScope? = null
 
     override fun startStream(emitter: Emitter<StreamState>) {
-        streamJob = CoroutineScope(Dispatchers.Main).launch {
-            wattRampExtension.testEngine.state.collectLatest { state ->
-                val value = when (state) {
-                    is TestState.Running -> {
-                        (state.elapsedMs / 1000).toDouble()
-                    }
-                    is TestState.Completed -> {
-                        (state.result.testDurationMs / 1000).toDouble()
-                    }
-                    else -> 0.0
-                }
+        // Cancel any existing scope first
+        streamScope?.cancel()
 
-                emitter.onNext(
-                    StreamState.Streaming(
-                        DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
+        // Create new scope with SupervisorJob for proper lifecycle management
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        streamScope = scope
+
+        scope.launch {
+            wattRampExtension.testEngine.state.collectLatest { state ->
+                if (isActive) {
+                    val value = when (state) {
+                        is TestState.Running -> {
+                            (state.elapsedMs / 1000).toDouble()
+                        }
+                        is TestState.Completed -> {
+                            (state.result.testDurationMs / 1000).toDouble()
+                        }
+                        else -> 0.0
+                    }
+
+                    emitter.onNext(
+                        StreamState.Streaming(
+                            DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
+                        )
                     )
-                )
+                }
             }
         }
 
         emitter.setCancellable {
-            streamJob?.cancel()
+            streamScope?.cancel()
+            streamScope = null
         }
     }
 }

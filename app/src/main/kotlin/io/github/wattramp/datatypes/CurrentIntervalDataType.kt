@@ -26,7 +26,7 @@ class CurrentIntervalDataType(
     private val wattRampExtension: WattRampExtension
 ) : DataTypeImpl("wattramp", "current-interval") {
 
-    private var viewJob: Job? = null
+    private var viewScope: CoroutineScope? = null
 
     override fun startStream(emitter: Emitter<StreamState>) {
         // This data type is graphical, so we don't emit numeric values
@@ -36,18 +36,28 @@ class CurrentIntervalDataType(
     }
 
     override fun startView(context: Context, config: ViewConfig, emitter: ViewEmitter) {
+        // Cancel any existing scope first
+        viewScope?.cancel()
+
+        // Create new scope with SupervisorJob for proper lifecycle management
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        viewScope = scope
+
         // Configure as graphical view without header
         emitter.onNext(UpdateGraphicConfig(showHeader = false))
 
-        viewJob = CoroutineScope(Dispatchers.Main).launch {
+        scope.launch {
             wattRampExtension.testEngine.state.collectLatest { state ->
-                val remoteViews = createRemoteViews(context, state)
-                emitter.updateView(remoteViews)
+                if (isActive) {
+                    val remoteViews = createRemoteViews(context, state)
+                    emitter.updateView(remoteViews)
+                }
             }
         }
 
         emitter.setCancellable {
-            viewJob?.cancel()
+            viewScope?.cancel()
+            viewScope = null
         }
     }
 

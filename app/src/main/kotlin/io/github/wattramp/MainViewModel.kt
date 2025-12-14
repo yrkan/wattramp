@@ -1,34 +1,49 @@
 package io.github.wattramp
 
 import android.app.Application
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.wattramp.data.*
-import io.github.wattramp.engine.TestEngine
 import io.github.wattramp.engine.TestState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 /**
  * Main ViewModel that manages test state and service connection.
  * Survives configuration changes and properly handles lifecycle.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val preferencesRepository = PreferencesRepository(application)
 
+    // Extension reference with thread-safe access using synchronized block
+    private val extensionLock = Any()
+    @Volatile
+    private var _boundExtension: WattRampExtension? = null
+
+    private fun getExtensionSafely(): WattRampExtension? {
+        // Fast path - already bound
+        _boundExtension?.let { return it }
+
+        // Slow path - try to bind
+        return synchronized(extensionLock) {
+            // Double-check after acquiring lock
+            _boundExtension ?: WattRampExtension.instance?.also {
+                _boundExtension = it
+                _extensionBound.value = true
+            }
+        }
+    }
+
     // Service connection state
     private val _extensionBound = MutableStateFlow(false)
     val extensionBound: StateFlow<Boolean> = _extensionBound.asStateFlow()
-
-    private var boundExtension: WattRampExtension? = null
 
     // Demo mode state (when Karoo extension is not available)
     private val _demoTestState = MutableStateFlow<TestState>(TestState.Idle)
@@ -42,83 +57,95 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // Whether we're in demo mode (no Karoo extension)
     val isDemoMode: Boolean
-        get() = boundExtension == null && !_extensionBound.value
+        get() = getExtensionSafely() == null
 
-    // Combined test state - from extension or demo
-    val testState: StateFlow<TestState> = combine(
-        _extensionBound,
-        _demoTestState
-    ) { bound, demoState ->
-        if (bound && boundExtension != null) {
-            boundExtension?.testEngine?.state?.value ?: demoState
-        } else {
-            demoState
+    /**
+     * Active test state - properly switches between extension and demo state.
+     * Uses flatMapLatest to correctly observe the right flow.
+     */
+    val activeTestState: StateFlow<TestState> = _extensionBound
+        .flatMapLatest { bound ->
+            if (bound) {
+                // Get extension safely
+                val ext = getExtensionSafely()
+                if (ext != null) {
+                    ext.testEngine.state
+                } else {
+                    _demoTestState
+                }
+            } else {
+                _demoTestState
+            }
         }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, TestState.Idle)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = TestState.Idle
+        )
 
-    // Delegate test state to extension when available
-    val activeTestState: Flow<TestState>
-        get() = if (boundExtension != null) {
-            boundExtension!!.testEngine.state
-        } else {
-            _demoTestState
-        }
-
-    // Settings flow
-    val settings = preferencesRepository.settingsFlow
+    // Settings flow - cached to avoid multiple subscriptions
+    val settings: StateFlow<PreferencesRepository.Settings> = preferencesRepository.settingsFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = PreferencesRepository.Settings()
+        )
 
     // History flow
-    val testHistory = preferencesRepository.testHistoryFlow
-
-    // Service connection
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            // The extension is a KarooExtension which doesn't use standard binding
-            // We rely on the singleton pattern instead
-            checkExtensionAvailability()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            boundExtension = null
-            _extensionBound.value = false
-        }
-    }
+    val testHistory: StateFlow<TestHistoryData> = preferencesRepository.testHistoryFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = TestHistoryData()
+        )
 
     init {
-        // Check for extension availability periodically at startup
-        viewModelScope.launch {
+        // Check for extension availability - non-blocking approach
+        viewModelScope.launch(Dispatchers.Default) {
             // Initial check
             checkExtensionAvailability()
 
-            // Retry a few times if not available (extension might still be starting)
+            // Quick retry with shorter delays (total max 1.5 sec instead of 3 sec)
             repeat(5) {
                 if (!_extensionBound.value) {
-                    delay(500)
+                    delay(100)
                     checkExtensionAvailability()
                 }
+            }
+
+            // If still not available, do a final slower retry
+            if (!_extensionBound.value) {
+                delay(500)
+                checkExtensionAvailability()
             }
         }
 
         // Observe test state changes for auto-save active session
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             activeTestState.collect { state ->
-                when (state) {
-                    is TestState.Running -> {
-                        // Save active session for recovery
-                        preferencesRepository.saveActiveSession(
-                            TestSession(
-                                protocol = state.protocol,
-                                startTimeMs = System.currentTimeMillis() - state.elapsedMs,
-                                currentPhase = state.phase
-                            )
-                        )
-                    }
-                    is TestState.Completed, is TestState.Failed, is TestState.Idle -> {
-                        // Clear active session
-                        preferencesRepository.saveActiveSession(null)
-                    }
-                    is TestState.Paused -> {
-                        // Keep session active but mark as paused
+                withContext(Dispatchers.IO) {
+                    try {
+                        when (state) {
+                            is TestState.Running -> {
+                                // Save active session for recovery
+                                preferencesRepository.saveActiveSession(
+                                    TestSession(
+                                        protocol = state.protocol,
+                                        startTimeMs = System.currentTimeMillis() - state.elapsedMs,
+                                        currentPhase = state.phase
+                                    )
+                                )
+                            }
+                            is TestState.Completed, is TestState.Failed, is TestState.Idle -> {
+                                // Clear active session
+                                preferencesRepository.saveActiveSession(null)
+                            }
+                            is TestState.Paused -> {
+                                // Keep session active but mark as paused
+                            }
+                        }
+                    } catch (e: Exception) {
+                        // Ignore save errors - not critical
                     }
                 }
             }
@@ -129,10 +156,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Check if WattRampExtension singleton is available.
      */
     private fun checkExtensionAvailability() {
-        val extension = WattRampExtension.instance
-        if (extension != null) {
-            boundExtension = extension
-            _extensionBound.value = true
+        synchronized(extensionLock) {
+            val extension = WattRampExtension.instance
+            if (extension != null && _boundExtension == null) {
+                _boundExtension = extension
+                _extensionBound.value = true
+            }
         }
     }
 
@@ -143,7 +172,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _sessionTestStarted.value = true
         _sessionHasNavigated.value = false
 
-        val extension = boundExtension
+        val extension = getExtensionSafely()
         if (extension != null) {
             // Real Karoo mode
             extension.testEngine.startTest(protocol)
@@ -158,7 +187,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     private fun startDemoTest(protocol: ProtocolType) {
         viewModelScope.launch {
-            val currentFtp = preferencesRepository.settingsFlow.first().currentFtp
+            val currentFtp = settings.value.currentFtp
 
             // Create a running state to show progress
             val demoRunningState = TestState.Running(
@@ -185,12 +214,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // Simulate progress updates
             for (i in 1..3) {
                 delay(1000)
-                val progressState = demoRunningState.copy(
+                _demoTestState.value = demoRunningState.copy(
                     elapsedMs = i * 1000L,
                     timeRemainingInInterval = (5 * 60 * 1000L) - (i * 1000L),
                     currentStep = if (protocol == ProtocolType.RAMP) i + 1 else null
                 )
-                _demoTestState.value = progressState
             }
 
             // Generate demo result
@@ -229,7 +257,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _sessionTestStarted.value = false
         _sessionHasNavigated.value = false
 
-        val extension = boundExtension
+        val extension = getExtensionSafely()
         if (extension != null) {
             extension.testEngine.dismissResults()
         } else {
@@ -248,7 +276,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update current FTP in preferences.
      */
     fun updateCurrentFtp(ftp: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateCurrentFtp(ftp)
         }
     }
@@ -257,7 +285,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Save test result to history.
      */
     fun saveTestResult(result: TestResult) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.saveTestResult(result)
         }
     }
@@ -266,7 +294,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update ramp start power.
      */
     fun updateRampStartPower(power: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateRampStartPower(power)
         }
     }
@@ -275,7 +303,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update ramp step.
      */
     fun updateRampStep(step: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateRampStep(step)
         }
     }
@@ -284,7 +312,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update sound alerts setting.
      */
     fun updateSoundAlerts(enabled: Boolean) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateSoundAlerts(enabled)
         }
     }
@@ -293,7 +321,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update screen wake setting.
      */
     fun updateScreenWake(enabled: Boolean) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateScreenWake(enabled)
         }
     }
@@ -302,7 +330,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update show motivation setting.
      */
     fun updateShowMotivation(enabled: Boolean) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateShowMotivation(enabled)
         }
     }
@@ -311,7 +339,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update warmup duration.
      */
     fun updateWarmupDuration(minutes: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateWarmupDuration(minutes)
         }
     }
@@ -320,7 +348,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update cooldown duration.
      */
     fun updateCooldownDuration(minutes: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateCooldownDuration(minutes)
         }
     }
@@ -329,7 +357,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update language setting.
      */
     fun updateLanguage(language: PreferencesRepository.AppLanguage) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateLanguage(language)
         }
     }
@@ -338,7 +366,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Update theme setting.
      */
     fun updateTheme(theme: PreferencesRepository.AppTheme) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateTheme(theme)
         }
     }
@@ -347,13 +375,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Clear test history.
      */
     fun clearTestHistory() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.clearTestHistory()
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        boundExtension = null
+        synchronized(extensionLock) {
+            _boundExtension = null
+        }
     }
 }

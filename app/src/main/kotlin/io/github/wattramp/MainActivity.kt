@@ -12,8 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.github.wattramp.data.PreferencesRepository
-import io.github.wattramp.data.TestHistoryData
 import io.github.wattramp.engine.TestState
 import io.github.wattramp.ui.screens.*
 import io.github.wattramp.ui.theme.WattRampTheme
@@ -33,10 +31,8 @@ class MainActivity : ComponentActivity() {
         )[MainViewModel::class.java]
 
         setContent {
-            // Observe settings for theme and apply language
-            val settings by viewModel.settings.collectAsState(
-                initial = PreferencesRepository.Settings()
-            )
+            // Settings is already a StateFlow, so we can collect directly
+            val settings by viewModel.settings.collectAsState()
 
             // Apply language setting (non-blocking, using LaunchedEffect)
             LaunchedEffect(settings.language) {
@@ -59,24 +55,16 @@ class MainActivity : ComponentActivity() {
 fun WattRampApp(viewModel: MainViewModel) {
     val navController = rememberNavController()
 
-    // Collect state flows
-    val settings by viewModel.settings.collectAsState(
-        initial = PreferencesRepository.Settings()
-    )
-    val history by viewModel.testHistory.collectAsState(
-        initial = TestHistoryData()
-    )
-
-    // Observe test state
-    val testState by viewModel.activeTestState.collectAsState(initial = TestState.Idle)
-
-    // Session state from ViewModel
+    // Collect StateFlows - no initial value needed as StateFlow always has a value
+    val settings by viewModel.settings.collectAsState()
+    val history by viewModel.testHistory.collectAsState()
+    val testState by viewModel.activeTestState.collectAsState()
     val testStarted by viewModel.sessionTestStarted.collectAsState()
     val hasNavigated by viewModel.sessionHasNavigated.collectAsState()
 
     // Navigate based on test state changes
     LaunchedEffect(testState, testStarted, hasNavigated) {
-        val currentRoute = navController.currentDestination?.route
+        val currentRoute = navController.currentDestination?.route ?: return@LaunchedEffect
 
         when {
             // Navigate to running screen when test starts
@@ -89,6 +77,14 @@ fun WattRampApp(viewModel: MainViewModel) {
                 viewModel.setHasNavigated(true)
                 navController.navigate("result") {
                     popUpTo("home")
+                }
+            }
+            // Handle failed state - go back to home
+            testState is TestState.Failed && testStarted &&
+                (currentRoute == "running") -> {
+                viewModel.setHasNavigated(true)
+                navController.navigate("home") {
+                    popUpTo("home") { inclusive = true }
                 }
             }
         }
@@ -191,25 +187,34 @@ fun WattRampApp(viewModel: MainViewModel) {
         }
 
         composable("running") {
-            val runningState = testState as? TestState.Running
-
-            if (runningState != null) {
-                RunningScreen(
-                    runningState = runningState,
-                    onStopTest = {
-                        viewModel.dismissResults()
+            when (val state = testState) {
+                is TestState.Running -> {
+                    RunningScreen(
+                        runningState = state,
+                        onStopTest = {
+                            viewModel.dismissResults()
+                            navController.navigate("home") {
+                                popUpTo("home") { inclusive = true }
+                            }
+                        }
+                    )
+                }
+                is TestState.Paused -> {
+                    // Show paused state (could show a paused overlay)
+                    // For now, just wait for resume
+                }
+                is TestState.Completed -> {
+                    // Test completed, will navigate via LaunchedEffect
+                }
+                is TestState.Failed -> {
+                    // Will navigate back via LaunchedEffect
+                }
+                is TestState.Idle -> {
+                    // Invalid state, go back home
+                    LaunchedEffect(Unit) {
                         navController.navigate("home") {
                             popUpTo("home") { inclusive = true }
                         }
-                    }
-                )
-            } else if (testState is TestState.Completed) {
-                // Test completed, will navigate via LaunchedEffect
-            } else {
-                // Invalid state, go back home
-                LaunchedEffect(Unit) {
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = true }
                     }
                 }
             }

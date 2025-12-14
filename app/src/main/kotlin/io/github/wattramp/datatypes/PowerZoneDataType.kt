@@ -17,10 +17,12 @@ class PowerZoneDataType(
     private val wattRampExtension: WattRampExtension
 ) : DataTypeImpl("wattramp", "power-zone") {
 
-    private var streamJob: Job? = null
+    private var streamScope: CoroutineScope? = null
 
     // Store zone info for display
+    @Volatile
     private var zoneStatus: ZoneStatus = ZoneStatus.NO_TEST
+    @Volatile
     private var deviation: Int = 0
 
     enum class ZoneStatus {
@@ -32,46 +34,56 @@ class PowerZoneDataType(
     }
 
     override fun startStream(emitter: Emitter<StreamState>) {
-        streamJob = CoroutineScope(Dispatchers.Main).launch {
+        // Cancel any existing scope first
+        streamScope?.cancel()
+
+        // Create new scope with SupervisorJob for proper lifecycle management
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        streamScope = scope
+
+        scope.launch {
             wattRampExtension.testEngine.state.collectLatest { state ->
-                val value = when (state) {
-                    is TestState.Running -> {
-                        val target = state.targetPower
+                if (isActive) {
+                    val value = when (state) {
+                        is TestState.Running -> {
+                            val target = state.targetPower
 
-                        if (target == null || target <= 0) {
-                            // Max effort interval
-                            zoneStatus = ZoneStatus.MAX_EFFORT
-                            deviation = 0
-                            0.0 // No target
-                        } else {
-                            deviation = state.currentPower - target
-                            zoneStatus = when {
-                                state.isInTargetZone -> ZoneStatus.IN_ZONE
-                                state.currentPower < target -> ZoneStatus.TOO_LOW
-                                else -> ZoneStatus.TOO_HIGH
+                            if (target == null || target <= 0) {
+                                // Max effort interval
+                                zoneStatus = ZoneStatus.MAX_EFFORT
+                                deviation = 0
+                                0.0 // No target
+                            } else {
+                                deviation = state.currentPower - target
+                                zoneStatus = when {
+                                    state.isInTargetZone -> ZoneStatus.IN_ZONE
+                                    state.currentPower < target -> ZoneStatus.TOO_LOW
+                                    else -> ZoneStatus.TOO_HIGH
+                                }
+
+                                // Return deviation as the value
+                                deviation.toDouble()
                             }
-
-                            // Return deviation as the value
-                            deviation.toDouble()
+                        }
+                        else -> {
+                            zoneStatus = ZoneStatus.NO_TEST
+                            deviation = 0
+                            0.0
                         }
                     }
-                    else -> {
-                        zoneStatus = ZoneStatus.NO_TEST
-                        deviation = 0
-                        0.0
-                    }
-                }
 
-                emitter.onNext(
-                    StreamState.Streaming(
-                        DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
+                    emitter.onNext(
+                        StreamState.Streaming(
+                            DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
+                        )
                     )
-                )
+                }
             }
         }
 
         emitter.setCancellable {
-            streamJob?.cancel()
+            streamScope?.cancel()
+            streamScope = null
         }
     }
 
