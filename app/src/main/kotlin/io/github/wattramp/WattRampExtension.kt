@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
-class WattRampExtension : KarooExtension("wattramp", "1.2.0") {
+class WattRampExtension : KarooExtension("wattramp", "1.2.1") {
 
     companion object {
         @Volatile

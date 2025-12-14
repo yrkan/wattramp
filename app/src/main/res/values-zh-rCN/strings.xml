@@ -151,6 +151,6 @@
     <string name="datatype_progress_desc">测试中的当前阶段或时间进度</string>
     <string name="datatype_zone_name">功率区间</string>
     <string name="datatype_zone_desc">显示当前功率是否在目标区间</string>
-    <string name="datatype_ftp_prediction_name">FTP预测</string>
-    <string name="datatype_ftp_prediction_desc">基于当前表现的预估FTP</string>
+    <string name="datatype_ftp_name">FTP预测</string>
+    <string name="datatype_ftp_desc">基于当前表现的预估FTP</string>
 </resources>

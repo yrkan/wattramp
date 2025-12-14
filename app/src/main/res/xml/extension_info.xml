@@ -4,6 +4,7 @@
     displayName="@string/extension_name"
     icon="@drawable/ic_wattramp">
 
+    <!-- Graphical widget (2x1) -->
     <DataType
         typeId="current-interval"
         description="@string/datatype_interval_desc"
@@ -11,6 +12,7 @@
         graphical="true"
         icon="@drawable/ic_wattramp" />
 
+    <!-- Numeric fields (1x1) -->
     <DataType
         typeId="target-power"
         description="@string/datatype_target_desc"
@@ -29,6 +31,41 @@
         typeId="power-zone"
         description="@string/datatype_zone_desc"
         displayName="@string/datatype_zone_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="deviation"
+        description="@string/datatype_deviation_desc"
+        displayName="@string/datatype_deviation_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="elapsed-time"
+        description="@string/datatype_elapsed_desc"
+        displayName="@string/datatype_elapsed_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="average-power"
+        description="@string/datatype_avg_desc"
+        displayName="@string/datatype_avg_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="max-power"
+        description="@string/datatype_max_desc"
+        displayName="@string/datatype_max_name"
+        graphical="false"
+        icon="@drawable/ic_wattramp" />
+
+    <DataType
+        typeId="ftp-prediction"
+        description="@string/datatype_ftp_desc"
+        displayName="@string/datatype_ftp_name"
         graphical="false"
         icon="@drawable/ic_wattramp" />
 

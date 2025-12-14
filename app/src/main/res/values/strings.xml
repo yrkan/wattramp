@@ -160,6 +160,14 @@
     <string name="datatype_progress_desc">Current step or time progress in the test</string>
     <string name="datatype_zone_name">Power Zone</string>
     <string name="datatype_zone_desc">Shows if current power is in target zone</string>
-    <string name="datatype_ftp_prediction_name">FTP Prediction</string>
-    <string name="datatype_ftp_prediction_desc">Estimated FTP based on current performance</string>
+    <string name="datatype_deviation_name">Power Deviation</string>
+    <string name="datatype_deviation_desc">Difference between current and target power</string>
+    <string name="datatype_elapsed_name">Elapsed Time</string>
+    <string name="datatype_elapsed_desc">Time elapsed since test started</string>
+    <string name="datatype_avg_name">Average Power</string>
+    <string name="datatype_avg_desc">Average power during test</string>
+    <string name="datatype_max_name">Max 1-min Power</string>
+    <string name="datatype_max_desc">Highest 1-minute average power</string>
+    <string name="datatype_ftp_name">FTP Prediction</string>
+    <string name="datatype_ftp_desc">Estimated FTP based on current performance</string>
 </resources>

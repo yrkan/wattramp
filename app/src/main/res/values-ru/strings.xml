@@ -151,6 +151,6 @@
     <string name="datatype_progress_desc">Текущий шаг или временной прогресс теста</string>
     <string name="datatype_zone_name">Зона мощности</string>
     <string name="datatype_zone_desc">Показывает, находится ли текущая мощность в целевой зоне</string>
-    <string name="datatype_ftp_prediction_name">Прогноз FTP</string>
-    <string name="datatype_ftp_prediction_desc">Расчётный FTP на основе текущих показателей</string>
+    <string name="datatype_ftp_name">Прогноз FTP</string>
+    <string name="datatype_ftp_desc">Расчётный FTP на основе текущих показателей</string>
 </resources>

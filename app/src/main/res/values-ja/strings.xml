@@ -151,6 +151,6 @@
     <string name="datatype_progress_desc">テストの現在のステップまたは時間進捗</string>
     <string name="datatype_zone_name">パワーゾーン</string>
     <string name="datatype_zone_desc">現在のパワーが目標ゾーンにあるかを表示</string>
-    <string name="datatype_ftp_prediction_name">FTP予測</string>
-    <string name="datatype_ftp_prediction_desc">現在のパフォーマンスに基づく推定FTP</string>
+    <string name="datatype_ftp_name">FTP予測</string>
+    <string name="datatype_ftp_desc">現在のパフォーマンスに基づく推定FTP</string>
 </resources>

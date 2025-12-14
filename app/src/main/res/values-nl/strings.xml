@@ -151,6 +151,6 @@
     <string name="datatype_progress_desc">Huidige stap of tijdsvoortgang in de test</string>
     <string name="datatype_zone_name">Vermogenszone</string>
     <string name="datatype_zone_desc">Toont of huidig vermogen in de doelzone ligt</string>
-    <string name="datatype_ftp_prediction_name">FTP Voorspelling</string>
-    <string name="datatype_ftp_prediction_desc">Geschatte FTP gebaseerd op huidige prestatie</string>
+    <string name="datatype_ftp_name">FTP Voorspelling</string>
+    <string name="datatype_ftp_desc">Geschatte FTP gebaseerd op huidige prestatie</string>
 </resources>

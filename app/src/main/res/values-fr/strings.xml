@@ -151,6 +151,6 @@
     <string name="datatype_progress_desc">Palier actuel ou progression temporelle du test</string>
     <string name="datatype_zone_name">Zone de Puissance</string>
     <string name="datatype_zone_desc">Indique si la puissance actuelle est dans la zone cible</string>
-    <string name="datatype_ftp_prediction_name">Prédiction FTP</string>
-    <string name="datatype_ftp_prediction_desc">FTP estimé basé sur la performance actuelle</string>
+    <string name="datatype_ftp_name">Prédiction FTP</string>
+    <string name="datatype_ftp_desc">FTP estimé basé sur la performance actuelle</string>
 </resources>

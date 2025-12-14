@@ -151,6 +151,6 @@
     <string name="datatype_progress_desc">Aktuelle Stufe oder Zeitfortschritt im Test</string>
     <string name="datatype_zone_name">Leistungszone</string>
     <string name="datatype_zone_desc">Zeigt ob aktuelle Leistung in der Zielzone liegt</string>
-    <string name="datatype_ftp_prediction_name">FTP-Vorhersage</string>
-    <string name="datatype_ftp_prediction_desc">Geschätzte FTP basierend auf aktueller Leistung</string>
+    <string name="datatype_ftp_name">FTP-Vorhersage</string>
+    <string name="datatype_ftp_desc">Geschätzte FTP basierend auf aktueller Leistung</string>
 </resources>
