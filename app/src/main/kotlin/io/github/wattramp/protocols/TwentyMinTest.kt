@@ -29,9 +29,11 @@ class TwentyMinTest(
         private const val RECOVERY_DURATION_MS = 5 * 60_000L
         private const val TEST_DURATION_MS = 20 * 60_000L
         private const val COOLDOWN_DURATION_MS = 10 * 60_000L
+        private const val MAX_TEST_SAMPLES = 1500 // 20 minutes + buffer
     }
 
-    private val testPowerSamples = mutableListOf<Int>()
+    // Bounded list for test interval samples only
+    private val testPowerSamples = java.util.concurrent.CopyOnWriteArrayList<Int>()
 
     override val type = ProtocolType.TWENTY_MINUTE
 
@@ -84,11 +86,14 @@ class TwentyMinTest(
     }
 
     override fun onPowerSample(power: Int, elapsedMs: Long) {
-        powerSamples.add(PowerSample(power, elapsedMs))
+        // Use bounded base class method
+        addPowerSample(power, elapsedMs)
 
-        // Collect samples only during the 20-min test interval
+        // Collect samples only during the 20-min test interval with bounds
         if (elapsedMs in testIntervalStartMs until testIntervalEndMs) {
-            testPowerSamples.add(power)
+            if (testPowerSamples.size < MAX_TEST_SAMPLES) {
+                testPowerSamples.add(power)
+            }
         }
     }
 

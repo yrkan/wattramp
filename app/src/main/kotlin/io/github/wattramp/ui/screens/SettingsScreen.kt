@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.content.Intent
 import android.net.Uri
+import io.github.wattramp.BuildConfig
 import io.github.wattramp.R
 import io.github.wattramp.data.PreferencesRepository
 import io.github.wattramp.ui.theme.*
@@ -764,7 +765,7 @@ private fun AboutRow(
                     .padding(horizontal = 8.dp)
             )
             Text(
-                text = "1.2.2",
+                text = BuildConfig.VERSION_NAME,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurfaceVariant,

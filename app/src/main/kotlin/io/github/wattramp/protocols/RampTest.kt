@@ -7,12 +7,17 @@ import io.github.wattramp.data.TestResult
 import io.github.wattramp.data.PreferencesRepository
 import java.util.ArrayDeque
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Ramp Test Protocol
  *
  * Progressive test with power increasing every minute until failure.
  * FTP = Max 1-minute Power × 0.75
+ *
+ * Thread-safe implementation using atomic types for mutable state.
  */
 class RampTest(
     private val startPower: Int = 100,
@@ -31,12 +36,15 @@ class RampTest(
     private val warmupDurationMs = warmupDurationMin * 60_000L
     private val cooldownDurationMs = cooldownDurationMin * 60_000L
 
-    // Rolling buffer for 1-minute power average
-    private val oneMinuteBuffer = ArrayDeque<Int>(60)
-    private var maxOneMinutePower = 0.0
-    private var totalSteps = 0
-    private var consecutiveLowPowerCount = 0
-    private var testEndTimeMs: Long? = null
+    // Rolling buffer for 1-minute power average - synchronized access
+    private val oneMinuteBuffer = ArrayDeque<Int>(65)
+    private val bufferLock = Any()
+
+    // Thread-safe state using atomic types
+    private val maxOneMinutePower = AtomicReference(0.0)
+    private val totalSteps = AtomicInteger(0)
+    private val consecutiveLowPowerCount = AtomicInteger(0)
+    private val testEndTimeMs = AtomicLong(0L) // 0 means not ended
 
     override val type = ProtocolType.RAMP
 
@@ -100,28 +108,32 @@ class RampTest(
     }
 
     override fun onPowerSample(power: Int, elapsedMs: Long) {
-        powerSamples.add(PowerSample(power, elapsedMs))
+        // Add to base class samples with bounds (handled by BaseTestProtocol)
+        addPowerSample(power, elapsedMs)
 
         // Only track during test phase
         if (elapsedMs < warmupDurationMs) return
 
-        // Add to rolling 1-minute buffer
-        oneMinuteBuffer.addLast(power)
-        if (oneMinuteBuffer.size > 60) {
-            oneMinuteBuffer.removeFirst()
-        }
+        // Thread-safe update of rolling buffer
+        synchronized(bufferLock) {
+            oneMinuteBuffer.addLast(power)
+            if (oneMinuteBuffer.size > 60) {
+                oneMinuteBuffer.removeFirst()
+            }
 
-        // Calculate current 1-minute average
-        if (oneMinuteBuffer.size >= 60) {
-            val currentAvg = oneMinuteBuffer.average()
-            if (currentAvg > maxOneMinutePower) {
-                maxOneMinutePower = currentAvg
+            // Calculate current 1-minute average
+            if (oneMinuteBuffer.size >= 60) {
+                val currentAvg = oneMinuteBuffer.average()
+                // Atomically update max if current is higher
+                maxOneMinutePower.updateAndGet { current ->
+                    if (currentAvg > current) currentAvg else current
+                }
             }
         }
 
         // Track steps completed
         val testElapsedMs = elapsedMs - warmupDurationMs
-        totalSteps = ((testElapsedMs / STEP_DURATION_MS).toInt() + 1).coerceAtLeast(1)
+        totalSteps.set(((testElapsedMs / STEP_DURATION_MS).toInt() + 1).coerceAtLeast(1))
     }
 
     override fun shouldEndTest(currentPower: Int, targetPower: Int): Boolean {
@@ -130,25 +142,25 @@ class RampTest(
         // Check if power dropped significantly
         val threshold = (targetPower * POWER_DROP_THRESHOLD).toInt()
         if (currentPower < threshold) {
-            consecutiveLowPowerCount++
-            if (consecutiveLowPowerCount >= CONSECUTIVE_LOW_POWER_SECONDS) {
-                testEndTimeMs = System.currentTimeMillis()
+            val count = consecutiveLowPowerCount.incrementAndGet()
+            if (count >= CONSECUTIVE_LOW_POWER_SECONDS) {
+                testEndTimeMs.set(System.currentTimeMillis())
                 return true
             }
         } else {
-            consecutiveLowPowerCount = 0
+            consecutiveLowPowerCount.set(0)
         }
 
         return false
     }
 
     override fun calculateFtp(method: PreferencesRepository.FtpCalcMethod): Int {
-        if (maxOneMinutePower <= 0) {
+        val maxPower = maxOneMinutePower.get()
+        if (maxPower <= 0) {
             // Fallback: use max power from samples
-            val maxPower = powerSamples
-                .filter { it.timestampMs >= warmupDurationMs }
+            val maxSamplePower = getPowerSamplesAfter(warmupDurationMs)
                 .maxOfOrNull { it.power } ?: 0
-            return (maxPower * 0.75).toInt()
+            return (maxSamplePower * 0.75).toInt()
         }
 
         val coefficient = when (method) {
@@ -157,7 +169,7 @@ class RampTest(
             PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.77
         }
 
-        return (maxOneMinutePower * coefficient).toInt()
+        return (maxPower * coefficient).toInt()
     }
 
     override fun getTestResult(
@@ -166,7 +178,9 @@ class RampTest(
         method: PreferencesRepository.FtpCalcMethod
     ): TestResult {
         val calculatedFtp = calculateFtp(method)
-        val maxPower = maxOneMinutePower.toInt()
+        val maxPower = maxOneMinutePower.get().toInt()
+        val steps = totalSteps.get()
+        val endTime = testEndTimeMs.get()
 
         val coefficient = when (method) {
             PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.72
@@ -182,9 +196,9 @@ class RampTest(
             previousFtp = previousFtp,
             maxOneMinutePower = maxPower,
             averagePower = null,
-            testDurationMs = testEndTimeMs?.let { it - startTime }
-                ?: (warmupDurationMs + (totalSteps * STEP_DURATION_MS)),
-            stepsCompleted = totalSteps,
+            testDurationMs = if (endTime > 0) endTime - startTime
+                else (warmupDurationMs + (steps * STEP_DURATION_MS)),
+            stepsCompleted = steps,
             formula = "$maxPower x $coefficient = $calculatedFtp"
         )
     }
@@ -213,10 +227,12 @@ class RampTest(
 
     override fun reset() {
         super.reset()
-        oneMinuteBuffer.clear()
-        maxOneMinutePower = 0.0
-        totalSteps = 0
-        consecutiveLowPowerCount = 0
-        testEndTimeMs = null
+        synchronized(bufferLock) {
+            oneMinuteBuffer.clear()
+        }
+        maxOneMinutePower.set(0.0)
+        totalSteps.set(0)
+        consecutiveLowPowerCount.set(0)
+        testEndTimeMs.set(0L)
     }
 }

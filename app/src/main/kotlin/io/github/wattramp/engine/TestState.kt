@@ -32,18 +32,24 @@ sealed class TestState {
         val averagePower: Int = 0,
         // Heart rate and cadence from Karoo
         val heartRate: Int = 0,
-        val cadence: Int = 0
+        val cadence: Int = 0,
+        // User's max HR from Karoo profile for accurate zone calculations
+        val userMaxHr: Int = 190
     ) : TestState() {
 
-        // HR zone calculation (based on max HR estimate: 220 - age, default ~190)
+        // HR zone calculation based on user's actual max HR from Karoo profile
         val hrZone: Int
-            get() = when {
-                heartRate == 0 -> 0
-                heartRate < 114 -> 1  // < 60% of ~190
-                heartRate < 133 -> 2  // 60-70%
-                heartRate < 152 -> 3  // 70-80%
-                heartRate < 171 -> 4  // 80-90%
-                else -> 5             // > 90%
+            get() {
+                if (heartRate == 0) return 0
+                val maxHr = userMaxHr.coerceAtLeast(150) // Sanity check
+                val percentOfMax = (heartRate.toDouble() / maxHr) * 100
+                return when {
+                    percentOfMax < 60 -> 1  // Zone 1: Recovery
+                    percentOfMax < 70 -> 2  // Zone 2: Endurance
+                    percentOfMax < 80 -> 3  // Zone 3: Tempo
+                    percentOfMax < 90 -> 4  // Zone 4: Threshold
+                    else -> 5               // Zone 5: VO2max
+                }
             }
 
         // Cadence warning thresholds
@@ -67,22 +73,28 @@ sealed class TestState {
                 if (it > 0) ((currentPower - it).toDouble() / it) * 100 else 0.0
             } ?: 0.0
 
+        // Accurate progress calculation based on protocol type and total duration
         val progressPercent: Double
             get() = when (protocol) {
                 ProtocolType.RAMP -> {
-                    // Estimate based on current step vs expected
+                    // For Ramp test: estimate based on current step vs expected
                     currentStep?.let { step ->
                         estimatedTotalSteps?.let { total ->
-                            (step.toDouble() / total) * 100
+                            if (total > 0) (step.toDouble() / total) * 100 else 0.0
                         }
                     } ?: 0.0
                 }
-                else -> {
-                    // Based on total duration
-                    val totalDuration = currentInterval.durationMs * 5 // Rough estimate
-                    (elapsedMs.toDouble() / totalDuration) * 100
+                ProtocolType.TWENTY_MINUTE -> {
+                    // Total duration: 20 + 5 + 5 + 20 + 10 = 60 minutes
+                    val totalDurationMs = 60 * 60_000L
+                    (elapsedMs.toDouble() / totalDurationMs) * 100
                 }
-            }
+                ProtocolType.EIGHT_MINUTE -> {
+                    // Total duration: 15 + 8 + 10 + 8 + 10 = 51 minutes
+                    val totalDurationMs = 51 * 60_000L
+                    (elapsedMs.toDouble() / totalDurationMs) * 100
+                }
+            }.coerceIn(0.0, 100.0)
     }
 
     /**
@@ -116,42 +128,4 @@ enum class FailureReason {
     POWER_DROPOUT,
     RIDE_ENDED,
     ERROR
-}
-
-/**
- * Events that can be sent to the TestEngine.
- */
-sealed class TestEvent {
-    data class StartTest(val protocol: ProtocolType) : TestEvent()
-    data object StopTest : TestEvent()
-    data object PauseTest : TestEvent()
-    data object ResumeTest : TestEvent()
-    data class PowerUpdate(val power: Int) : TestEvent()
-    data class TimeUpdate(val elapsedMs: Long) : TestEvent()
-    data object RideEnded : TestEvent()
-}
-
-/**
- * Effects that the TestEngine can produce.
- */
-sealed class TestEffect {
-    data class ShowAlert(
-        val id: String,
-        val title: String,
-        val detail: String? = null,
-        val playSound: Boolean = false,
-        val wakeScreen: Boolean = false,
-        val autoDismissMs: Long? = 5000L
-    ) : TestEffect()
-
-    data class UpdateDataFields(
-        val state: TestState.Running
-    ) : TestEffect()
-
-    data class SaveResult(
-        val result: TestResult
-    ) : TestEffect()
-
-    data object PlayBeep : TestEffect()
-    data object WakeScreen : TestEffect()
 }

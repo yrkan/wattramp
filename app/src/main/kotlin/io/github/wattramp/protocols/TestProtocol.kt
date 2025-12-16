@@ -78,12 +78,44 @@ interface TestProtocol {
 
 /**
  * Base implementation with common functionality.
+ * Includes bounded power sample storage to prevent unbounded memory growth.
  */
 abstract class BaseTestProtocol : TestProtocol {
     protected var testStartTimeMs: Long = 0L
-    protected val powerSamples = mutableListOf<PowerSample>()
+
+    // Bounded power sample storage using thread-safe list
+    private val powerSamples = java.util.concurrent.CopyOnWriteArrayList<PowerSample>()
+    private val samplesLock = Any()
+
+    companion object {
+        // Maximum samples to store (~67 minutes at 1 sample/sec)
+        private const val MAX_POWER_SAMPLES = 4000
+    }
 
     data class PowerSample(val power: Int, val timestampMs: Long)
+
+    /**
+     * Thread-safe method to add power sample with bounded storage.
+     */
+    protected fun addPowerSample(power: Int, timestampMs: Long) {
+        if (powerSamples.size < MAX_POWER_SAMPLES) {
+            powerSamples.add(PowerSample(power, timestampMs))
+        }
+    }
+
+    /**
+     * Get power samples after a specific timestamp.
+     */
+    protected fun getPowerSamplesAfter(afterMs: Long): List<PowerSample> {
+        return powerSamples.filter { it.timestampMs >= afterMs }
+    }
+
+    /**
+     * Get all power samples (snapshot).
+     */
+    protected fun getAllPowerSamples(): List<PowerSample> {
+        return powerSamples.toList()
+    }
 
     override val totalDurationMs: Long
         get() = intervals.sumOf { it.durationMs }
@@ -133,7 +165,7 @@ abstract class BaseTestProtocol : TestProtocol {
 
     override fun reset() {
         testStartTimeMs = System.currentTimeMillis()
-        powerSamples.clear()
+        powerSamples.clear() // Thread-safe clear of CopyOnWriteArrayList
     }
 
     protected fun getElapsedInCurrentInterval(elapsedMs: Long): Long {

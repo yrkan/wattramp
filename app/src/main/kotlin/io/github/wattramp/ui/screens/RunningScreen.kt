@@ -25,6 +25,7 @@ import io.github.wattramp.data.ProtocolType
 import io.github.wattramp.engine.TestState
 import io.github.wattramp.ui.components.PowerGraph
 import io.github.wattramp.ui.theme.*
+import java.util.ArrayDeque
 
 /**
  * Running screen - Garmin Edge style data fields.
@@ -43,11 +44,23 @@ fun RunningScreen(
     onStopTest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Power history for graph
-    val powerHistory = remember { mutableStateListOf<Int>() }
+    // Power history for graph using efficient circular buffer (ArrayDeque with O(1) removal)
+    val powerHistoryDeque = remember { ArrayDeque<Int>(65) }
+    var powerHistoryVersion by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(runningState.currentPower, runningState.elapsedMs) {
-        powerHistory.add(runningState.currentPower)
-        while (powerHistory.size > 60) powerHistory.removeAt(0)
+        powerHistoryDeque.addLast(runningState.currentPower)
+        // O(1) removal from front instead of O(n) removeAt(0)
+        while (powerHistoryDeque.size > 60) {
+            powerHistoryDeque.removeFirst()
+        }
+        // Trigger recomposition by incrementing version
+        powerHistoryVersion++
+    }
+
+    // Convert to list only when needed for rendering (triggered by version change)
+    val powerHistory = remember(powerHistoryVersion) {
+        powerHistoryDeque.toList()
     }
 
     // Capture theme colors for helper functions

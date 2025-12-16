@@ -30,13 +30,20 @@ data class TestResult(
 
 /**
  * Container for test history with serialization support.
+ * Limits history to MAX_HISTORY_SIZE results to prevent unbounded growth.
  */
 @Serializable
 data class TestHistoryData(
     val results: List<TestResult> = emptyList()
 ) {
+    companion object {
+        const val MAX_HISTORY_SIZE = 100
+    }
+
     fun addResult(result: TestResult): TestHistoryData {
-        return copy(results = listOf(result) + results)
+        // Add new result at the beginning and limit total size
+        val newResults = (listOf(result) + results).take(MAX_HISTORY_SIZE)
+        return copy(results = newResults)
     }
 
     fun getLatestFtp(): Int? {

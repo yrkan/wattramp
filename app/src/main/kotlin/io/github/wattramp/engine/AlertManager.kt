@@ -7,18 +7,22 @@ import io.github.wattramp.data.ProtocolType
 import io.hammerhead.karooext.models.InRideAlert
 import io.hammerhead.karooext.models.PlayBeepPattern
 import io.hammerhead.karooext.models.TurnScreenOn
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Manages in-ride alerts and notifications during FTP tests.
+ * Thread-safe implementation using atomic types.
  */
 class AlertManager(private val extension: WattRampExtension) {
 
-    private var lastAlertId: String? = null
-    private var lastPhase: TestPhase? = null
-    private var halfwayAlertShown = false
-    private var final30Shown = false
-    private var getReadyShown = false
-    private var lowCadenceWarningCount = 0
+    // Thread-safe state tracking using atomic types
+    private val lastPhase = AtomicReference<TestPhase?>(null)
+    private val halfwayAlertShown = AtomicBoolean(false)
+    private val final30Shown = AtomicBoolean(false)
+    private val getReadyShown = AtomicBoolean(false)
+    private val lowCadenceWarningCount = AtomicInteger(0)
 
     companion object {
         private const val ALERT_INTERVAL_CHANGE = "wattramp_interval_change"
@@ -40,11 +44,13 @@ class AlertManager(private val extension: WattRampExtension) {
         screenWakeEnabled: Boolean,
         motivationEnabled: Boolean
     ) {
-        // Phase change alert
-        if (state.phase != lastPhase) {
-            onPhaseChange(state, soundEnabled, screenWakeEnabled)
-            lastPhase = state.phase
-            resetPhaseAlerts()
+        // Phase change alert - use compareAndSet for thread safety
+        val previousPhase = lastPhase.get()
+        if (state.phase != previousPhase) {
+            if (lastPhase.compareAndSet(previousPhase, state.phase)) {
+                onPhaseChange(state, soundEnabled, screenWakeEnabled)
+                resetPhaseAlerts()
+            }
         }
 
         // Time-based alerts during test intervals
@@ -103,7 +109,7 @@ class AlertManager(private val extension: WattRampExtension) {
         // Get ready alert (10 seconds before phase change)
         // Only for non-Ramp tests where we know the duration
         if (state.protocol != ProtocolType.RAMP) {
-            if (!getReadyShown && remainingMs in 9_000L..11_000L) {
+            if (remainingMs in 9_000L..11_000L && getReadyShown.compareAndSet(false, true)) {
                 showAlert(
                     id = ALERT_GET_READY,
                     title = "Almost there!",
@@ -111,7 +117,6 @@ class AlertManager(private val extension: WattRampExtension) {
                     playSound = false,
                     wakeScreen = false
                 )
-                getReadyShown = true
             }
         }
 
@@ -120,8 +125,9 @@ class AlertManager(private val extension: WattRampExtension) {
         val halfway = intervalDuration / 2
         val elapsedInInterval = intervalDuration - remainingMs
 
-        if (motivationEnabled && !halfwayAlertShown &&
-            elapsedInInterval >= halfway && elapsedInInterval < halfway + 2000
+        if (motivationEnabled &&
+            elapsedInInterval >= halfway && elapsedInInterval < halfway + 2000 &&
+            halfwayAlertShown.compareAndSet(false, true)
         ) {
             showAlert(
                 id = ALERT_HALFWAY,
@@ -130,11 +136,10 @@ class AlertManager(private val extension: WattRampExtension) {
                 playSound = false,
                 wakeScreen = false
             )
-            halfwayAlertShown = true
         }
 
         // Final 30 seconds
-        if (!final30Shown && remainingMs in 29_000L..31_000L) {
+        if (remainingMs in 29_000L..31_000L && final30Shown.compareAndSet(false, true)) {
             showAlert(
                 id = ALERT_FINAL_30,
                 title = "FINAL 30 SECONDS!",
@@ -142,11 +147,11 @@ class AlertManager(private val extension: WattRampExtension) {
                 playSound = soundEnabled,
                 wakeScreen = screenWakeEnabled
             )
-            final30Shown = true
         }
     }
 
-    private var lastRampStep = 0
+    private val lastRampStep = AtomicInteger(0)
+    private val lowPowerWarningCount = AtomicInteger(0)
 
     private fun checkRampStepAlerts(
         state: TestState.Running,
@@ -156,21 +161,20 @@ class AlertManager(private val extension: WattRampExtension) {
         val currentStep = state.currentStep ?: return
         val targetPower = state.targetPower ?: return
 
-        if (currentStep > lastRampStep && currentStep > 0) {
-            showAlert(
-                id = ALERT_INTERVAL_CHANGE,
-                title = "RAMP UP!",
-                detail = "Target: ${targetPower}W",
-                playSound = soundEnabled,
-                wakeScreen = screenWakeEnabled
-            )
-            lastRampStep = currentStep
+        val previousStep = lastRampStep.get()
+        if (currentStep > previousStep && currentStep > 0) {
+            if (lastRampStep.compareAndSet(previousStep, currentStep)) {
+                showAlert(
+                    id = ALERT_INTERVAL_CHANGE,
+                    title = "RAMP UP!",
+                    detail = "Target: ${targetPower}W",
+                    playSound = soundEnabled,
+                    wakeScreen = screenWakeEnabled
+                )
+            }
         }
     }
 
-    private var lowPowerWarningCount = 0
-
-    @Suppress("UNUSED_PARAMETER")
     private fun checkPowerWarning(state: TestState.Running, soundEnabled: Boolean) {
         val target = state.targetPower ?: return
         if (target <= 0) return
@@ -178,28 +182,28 @@ class AlertManager(private val extension: WattRampExtension) {
         // Only warn if more than 15% below target
         val threshold = target * 0.85
         if (state.currentPower < threshold) {
-            lowPowerWarningCount++
+            val count = lowPowerWarningCount.incrementAndGet()
             // Show warning every 10 seconds of low power
-            if (lowPowerWarningCount >= 10 && lowPowerWarningCount % 10 == 0) {
+            if (count >= 10 && count % 10 == 0) {
                 showAlert(
                     id = ALERT_PUSH_HARDER,
                     title = "PUSH HARDER!",
                     detail = "Below target: ${state.currentPower}W < ${target}W",
-                    playSound = false,
+                    playSound = soundEnabled,
                     wakeScreen = false,
                     autoDismissMs = 3000L
                 )
             }
         } else {
-            lowPowerWarningCount = 0
+            lowPowerWarningCount.set(0)
         }
     }
 
     private fun checkCadenceWarning(state: TestState.Running, soundEnabled: Boolean) {
         if (state.cadence > 0 && state.isCadenceLow) {
-            lowCadenceWarningCount++
+            val count = lowCadenceWarningCount.incrementAndGet()
             // Show warning every 10 seconds of low cadence
-            if (lowCadenceWarningCount >= 5 && lowCadenceWarningCount % 10 == 0) {
+            if (count >= 5 && count % 10 == 0) {
                 showAlert(
                     id = ALERT_LOW_CADENCE,
                     title = "LOW CADENCE!",
@@ -210,7 +214,7 @@ class AlertManager(private val extension: WattRampExtension) {
                 )
             }
         } else {
-            lowCadenceWarningCount = 0
+            lowCadenceWarningCount.set(0)
         }
     }
 
@@ -264,32 +268,51 @@ class AlertManager(private val extension: WattRampExtension) {
                 )
             )
 
+            // Play beep sound using Karoo's internal beeper
             if (playSound) {
-                // Note: PlayBeepPattern may need specific pattern configuration
-                // This is a placeholder - actual implementation depends on Karoo SDK
+                try {
+                    // PlayBeepPattern takes a list of Tones with frequency and duration
+                    // 1000Hz is a clear audible frequency
+                    val tones = when (id) {
+                        ALERT_GO, ALERT_COMPLETE -> listOf(
+                            PlayBeepPattern.Tone(frequency = 1000, durationMs = 200),
+                            PlayBeepPattern.Tone(frequency = null, durationMs = 100), // Silence
+                            PlayBeepPattern.Tone(frequency = 1000, durationMs = 200)
+                        )
+                        ALERT_FINAL_30 -> listOf(
+                            PlayBeepPattern.Tone(frequency = 1200, durationMs = 200),
+                            PlayBeepPattern.Tone(frequency = null, durationMs = 100),
+                            PlayBeepPattern.Tone(frequency = 1200, durationMs = 200),
+                            PlayBeepPattern.Tone(frequency = null, durationMs = 100),
+                            PlayBeepPattern.Tone(frequency = 1200, durationMs = 200)
+                        )
+                        else -> listOf(
+                            PlayBeepPattern.Tone(frequency = 800, durationMs = 150)
+                        )
+                    }
+                    extension.karooSystem.dispatch(PlayBeepPattern(tones))
+                } catch (e: Exception) {
+                    android.util.Log.w("AlertManager", "Failed to play beep: ${e.message}")
+                }
             }
-
-            lastAlertId = id
         } catch (e: Exception) {
-            // Log error but don't crash
             android.util.Log.e("AlertManager", "Failed to show alert: ${e.message}")
         }
     }
 
     private fun resetPhaseAlerts() {
-        halfwayAlertShown = false
-        final30Shown = false
-        getReadyShown = false
-        lowPowerWarningCount = 0
+        halfwayAlertShown.set(false)
+        final30Shown.set(false)
+        getReadyShown.set(false)
+        lowPowerWarningCount.set(0)
     }
 
     /**
      * Reset all alert state for a new test.
      */
     fun reset() {
-        lastAlertId = null
-        lastPhase = null
-        lastRampStep = 0
+        lastPhase.set(null)
+        lastRampStep.set(0)
         resetPhaseAlerts()
     }
 }

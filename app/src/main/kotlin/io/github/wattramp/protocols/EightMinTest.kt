@@ -28,10 +28,12 @@ class EightMinTest(
         private const val TEST_DURATION_MS = 8 * 60_000L
         private const val RECOVERY_DURATION_MS = 10 * 60_000L
         private const val COOLDOWN_DURATION_MS = 10 * 60_000L
+        private const val MAX_TEST_SAMPLES = 600 // 8 minutes + buffer
     }
 
-    private val firstTestPowerSamples = mutableListOf<Int>()
-    private val secondTestPowerSamples = mutableListOf<Int>()
+    // Bounded lists for test interval samples
+    private val firstTestPowerSamples = java.util.concurrent.CopyOnWriteArrayList<Int>()
+    private val secondTestPowerSamples = java.util.concurrent.CopyOnWriteArrayList<Int>()
 
     override val type = ProtocolType.EIGHT_MINUTE
 
@@ -83,15 +85,20 @@ class EightMinTest(
     }
 
     override fun onPowerSample(power: Int, elapsedMs: Long) {
-        powerSamples.add(PowerSample(power, elapsedMs))
+        // Use bounded base class method
+        addPowerSample(power, elapsedMs)
 
-        // Collect samples during test intervals
+        // Collect samples during test intervals with bounds
         when {
             elapsedMs in firstTestStartMs until firstTestEndMs -> {
-                firstTestPowerSamples.add(power)
+                if (firstTestPowerSamples.size < MAX_TEST_SAMPLES) {
+                    firstTestPowerSamples.add(power)
+                }
             }
             elapsedMs in secondTestStartMs until secondTestEndMs -> {
-                secondTestPowerSamples.add(power)
+                if (secondTestPowerSamples.size < MAX_TEST_SAMPLES) {
+                    secondTestPowerSamples.add(power)
+                }
             }
         }
     }

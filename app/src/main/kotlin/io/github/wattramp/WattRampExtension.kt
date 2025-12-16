@@ -8,8 +8,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class WattRampExtension : KarooExtension("wattramp", "1.2.2") {
+class WattRampExtension : KarooExtension("wattramp", BuildConfig.VERSION_NAME) {
 
     companion object {
         @Volatile
@@ -19,6 +22,10 @@ class WattRampExtension : KarooExtension("wattramp", "1.2.2") {
 
     lateinit var karooSystem: KarooSystemService
         private set
+
+    // Connection state flow for observing connection status
+    private val _isConnected = MutableStateFlow(false)
+    val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
 
     val testEngine: TestEngine by lazy {
         TestEngine(this)
@@ -30,11 +37,21 @@ class WattRampExtension : KarooExtension("wattramp", "1.2.2") {
         super.onCreate()
         instance = this
         karooSystem = KarooSystemService(this)
-        karooSystem.connect { }
+
+        // Connect to Karoo system and track connection state
+        karooSystem.connect { connected ->
+            _isConnected.value = connected
+            if (connected) {
+                android.util.Log.i("WattRampExtension", "KarooSystemService connected successfully")
+            } else {
+                android.util.Log.w("WattRampExtension", "KarooSystemService connection failed or disconnected")
+            }
+        }
     }
 
     override fun onDestroy() {
         instance = null
+        _isConnected.value = false
         testEngine.destroy()
         serviceScope.cancel()
         karooSystem.disconnect()

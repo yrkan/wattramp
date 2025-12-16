@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
+import kotlin.random.Random
 
 /**
  * Main ViewModel that manages test state and service connection.
@@ -221,8 +222,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
 
-            // Generate demo result
-            val newFtp = (currentFtp * (0.95 + Math.random() * 0.15)).toInt()
+            // Generate demo result using Kotlin's Random
+            val newFtp = (currentFtp * (0.95 + Random.nextDouble() * 0.15)).toInt()
 
             val demoResult = TestResult(
                 id = UUID.randomUUID().toString(),

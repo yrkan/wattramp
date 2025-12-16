@@ -10,10 +10,17 @@ import io.hammerhead.karooext.models.StreamState
 import io.hammerhead.karooext.models.UserProfile
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.ArrayDeque
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Main test engine that manages the FTP test state machine.
+ * Thread-safe implementation with proper synchronization and bounded data structures.
  */
 class TestEngine(private val extension: WattRampExtension) {
 
@@ -25,59 +32,61 @@ class TestEngine(private val extension: WattRampExtension) {
     private val _state = MutableStateFlow<TestState>(TestState.Idle)
     val state: StateFlow<TestState> = _state.asStateFlow()
 
-    // Current protocol
-    @Volatile
-    private var currentProtocol: TestProtocol? = null
+    // Current protocol - using AtomicReference for thread-safe access
+    private val currentProtocolRef = AtomicReference<TestProtocol?>(null)
+    private val currentProtocol: TestProtocol?
+        get() = currentProtocolRef.get()
 
-    // Test timing
-    @Volatile
-    private var testStartTimeMs: Long = 0L
-    @Volatile
-    private var pausedTimeMs: Long = 0L
-    @Volatile
-    private var totalPausedMs: Long = 0L
+    // Test timing - using atomic types for thread safety
+    private val testStartTimeMs = AtomicLong(0L)
+    private val pausedTimeMs = AtomicLong(0L)
+    private val totalPausedMs = AtomicLong(0L)
 
-    // Current power, HR, cadence and settings
-    @Volatile
-    private var currentPower: Int = 0
-    @Volatile
-    private var currentHeartRate: Int = 0
-    @Volatile
-    private var currentCadence: Int = 0
-    @Volatile
-    private var currentFtp: Int = 200
+    // Current power, HR, cadence - using atomic types for thread safety
+    private val currentPower = AtomicInteger(0)
+    private val currentHeartRate = AtomicInteger(0)
+    private val currentCadence = AtomicInteger(0)
+    private val currentFtp = AtomicInteger(200)
+
+    // Max HR from user profile for zone calculations
+    private val userMaxHr = AtomicInteger(190) // Default 190
+
     @Volatile
     private var settings: PreferencesRepository.Settings = PreferencesRepository.Settings()
 
-    // Power tracking for avg/max - use ArrayDeque for efficient removal from front
-    private val powerSamples = mutableListOf<Int>()
-    private var maxOneMinutePower: Int = 0
-    private val lastMinutePowerSamples = ArrayDeque<Int>(65) // Slightly more than 60 for safety
+    // Power tracking - bounded data structures for memory efficiency
+    // Use thread-safe CopyOnWriteArrayList with size limit
+    companion object {
+        private const val MAX_POWER_SAMPLES = 4000 // ~67 minutes at 1 sample/sec
+        private const val ROLLING_WINDOW_SIZE = 60 // 60 samples for 1-minute rolling average
+    }
 
-    // Karoo system consumer IDs
-    @Volatile
-    private var powerConsumerId: String? = null
-    @Volatile
-    private var heartRateConsumerId: String? = null
-    @Volatile
-    private var cadenceConsumerId: String? = null
-    @Volatile
-    private var rideStateConsumerId: String? = null
-    @Volatile
-    private var userProfileConsumerId: String? = null
+    private val powerSamples = CopyOnWriteArrayList<Int>()
+    private val maxOneMinutePower = AtomicInteger(0)
+
+    // Thread-safe bounded deque for rolling average
+    private val lastMinutePowerSamples = ArrayDeque<Int>(ROLLING_WINDOW_SIZE + 5)
+    private val powerSamplesLock = Any()
+
+    // Karoo system consumer IDs - using AtomicReference for thread safety
+    private val powerConsumerId = AtomicReference<String?>(null)
+    private val heartRateConsumerId = AtomicReference<String?>(null)
+    private val cadenceConsumerId = AtomicReference<String?>(null)
+    private val rideStateConsumerId = AtomicReference<String?>(null)
+    private val userProfileConsumerId = AtomicReference<String?>(null)
 
     // Update job
     private var updateJob: Job? = null
 
-    // Lock for state updates
-    private val stateLock = Any()
+    // Mutex for state updates (coroutine-friendly synchronization)
+    private val stateMutex = Mutex()
 
     init {
         // Observe settings
         scope.launch {
             preferencesRepository.settingsFlow.collect { newSettings ->
                 settings = newSettings
-                currentFtp = newSettings.currentFtp
+                currentFtp.set(newSettings.currentFtp)
             }
         }
     }
@@ -86,46 +95,52 @@ class TestEngine(private val extension: WattRampExtension) {
      * Start a new FTP test with the specified protocol.
      */
     fun startTest(protocolType: ProtocolType) {
-        synchronized(stateLock) {
-            if (_state.value !is TestState.Idle) {
-                stopTestInternal(FailureReason.USER_STOPPED)
+        scope.launch {
+            stateMutex.withLock {
+                if (_state.value !is TestState.Idle) {
+                    stopTestInternal(FailureReason.USER_STOPPED)
+                }
+
+                // Create protocol instance
+                val ftp = currentFtp.get()
+                val protocol = when (protocolType) {
+                    ProtocolType.RAMP -> RampTest(
+                        startPower = settings.rampStartPower,
+                        stepIncrement = settings.rampStep,
+                        warmupDurationMin = settings.warmupDuration,
+                        cooldownDurationMin = settings.cooldownDuration
+                    )
+                    ProtocolType.TWENTY_MINUTE -> TwentyMinTest(ftp)
+                    ProtocolType.EIGHT_MINUTE -> EightMinTest(ftp)
+                }
+
+                currentProtocolRef.set(protocol)
+                protocol.reset()
+                alertManager.reset()
+
+                testStartTimeMs.set(System.currentTimeMillis())
+                totalPausedMs.set(0L)
+                pausedTimeMs.set(0L)
+
+                // Reset power tracking with bounded clearing
+                powerSamples.clear()
+                maxOneMinutePower.set(0)
+                synchronized(powerSamplesLock) {
+                    lastMinutePowerSamples.clear()
+                }
+                currentHeartRate.set(0)
+                currentCadence.set(0)
+                currentPower.set(0)
+
+                // Connect to Karoo streams
+                connectToKarooStreams()
+
+                // Start update loop
+                startUpdateLoop()
+
+                // Initial state
+                updateState()
             }
-
-            // Create protocol instance
-            currentProtocol = when (protocolType) {
-                ProtocolType.RAMP -> RampTest(
-                    startPower = settings.rampStartPower,
-                    stepIncrement = settings.rampStep,
-                    warmupDurationMin = settings.warmupDuration,
-                    cooldownDurationMin = settings.cooldownDuration
-                )
-                ProtocolType.TWENTY_MINUTE -> TwentyMinTest(currentFtp)
-                ProtocolType.EIGHT_MINUTE -> EightMinTest(currentFtp)
-            }
-
-            currentProtocol?.reset()
-            alertManager.reset()
-
-            testStartTimeMs = System.currentTimeMillis()
-            totalPausedMs = 0L
-            pausedTimeMs = 0L
-
-            // Reset power tracking
-            powerSamples.clear()
-            maxOneMinutePower = 0
-            lastMinutePowerSamples.clear()
-            currentHeartRate = 0
-            currentCadence = 0
-            currentPower = 0
-
-            // Connect to Karoo streams
-            connectToKarooStreams()
-
-            // Start update loop
-            startUpdateLoop()
-
-            // Initial state
-            updateState()
         }
     }
 
@@ -133,8 +148,10 @@ class TestEngine(private val extension: WattRampExtension) {
      * Stop the current test.
      */
     fun stopTest(reason: FailureReason = FailureReason.USER_STOPPED) {
-        synchronized(stateLock) {
-            stopTestInternal(reason)
+        scope.launch {
+            stateMutex.withLock {
+                stopTestInternal(reason)
+            }
         }
     }
 
@@ -151,8 +168,8 @@ class TestEngine(private val extension: WattRampExtension) {
         val partialResult = if (elapsedMs > 60_000L) {
             try {
                 protocol.getTestResult(
-                    startTime = testStartTimeMs,
-                    previousFtp = currentFtp,
+                    startTime = testStartTimeMs.get(),
+                    previousFtp = currentFtp.get(),
                     method = settings.ftpCalcMethod
                 )
             } catch (e: Exception) {
@@ -166,63 +183,71 @@ class TestEngine(private val extension: WattRampExtension) {
             partialResult = partialResult
         )
 
-        currentProtocol = null
+        currentProtocolRef.set(null)
     }
 
     /**
      * Mark test as complete and show results.
      */
     private fun completeTest() {
-        synchronized(stateLock) {
-            val protocol = currentProtocol ?: return
+        scope.launch {
+            stateMutex.withLock {
+                val protocol = currentProtocol ?: return@withLock
 
-            updateJob?.cancel()
-            updateJob = null
-            disconnectFromKarooStreams()
+                updateJob?.cancel()
+                updateJob = null
+                disconnectFromKarooStreams()
 
-            val result = try {
-                protocol.getTestResult(
-                    startTime = testStartTimeMs,
-                    previousFtp = currentFtp,
-                    method = settings.ftpCalcMethod
-                )
-            } catch (e: Exception) {
-                // If result calculation fails, create a minimal result
-                TestResult(
-                    id = java.util.UUID.randomUUID().toString(),
-                    timestamp = System.currentTimeMillis(),
-                    protocol = protocol.type,
-                    calculatedFtp = currentFtp,
-                    previousFtp = currentFtp,
-                    testDurationMs = getElapsedTimeMs(),
-                    maxOneMinutePower = maxOneMinutePower,
-                    averagePower = if (powerSamples.isNotEmpty()) powerSamples.average().toInt() else 0,
-                    stepsCompleted = null,
-                    formula = "Error calculating",
-                    saved = false
-                )
-            }
+                val ftp = currentFtp.get()
+                val maxPower = maxOneMinutePower.get()
+                val avgPower = if (powerSamples.isNotEmpty()) {
+                    powerSamples.toList().average().toInt()
+                } else 0
 
-            _state.value = TestState.Completed(result)
-
-            // Show completion alert
-            alertManager.showCompleteAlert(
-                calculatedFtp = result.calculatedFtp,
-                previousFtp = result.previousFtp,
-                soundEnabled = settings.soundAlerts,
-                screenWakeEnabled = settings.screenWake
-            )
-
-            // Save result to history
-            scope.launch(Dispatchers.IO) {
-                try {
-                    preferencesRepository.saveTestResult(result)
+                val result = try {
+                    protocol.getTestResult(
+                        startTime = testStartTimeMs.get(),
+                        previousFtp = ftp,
+                        method = settings.ftpCalcMethod
+                    )
                 } catch (e: Exception) {
-                    // Log error but don't crash
+                    // If result calculation fails, create a minimal result
+                    TestResult(
+                        id = java.util.UUID.randomUUID().toString(),
+                        timestamp = System.currentTimeMillis(),
+                        protocol = protocol.type,
+                        calculatedFtp = ftp,
+                        previousFtp = ftp,
+                        testDurationMs = getElapsedTimeMs(),
+                        maxOneMinutePower = maxPower,
+                        averagePower = avgPower,
+                        stepsCompleted = null,
+                        formula = "Error calculating",
+                        saved = false
+                    )
                 }
-            }
 
-            currentProtocol = null
+                _state.value = TestState.Completed(result)
+
+                // Show completion alert
+                alertManager.showCompleteAlert(
+                    calculatedFtp = result.calculatedFtp,
+                    previousFtp = result.previousFtp,
+                    soundEnabled = settings.soundAlerts,
+                    screenWakeEnabled = settings.screenWake
+                )
+
+                // Save result to history
+                launch(Dispatchers.IO) {
+                    try {
+                        preferencesRepository.saveTestResult(result)
+                    } catch (e: Exception) {
+                        // Log error but don't crash
+                    }
+                }
+
+                currentProtocolRef.set(null)
+            }
         }
     }
 
@@ -243,13 +268,22 @@ class TestEngine(private val extension: WattRampExtension) {
      * Dismiss results and return to idle state.
      */
     fun dismissResults() {
-        _state.value = TestState.Idle
+        scope.launch {
+            stateMutex.withLock {
+                _state.value = TestState.Idle
+            }
+        }
     }
 
     private fun connectToKarooStreams() {
+        // Check if Karoo system is connected before subscribing
+        if (!extension.karooSystem.connected) {
+            android.util.Log.w("TestEngine", "KarooSystem not connected, streams may fail")
+        }
+
         try {
             // Subscribe to power data
-            powerConsumerId = extension.karooSystem.addConsumer(
+            powerConsumerId.set(extension.karooSystem.addConsumer(
                 OnStreamState.StartStreaming(DataType.Type.POWER)
             ) { event: OnStreamState ->
                 when (val streamState = event.state) {
@@ -260,91 +294,106 @@ class TestEngine(private val extension: WattRampExtension) {
                     }
                     else -> { /* Ignore other states */ }
                 }
-            }
+            })
 
             // Subscribe to heart rate data
-            heartRateConsumerId = extension.karooSystem.addConsumer(
+            heartRateConsumerId.set(extension.karooSystem.addConsumer(
                 OnStreamState.StartStreaming(DataType.Type.HEART_RATE)
             ) { event: OnStreamState ->
                 when (val streamState = event.state) {
                     is StreamState.Streaming -> {
                         streamState.dataPoint.singleValue?.toInt()?.let { hr ->
-                            currentHeartRate = hr
+                            currentHeartRate.set(hr)
                         }
                     }
                     else -> { /* Ignore other states */ }
                 }
-            }
+            })
 
             // Subscribe to cadence data
-            cadenceConsumerId = extension.karooSystem.addConsumer(
+            cadenceConsumerId.set(extension.karooSystem.addConsumer(
                 OnStreamState.StartStreaming(DataType.Type.CADENCE)
             ) { event: OnStreamState ->
                 when (val streamState = event.state) {
                     is StreamState.Streaming -> {
                         streamState.dataPoint.singleValue?.toInt()?.let { rpm ->
-                            currentCadence = rpm
+                            currentCadence.set(rpm)
                         }
                     }
                     else -> { /* Ignore other states */ }
                 }
-            }
+            })
 
             // Subscribe to ride state
-            rideStateConsumerId = extension.karooSystem.addConsumer<RideState> { rideState ->
+            rideStateConsumerId.set(extension.karooSystem.addConsumer<RideState> { rideState ->
                 onRideStateChange(rideState)
-            }
+            })
 
-            // Get user profile (initial FTP)
-            userProfileConsumerId = extension.karooSystem.addConsumer<UserProfile> { profile ->
+            // Get user profile (initial FTP and max HR)
+            userProfileConsumerId.set(extension.karooSystem.addConsumer<UserProfile> { profile ->
                 // Safe access with null check
-                val profileFtp = try { profile.ftp } catch (e: Exception) { 0 }
-                if (profileFtp > 0 && currentFtp == 200) {
-                    currentFtp = profileFtp
+                try {
+                    val profileFtp = profile.ftp
+                    if (profileFtp > 0 && currentFtp.get() == 200) {
+                        currentFtp.set(profileFtp)
+                    }
+                    // Extract max HR from user profile for accurate HR zone calculations
+                    val maxHr = profile.maxHr
+                    if (maxHr > 0) {
+                        userMaxHr.set(maxHr)
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.w("TestEngine", "Error reading user profile: ${e.message}")
                 }
-            }
+            })
         } catch (e: Exception) {
-            // Log error but continue - some streams might still work
+            android.util.Log.e("TestEngine", "Error connecting to Karoo streams: ${e.message}")
         }
     }
 
     private fun disconnectFromKarooStreams() {
-        // Disconnect each consumer with individual try-catch to ensure all are attempted
-        powerConsumerId?.let { id ->
+        // Disconnect each consumer atomically with getAndSet to prevent race conditions
+        powerConsumerId.getAndSet(null)?.let { id ->
             try {
                 extension.karooSystem.removeConsumer(id)
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) {
+                android.util.Log.w("TestEngine", "Error removing power consumer: ${e.message}")
+            }
         }
-        heartRateConsumerId?.let { id ->
+        heartRateConsumerId.getAndSet(null)?.let { id ->
             try {
                 extension.karooSystem.removeConsumer(id)
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) {
+                android.util.Log.w("TestEngine", "Error removing HR consumer: ${e.message}")
+            }
         }
-        cadenceConsumerId?.let { id ->
+        cadenceConsumerId.getAndSet(null)?.let { id ->
             try {
                 extension.karooSystem.removeConsumer(id)
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) {
+                android.util.Log.w("TestEngine", "Error removing cadence consumer: ${e.message}")
+            }
         }
-        rideStateConsumerId?.let { id ->
+        rideStateConsumerId.getAndSet(null)?.let { id ->
             try {
                 extension.karooSystem.removeConsumer(id)
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) {
+                android.util.Log.w("TestEngine", "Error removing ride state consumer: ${e.message}")
+            }
         }
-        userProfileConsumerId?.let { id ->
+        userProfileConsumerId.getAndSet(null)?.let { id ->
             try {
                 extension.karooSystem.removeConsumer(id)
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) {
+                android.util.Log.w("TestEngine", "Error removing user profile consumer: ${e.message}")
+            }
         }
-
-        powerConsumerId = null
-        heartRateConsumerId = null
-        cadenceConsumerId = null
-        rideStateConsumerId = null
-        userProfileConsumerId = null
     }
 
     private fun onPowerUpdate(power: Int) {
-        currentPower = power
+        currentPower.set(power)
+
+        // Get protocol atomically to ensure consistency
         val protocol = currentProtocol ?: return
 
         // Only process if we're in Running state
@@ -355,27 +404,35 @@ class TestEngine(private val extension: WattRampExtension) {
         // Feed power to protocol
         protocol.onPowerSample(power, elapsedMs)
 
-        // Track power for avg/max calculations
+        // Track power for avg/max calculations with bounded storage
         if (power > 0) {
-            powerSamples.add(power)
-            lastMinutePowerSamples.addLast(power)
-
-            // Keep only last ~60 samples for 1-minute rolling average (assuming ~1 sample/sec)
-            while (lastMinutePowerSamples.size > 60) {
-                lastMinutePowerSamples.removeFirst()
+            // Add to power samples with size limit to prevent unbounded growth
+            if (powerSamples.size < MAX_POWER_SAMPLES) {
+                powerSamples.add(power)
             }
 
-            // Update max 1-minute power
-            if (lastMinutePowerSamples.size >= 30) { // At least 30 seconds of data
-                val currentMinuteAvg = lastMinutePowerSamples.average().toInt()
-                if (currentMinuteAvg > maxOneMinutePower) {
-                    maxOneMinutePower = currentMinuteAvg
+            // Thread-safe update of rolling window
+            synchronized(powerSamplesLock) {
+                lastMinutePowerSamples.addLast(power)
+
+                // Keep only last 60 samples for 1-minute rolling average
+                while (lastMinutePowerSamples.size > ROLLING_WINDOW_SIZE) {
+                    lastMinutePowerSamples.removeFirst()
+                }
+
+                // Update max 1-minute power atomically
+                if (lastMinutePowerSamples.size >= 30) { // At least 30 seconds of data
+                    val currentMinuteAvg = lastMinutePowerSamples.average().toInt()
+                    maxOneMinutePower.updateAndGet { current ->
+                        maxOf(current, currentMinuteAvg)
+                    }
                 }
             }
         }
 
         // Check for auto-end (Ramp test)
-        val targetPower = protocol.getTargetPower(elapsedMs, currentFtp) ?: 0
+        val ftp = currentFtp.get()
+        val targetPower = protocol.getTargetPower(elapsedMs, ftp) ?: 0
         if (protocol.shouldEndTest(power, targetPower)) {
             completeTest()
         }
@@ -396,31 +453,37 @@ class TestEngine(private val extension: WattRampExtension) {
     }
 
     private fun pauseTest() {
-        synchronized(stateLock) {
-            val currentState = _state.value
-            if (currentState is TestState.Running) {
-                pausedTimeMs = System.currentTimeMillis()
-                updateJob?.cancel()
-                _state.value = TestState.Paused(
-                    protocol = currentState.protocol,
-                    elapsedMs = getElapsedTimeMs(),
-                    pausedAt = pausedTimeMs
-                )
+        scope.launch {
+            stateMutex.withLock {
+                val currentState = _state.value
+                if (currentState is TestState.Running) {
+                    val pauseTime = System.currentTimeMillis()
+                    pausedTimeMs.set(pauseTime)
+                    updateJob?.cancel()
+                    _state.value = TestState.Paused(
+                        protocol = currentState.protocol,
+                        elapsedMs = getElapsedTimeMs(),
+                        pausedAt = pauseTime
+                    )
+                }
             }
         }
     }
 
     private fun resumeTest() {
-        synchronized(stateLock) {
-            val currentState = _state.value
-            if (currentState is TestState.Paused) {
-                totalPausedMs += System.currentTimeMillis() - pausedTimeMs
+        scope.launch {
+            stateMutex.withLock {
+                val currentState = _state.value
+                if (currentState is TestState.Paused) {
+                    val pauseDuration = System.currentTimeMillis() - pausedTimeMs.get()
+                    totalPausedMs.addAndGet(pauseDuration)
 
-                // Restart update loop
-                startUpdateLoop()
+                    // Restart update loop
+                    startUpdateLoop()
 
-                // Immediately update state to Running
-                updateState()
+                    // Immediately update state to Running
+                    updateState()
+                }
             }
         }
     }
@@ -453,11 +516,12 @@ class TestEngine(private val extension: WattRampExtension) {
         }
 
         val currentInterval = protocol.getCurrentInterval(elapsedMs) ?: return
-        val targetPower = protocol.getTargetPower(elapsedMs, currentFtp)
+        val ftp = currentFtp.get()
+        val targetPower = protocol.getTargetPower(elapsedMs, ftp)
 
-        // Calculate average power
+        // Calculate average power from thread-safe list
         val avgPower = if (powerSamples.isNotEmpty()) {
-            powerSamples.average().toInt()
+            powerSamples.toList().average().toInt()
         } else 0
 
         val runningState = TestState.Running(
@@ -467,14 +531,15 @@ class TestEngine(private val extension: WattRampExtension) {
             intervalIndex = protocol.getCurrentIntervalIndex(elapsedMs),
             elapsedMs = elapsedMs,
             timeRemainingInInterval = protocol.getTimeRemainingInInterval(elapsedMs),
-            currentPower = currentPower,
+            currentPower = currentPower.get(),
             targetPower = targetPower,
             currentStep = (protocol as? RampTest)?.getCurrentStep(elapsedMs),
-            estimatedTotalSteps = (protocol as? RampTest)?.getEstimatedTotalSteps(currentFtp),
-            maxOneMinutePower = maxOneMinutePower,
+            estimatedTotalSteps = (protocol as? RampTest)?.getEstimatedTotalSteps(ftp),
+            maxOneMinutePower = maxOneMinutePower.get(),
             averagePower = avgPower,
-            heartRate = currentHeartRate,
-            cadence = currentCadence
+            heartRate = currentHeartRate.get(),
+            cadence = currentCadence.get(),
+            userMaxHr = userMaxHr.get() // Pass user's max HR for zone calculations
         )
 
         // Only update if state actually changed (reduces unnecessary recompositions)
@@ -493,7 +558,7 @@ class TestEngine(private val extension: WattRampExtension) {
     }
 
     private fun getElapsedTimeMs(): Long {
-        return System.currentTimeMillis() - testStartTimeMs - totalPausedMs
+        return System.currentTimeMillis() - testStartTimeMs.get() - totalPausedMs.get()
     }
 
     /**
@@ -507,6 +572,11 @@ class TestEngine(private val extension: WattRampExtension) {
     fun isTestActive(): Boolean {
         return _state.value is TestState.Running || _state.value is TestState.Paused
     }
+
+    /**
+     * Get the user's max HR from profile for external use.
+     */
+    fun getUserMaxHr(): Int = userMaxHr.get()
 
     /**
      * Clean up resources.
