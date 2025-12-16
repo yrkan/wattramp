@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -27,6 +27,10 @@ import io.github.wattramp.R
 import io.github.wattramp.data.ProtocolType
 import io.github.wattramp.data.TestHistoryData
 import io.github.wattramp.data.TestResult
+import io.github.wattramp.ui.components.ChartMode
+import io.github.wattramp.ui.components.ChartModeToggle
+import io.github.wattramp.ui.components.FtpTrendChart
+import io.github.wattramp.ui.components.ProtocolComparisonChart
 import io.github.wattramp.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -118,24 +122,72 @@ fun HistoryScreen(
                 }
             }
         } else {
+            // Chart mode state
+            var chartMode by remember { mutableStateOf(ChartMode.BAR) }
+
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 // Current FTP block
                 item {
                     CurrentFtpBlock(history = history)
                 }
 
-                // Progress chart
+                // Progress chart with mode toggle
                 if (history.results.size >= 2) {
                     item {
-                        SectionHeader(stringResource(R.string.history_ftp_progress))
-                        FtpProgressChart(
-                            results = history.results.take(8).reversed(),
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(60.dp)
-                                .background(Surface)
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                        )
+                                .background(SurfaceVariant),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.history_ftp_progress),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = OnSurfaceVariant,
+                                letterSpacing = 1.sp,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            )
+                            ChartModeToggle(
+                                currentMode = chartMode,
+                                onModeChange = { chartMode = it }
+                            )
+                        }
+
+                        // Show appropriate chart based on mode
+                        when (chartMode) {
+                            ChartMode.BAR -> {
+                                FtpProgressChart(
+                                    results = history.results.take(12).reversed(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(80.dp)
+                                        .background(Surface)
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                )
+                            }
+                            ChartMode.TREND -> {
+                                FtpTrendChart(
+                                    results = history.results.take(12).reversed(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(80.dp)
+                                        .background(Surface)
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                )
+                            }
+                            ChartMode.PROTOCOL -> {
+                                ProtocolComparisonChart(
+                                    results = history.results.take(12).reversed(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(100.dp)
+                                        .background(Surface)
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                )
+                            }
+                        }
                     }
                 }
 

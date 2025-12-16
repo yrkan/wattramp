@@ -61,6 +61,7 @@ fun WattRampApp(viewModel: MainViewModel) {
     val testState by viewModel.activeTestState.collectAsState()
     val testStarted by viewModel.sessionTestStarted.collectAsState()
     val hasNavigated by viewModel.sessionHasNavigated.collectAsState()
+    val recoverySession by viewModel.recoverySession.collectAsState()
 
     // Navigate based on test state changes
     LaunchedEffect(testState, testStarted, hasNavigated) {
@@ -99,8 +100,19 @@ fun WattRampApp(viewModel: MainViewModel) {
         composable("home") {
             HomeScreen(
                 currentFtp = settings.currentFtp,
+                showChecklist = settings.showChecklist,
+                recoverySession = recoverySession,
                 onStartTest = { protocol ->
                     viewModel.startTest(protocol)
+                },
+                onDismissChecklist = {
+                    viewModel.dismissChecklist()
+                },
+                onAcceptRecovery = {
+                    viewModel.acceptRecovery()
+                },
+                onDeclineRecovery = {
+                    viewModel.declineRecovery()
                 },
                 onNavigateToSettings = {
                     navController.navigate("settings")

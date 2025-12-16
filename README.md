@@ -33,6 +33,31 @@ Free FTP testing extension for Hammerhead Karoo cycling computers. No subscripti
 | **Max Power** | 1x1 | Session maximum power |
 | **FTP Prediction** | 1x1 | Live FTP estimate (updates during Ramp test) |
 
+### Extended Analytics
+
+Results include advanced metrics:
+- **Normalized Power (NP)**: Accounts for variability in effort
+- **Variability Index (VI)**: NP / Avg Power (1.0 = steady, >1.05 = variable)
+- **Efficiency Factor (EF)**: NP / Avg HR (tracks aerobic fitness)
+
+### FTP History & Charts
+
+- **Progress Tracking**: View all past test results
+- **Chart Modes**: Toggle between Bar, Trend (smooth curves), and Protocol comparison views
+- **Statistics**: Best FTP, average, total gain
+
+### Pre-Test Checklist
+
+Expandable reminder before starting:
+- Calibrate power meter
+- Sensors connected
+- Hydration ready
+- FTP setting verified
+
+### Session Recovery
+
+If the app crashes during a test, WattRamp detects the abandoned session on restart and offers to dismiss or discard it.
+
 ### In-Ride Alerts
 
 - **Interval Changes**: Visual + audio notification when phases change
@@ -144,19 +169,19 @@ APK: `app/build/outputs/apk/release/wattramp-x.x.x.apk`
 
 ## Settings
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| **Current FTP** | Your baseline FTP for zone calculations | 200W |
-| **Ramp Start Power** | Initial power for ramp test | 100W |
-| **Ramp Step** | Power increase per minute | 20W |
-| **Warmup Duration** | Warmup period length | 5 min |
-| **Cooldown Duration** | Cooldown period length | 5 min |
-| **FTP Calculation Method** | Conservative (0.72) / Standard / Aggressive (0.77) | Standard |
-| **Sound Alerts** | Enable beep notifications | On |
-| **Screen Wake** | Wake screen on important alerts | On |
-| **Motivational Messages** | Show encouragement during test | On |
-| **Language** | UI language | System |
-| **Theme** | Orange or Blue color scheme | Orange |
+| Setting | Description | Default | Range |
+|---------|-------------|---------|-------|
+| **Current FTP** | Your baseline FTP for zone calculations | 200W | 50-500W |
+| **Ramp Start Power** | Initial power for ramp test | 150W | 50-300W |
+| **Ramp Step** | Power increase per minute | 20W | 10-50W |
+| **Warmup Duration** | Warmup period length | 5 min | 1-15 min |
+| **Cooldown Duration** | Cooldown period length | 5 min | 1-15 min |
+| **FTP Calculation Method** | Conservative (0.72) / Standard / Aggressive (0.77) | Standard | — |
+| **Sound Alerts** | Enable beep notifications | On | — |
+| **Screen Wake** | Wake screen on important alerts | On | — |
+| **Motivational Messages** | Show encouragement during test | On | — |
+| **Language** | UI language | System | — |
+| **Theme** | Orange or Blue color scheme | Orange | — |
 
 ## Architecture
 
@@ -178,11 +203,15 @@ io.github.wattramp/
 ├── engine/
 │   ├── TestEngine.kt        # State machine, Karoo stream handling
 │   ├── TestState.kt         # Sealed class for test states
-│   └── AlertManager.kt      # In-ride alert management
+│   ├── AlertManager.kt      # In-ride alert management
+│   └── AnalyticsCalculator.kt  # NP, VI, EF calculations
 ├── data/
 │   ├── PreferencesRepository.kt  # DataStore persistence
-│   └── TestHistory.kt       # Test result storage
-└── ui/                      # Compose UI screens
+│   ├── TestHistory.kt       # Test result storage
+│   └── TestSession.kt       # Session recovery data
+└── ui/
+    ├── screens/             # Compose UI screens
+    └── components/          # Reusable UI (charts, checklist)
 ```
 
 ### Key Technical Details
@@ -231,6 +260,20 @@ WattRamp respects your privacy:
 - **Open Source**: Verify everything yourself
 
 ## Changelog
+
+### v1.4.0
+- **Extended Analytics**: NP, Variability Index, Efficiency Factor in results
+- **FTP History Charts**: Bar, Trend (Bezier curves), Protocol comparison modes
+- **Pre-Test Checklist**: Expandable reminder on home screen
+- **Session Recovery**: Detects abandoned tests after crash/restart
+- Shows up to 12 results in history (was 8)
+
+### v1.3.1
+- Fixed KarooSystem connection check before starting test
+- Added settings validation with min/max bounds
+- Changed default ramp start to 150W (was 100W)
+- Thread-safe update job handling
+- Fixed UserProfile FTP logic
 
 ### v1.3.0
 - Thread safety improvements for Karoo 3 stability

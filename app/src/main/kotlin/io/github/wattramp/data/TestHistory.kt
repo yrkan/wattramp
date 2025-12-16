@@ -17,7 +17,12 @@ data class TestResult(
     val testDurationMs: Long,
     val stepsCompleted: Int?,    // For Ramp test
     val formula: String,         // e.g., "329 x 0.75 = 247"
-    val saved: Boolean = false   // Whether FTP was saved to Karoo
+    val saved: Boolean = false,  // Whether FTP was saved to Karoo
+    // Extended analytics (v1.4.0)
+    val normalizedPower: Int? = null,     // NP: 30-sec rolling avg to 4th power
+    val variabilityIndex: Double? = null, // VI: NP / Avg Power (1.0-1.2 typical)
+    val averageHeartRate: Int? = null,    // Avg HR during test
+    val efficiencyFactor: Double? = null  // EF: NP / Avg HR
 ) {
     val ftpChange: Int?
         get() = previousFtp?.let { calculatedFtp - it }

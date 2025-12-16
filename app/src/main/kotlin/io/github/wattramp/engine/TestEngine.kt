@@ -62,6 +62,7 @@ class TestEngine(private val extension: WattRampExtension) {
     }
 
     private val powerSamples = CopyOnWriteArrayList<Int>()
+    private val hrSamples = CopyOnWriteArrayList<Int>() // For analytics calculation
     private val maxOneMinutePower = AtomicInteger(0)
 
     // Thread-safe bounded deque for rolling average
@@ -134,8 +135,9 @@ class TestEngine(private val extension: WattRampExtension) {
                 totalPausedMs.set(0L)
                 pausedTimeMs.set(0L)
 
-                // Reset power tracking with bounded clearing
+                // Reset power and HR tracking with bounded clearing
                 powerSamples.clear()
+                hrSamples.clear()
                 maxOneMinutePower.set(0)
                 synchronized(powerSamplesLock) {
                     lastMinutePowerSamples.clear()
@@ -217,7 +219,7 @@ class TestEngine(private val extension: WattRampExtension) {
                     powerSamples.toList().average().toInt()
                 } else 0
 
-                val result = try {
+                val baseResult = try {
                     protocol.getTestResult(
                         startTime = testStartTimeMs.get(),
                         previousFtp = ftp,
@@ -239,6 +241,20 @@ class TestEngine(private val extension: WattRampExtension) {
                         saved = false
                     )
                 }
+
+                // Calculate extended analytics (NP, VI, EF)
+                val analytics = AnalyticsCalculator.calculateAll(
+                    powerSamples = powerSamples.toList(),
+                    hrSamples = hrSamples.toList()
+                )
+
+                // Augment result with analytics
+                val result = baseResult.copy(
+                    normalizedPower = analytics.normalizedPower,
+                    variabilityIndex = analytics.variabilityIndex,
+                    averageHeartRate = analytics.averageHeartRate,
+                    efficiencyFactor = analytics.efficiencyFactor
+                )
 
                 _state.value = TestState.Completed(result)
 
@@ -317,6 +333,11 @@ class TestEngine(private val extension: WattRampExtension) {
                     is StreamState.Streaming -> {
                         streamState.dataPoint.singleValue?.toInt()?.let { hr ->
                             currentHeartRate.set(hr)
+                            // Store HR samples for analytics (only during test, limit size)
+                            if (hr > 0 && _state.value is TestState.Running &&
+                                hrSamples.size < MAX_POWER_SAMPLES) {
+                                hrSamples.add(hr)
+                            }
                         }
                     }
                     else -> { /* Ignore other states */ }

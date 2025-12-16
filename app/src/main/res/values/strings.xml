@@ -32,6 +32,10 @@
     <string name="result_avg">AVG</string>
     <string name="result_prev">PREV</string>
     <string name="result_coeff">COEFF</string>
+    <string name="result_np">NP</string>
+    <string name="result_vi">VI</string>
+    <string name="result_ef">EF</string>
+    <string name="result_hr">HR</string>
 
     <!-- History Screen -->
     <string name="history_title">HISTORY</string>
@@ -127,6 +131,24 @@
     <string name="unit_watts_min">W/min</string>
     <string name="unit_min">min</string>
     <string name="unit_minutes">%dm</string>
+
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">SESSION FOUND</string>
+    <string name="recovery_message">An incomplete %1$s test was found (%2$s elapsed). Do you want to discard it?</string>
+    <string name="recovery_discard">DISCARD</string>
+    <string name="recovery_keep">DISMISS</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">PRE-TEST CHECKLIST</string>
+    <string name="checklist_dismiss">Dismiss checklist</string>
+    <string name="checklist_calibrate">Calibrate power meter</string>
+    <string name="checklist_calibrate_desc">Zero offset for accurate readings</string>
+    <string name="checklist_sensors">Sensors connected</string>
+    <string name="checklist_sensors_desc">HR, Power, Cadence paired</string>
+    <string name="checklist_hydration">Check hydration</string>
+    <string name="checklist_hydration_desc">Water bottle ready</string>
+    <string name="checklist_ftp">Verify FTP setting</string>
+    <string name="checklist_ftp_desc">Current FTP is accurate</string>
 
     <!-- Tutorial Screen -->
     <string name="tutorial_link">Tutorial</string>

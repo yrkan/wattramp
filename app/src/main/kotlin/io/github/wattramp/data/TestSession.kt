@@ -3,7 +3,18 @@ package io.github.wattramp.data
 import kotlinx.serialization.Serializable
 
 /**
+ * Settings snapshot for session recovery.
+ */
+@Serializable
+data class SessionSettings(
+    val currentFtp: Int,
+    val rampStartPower: Int,
+    val rampStep: Int
+)
+
+/**
  * Represents the current state of an active FTP test session.
+ * Stores all data needed for recovery after crash/restart.
  */
 @Serializable
 data class TestSession(
@@ -16,7 +27,11 @@ data class TestSession(
     val maxOneMinutePower: Double = 0.0,
     val testIntervalPowerSamples: List<Int> = emptyList(),
     val secondTestIntervalPowerSamples: List<Int> = emptyList(), // For 8-min test
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    // Recovery fields (v1.4.0)
+    val heartRateSamples: List<Int> = emptyList(),
+    val lastSaveTimestamp: Long = 0,
+    val settingsSnapshot: SessionSettings? = null
 ) {
     val currentTargetPower: Int
         get() = when (protocol) {
@@ -28,6 +43,30 @@ data class TestSession(
     private fun calculateRampTargetPower(): Int {
         // Will be calculated by protocol
         return 0
+    }
+
+    /**
+     * Check if this session is abandoned (active but stale).
+     * A session is abandoned if it's still active but hasn't been updated
+     * for more than the threshold time (5 minutes).
+     */
+    fun isAbandoned(currentTimeMs: Long, thresholdMs: Long = ABANDONMENT_THRESHOLD_MS): Boolean {
+        return isActive &&
+               lastSaveTimestamp > 0 &&
+               (currentTimeMs - lastSaveTimestamp) > thresholdMs
+    }
+
+    /**
+     * Check if this session has meaningful data worth recovering.
+     * Only checks elapsed time since we don't save power samples for recovery
+     * (full recovery with samples would be complex and storage-heavy).
+     */
+    fun hasRecoverableData(): Boolean {
+        return elapsedTimeMs > 60_000 // At least 1 minute of test time
+    }
+
+    companion object {
+        const val ABANDONMENT_THRESHOLD_MS = 5 * 60 * 1000L // 5 minutes
     }
 }
 

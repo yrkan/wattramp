@@ -35,6 +35,7 @@ class PreferencesRepository(private val context: Context) {
         private val KEY_COOLDOWN_DURATION = intPreferencesKey("cooldown_duration")
         private val KEY_LANGUAGE = stringPreferencesKey("language")
         private val KEY_THEME = stringPreferencesKey("theme")
+        private val KEY_SHOW_CHECKLIST = booleanPreferencesKey("show_checklist")
 
         // History key
         private val KEY_TEST_HISTORY = stringPreferencesKey("test_history")
@@ -78,7 +79,8 @@ class PreferencesRepository(private val context: Context) {
         val warmupDuration: Int = DEFAULT_WARMUP_DURATION,
         val cooldownDuration: Int = DEFAULT_COOLDOWN_DURATION,
         val language: AppLanguage = AppLanguage.SYSTEM,
-        val theme: AppTheme = AppTheme.ORANGE
+        val theme: AppTheme = AppTheme.ORANGE,
+        val showChecklist: Boolean = true
     )
 
     enum class AppTheme(val displayName: String) {
@@ -126,7 +128,8 @@ class PreferencesRepository(private val context: Context) {
             } ?: AppLanguage.SYSTEM,
             theme = prefs[KEY_THEME]?.let {
                 try { AppTheme.valueOf(it) } catch (e: Exception) { AppTheme.ORANGE }
-            } ?: AppTheme.ORANGE
+            } ?: AppTheme.ORANGE,
+            showChecklist = prefs[KEY_SHOW_CHECKLIST] ?: true
         )
     }
 
@@ -217,6 +220,12 @@ class PreferencesRepository(private val context: Context) {
     suspend fun updateTheme(theme: AppTheme) {
         context.dataStore.edit { prefs ->
             prefs[KEY_THEME] = theme.name
+        }
+    }
+
+    suspend fun updateShowChecklist(show: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_SHOW_CHECKLIST] = show
         }
     }
 

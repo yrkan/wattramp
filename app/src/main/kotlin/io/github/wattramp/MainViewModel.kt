@@ -14,6 +14,8 @@ import kotlinx.coroutines.withContext
 import java.util.UUID
 import kotlin.random.Random
 
+private const val SESSION_SAVE_INTERVAL_MS = 10_000L // Save every 10 seconds
+
 /**
  * Main ViewModel that manages test state and service connection.
  * Survives configuration changes and properly handles lifecycle.
@@ -55,6 +57,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _sessionHasNavigated = MutableStateFlow(false)
     val sessionHasNavigated: StateFlow<Boolean> = _sessionHasNavigated.asStateFlow()
+
+    // Recovery session - set when an abandoned session is detected
+    private val _recoverySession = MutableStateFlow<TestSession?>(null)
+    val recoverySession: StateFlow<TestSession?> = _recoverySession.asStateFlow()
 
     // Whether we're in demo mode (no Karoo extension)
     val isDemoMode: Boolean
@@ -121,19 +127,43 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        // Observe test state changes for auto-save active session
+        // Check for abandoned sessions on startup
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                preferencesRepository.activeSessionFlow.first()?.let { session ->
+                    val currentTime = System.currentTimeMillis()
+                    if (session.isAbandoned(currentTime) && session.hasRecoverableData()) {
+                        _recoverySession.value = session
+                    }
+                }
+            } catch (e: Exception) {
+                // Ignore errors - not critical
+            }
+        }
+
+        // Observe test state changes for session persistence
         viewModelScope.launch(Dispatchers.Default) {
             activeTestState.collect { state ->
                 withContext(Dispatchers.IO) {
                     try {
                         when (state) {
                             is TestState.Running -> {
-                                // Save active session for recovery
+                                // Save comprehensive session for recovery
                                 preferencesRepository.saveActiveSession(
                                     TestSession(
                                         protocol = state.protocol,
                                         startTimeMs = System.currentTimeMillis() - state.elapsedMs,
-                                        currentPhase = state.phase
+                                        currentPhase = state.phase,
+                                        currentIntervalIndex = state.intervalIndex,
+                                        elapsedTimeMs = state.elapsedMs,
+                                        maxOneMinutePower = state.maxOneMinutePower.toDouble(),
+                                        isActive = true,
+                                        lastSaveTimestamp = System.currentTimeMillis(),
+                                        settingsSnapshot = SessionSettings(
+                                            currentFtp = settings.value.currentFtp,
+                                            rampStartPower = settings.value.rampStartPower,
+                                            rampStep = settings.value.rampStep
+                                        )
                                     )
                                 )
                             }
@@ -279,6 +309,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * Accept recovery - clear the recovery session and continue with saved data.
+     * Note: Full recovery would require reconstructing protocol state, which is complex.
+     * For now, we simply acknowledge the session and let user see the elapsed time.
+     */
+    fun acceptRecovery() {
+        if (_recoverySession.value == null) return
+        viewModelScope.launch(Dispatchers.IO) {
+            // Clear the abandoned session
+            preferencesRepository.saveActiveSession(null)
+        }
+        _recoverySession.value = null
+        // User can see session info and decide to start a new test
+    }
+
+    /**
+     * Decline recovery - discard the abandoned session.
+     */
+    fun declineRecovery() {
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesRepository.saveActiveSession(null)
+        }
+        _recoverySession.value = null
+    }
+
+    /**
      * Update current FTP in preferences.
      */
     fun updateCurrentFtp(ftp: Int) {
@@ -383,6 +438,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun clearTestHistory() {
         viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.clearTestHistory()
+        }
+    }
+
+    /**
+     * Dismiss pre-test checklist (hide permanently).
+     */
+    fun dismissChecklist() {
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesRepository.updateShowChecklist(false)
         }
     }
 

@@ -223,6 +223,49 @@ fun ResultScreen(
         }
 
         // ═══════════════════════════════════════════════════════════════════
+        // ANALYTICS ROW - NP, VI, EF (only show if available)
+        // ═══════════════════════════════════════════════════════════════════
+        if (result.normalizedPower != null || result.variabilityIndex != null || result.efficiencyFactor != null) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                // Normalized Power
+                DataField(
+                    label = stringResource(R.string.result_np),
+                    value = result.normalizedPower?.let { "${it}W" } ?: "--",
+                    valueColor = Zone4,
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor
+                )
+
+                // Variability Index
+                DataField(
+                    label = stringResource(R.string.result_vi),
+                    value = result.variabilityIndex?.let { String.format("%.2f", it) } ?: "--",
+                    valueColor = Zone4,
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor
+                )
+
+                // Efficiency Factor or Avg HR
+                if (result.efficiencyFactor != null) {
+                    DataField(
+                        label = stringResource(R.string.result_ef),
+                        value = String.format("%.2f", result.efficiencyFactor),
+                        valueColor = Zone4,
+                        modifier = Modifier.weight(1f).height(cellHeight),
+                        borderColor = borderColor
+                    )
+                } else {
+                    DataField(
+                        label = stringResource(R.string.result_hr),
+                        value = result.averageHeartRate?.let { "${it}" } ?: "--",
+                        modifier = Modifier.weight(1f).height(cellHeight),
+                        borderColor = borderColor
+                    )
+                }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
         // ACTION BUTTONS
         // ═══════════════════════════════════════════════════════════════════
 

@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.wattramp.R
 import io.github.wattramp.data.ProtocolType
+import io.github.wattramp.data.TestSession
+import io.github.wattramp.ui.components.PreTestChecklist
 import io.github.wattramp.ui.theme.*
 
 /**
@@ -36,7 +38,12 @@ import io.github.wattramp.ui.theme.*
 @Composable
 fun HomeScreen(
     currentFtp: Int,
+    showChecklist: Boolean,
+    recoverySession: TestSession?,
     onStartTest: (ProtocolType) -> Unit,
+    onDismissChecklist: () -> Unit,
+    onAcceptRecovery: () -> Unit,
+    onDeclineRecovery: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToZones: () -> Unit,
@@ -65,6 +72,18 @@ fun HomeScreen(
         )
 
         // ═══════════════════════════════════════════════════════════════════
+        // RECOVERY DIALOG - Show if abandoned session found
+        // ═══════════════════════════════════════════════════════════════════
+        if (recoverySession != null) {
+            RecoveryBanner(
+                session = recoverySession,
+                onDismiss = onAcceptRecovery,
+                onDiscard = onDeclineRecovery,
+                isCompact = isCompact
+            )
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
         // FTP DATA FIELD - Current FTP as hero metric
         // ═══════════════════════════════════════════════════════════════════
         FtpDataField(
@@ -72,6 +91,15 @@ fun HomeScreen(
             borderColor = borderColor,
             isCompact = isCompact
         )
+
+        // ═══════════════════════════════════════════════════════════════════
+        // PRE-TEST CHECKLIST - Reminders before starting
+        // ═══════════════════════════════════════════════════════════════════
+        if (showChecklist) {
+            PreTestChecklist(
+                onDismiss = onDismissChecklist
+            )
+        }
 
         // ═══════════════════════════════════════════════════════════════════
         // PROTOCOL SELECTOR - Test type selection
@@ -430,4 +458,92 @@ private fun Modifier.garminBorder(color: Color): Modifier = this.drawBehind {
         end = Offset(size.width, size.height),
         strokeWidth = strokeWidth
     )
+}
+
+// =============================================================================
+// RECOVERY BANNER
+// =============================================================================
+
+@Composable
+private fun RecoveryBanner(
+    session: TestSession,
+    onDismiss: () -> Unit,
+    onDiscard: () -> Unit,
+    isCompact: Boolean
+) {
+    val elapsedMinutes = (session.elapsedTimeMs / 60_000).toInt()
+    val elapsedDisplay = if (elapsedMinutes >= 60) {
+        "${elapsedMinutes / 60}h ${elapsedMinutes % 60}m"
+    } else {
+        "${elapsedMinutes}m"
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Zone4.copy(alpha = 0.2f))
+            .padding(horizontal = 12.dp, vertical = if (isCompact) 8.dp else 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = Zone4,
+                    modifier = Modifier.size(14.dp)
+                )
+                Text(
+                    text = stringResource(R.string.recovery_title),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Zone4,
+                    letterSpacing = 1.sp
+                )
+            }
+            Text(
+                text = "${session.protocol.shortName} • $elapsedDisplay",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                color = OnSurface
+            )
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Dismiss button
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.height(28.dp),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.recovery_keep),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = OnSurfaceVariant
+                )
+            }
+
+            // Discard button
+            Button(
+                onClick = onDiscard,
+                modifier = Modifier.height(28.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Zone4,
+                    contentColor = Color.Black
+                ),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.recovery_discard),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
 }
