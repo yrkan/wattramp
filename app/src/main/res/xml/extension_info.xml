@@ -2,7 +2,8 @@
 <ExtensionInfo
     id="wattramp"
     displayName="@string/extension_name"
-    icon="@drawable/ic_wattramp">
+    icon="@drawable/ic_wattramp"
+    configurable="true">
 
     <!-- Graphical widget (2x1) -->
     <DataType

@@ -764,7 +764,7 @@ private fun AboutRow(
                     .padding(horizontal = 8.dp)
             )
             Text(
-                text = "1.2.1",
+                text = "1.2.2",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurfaceVariant,
