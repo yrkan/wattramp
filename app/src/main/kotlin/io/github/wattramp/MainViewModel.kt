@@ -170,15 +170,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Start a new test with the specified protocol.
      */
     fun startTest(protocol: ProtocolType) {
-        _sessionTestStarted.value = true
-        _sessionHasNavigated.value = false
-
         val extension = getExtensionSafely()
         if (extension != null) {
-            // Real Karoo mode
-            extension.testEngine.startTest(protocol)
+            // Real Karoo mode - check if test actually started
+            val started = extension.testEngine.startTest(protocol)
+            if (started) {
+                _sessionTestStarted.value = true
+                _sessionHasNavigated.value = false
+            }
+            // If not started, TestEngine already set state to Failed
+            // which will be observed via activeTestState
         } else {
             // Demo mode - simulate test
+            _sessionTestStarted.value = true
+            _sessionHasNavigated.value = false
             startDemoTest(protocol)
         }
     }

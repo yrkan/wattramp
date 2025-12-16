@@ -253,10 +253,13 @@ class AlertManager(private val extension: WattRampExtension) {
     ) {
         try {
             if (wakeScreen) {
-                extension.karooSystem.dispatch(TurnScreenOn)
+                val screenResult = extension.karooSystem.dispatch(TurnScreenOn)
+                if (!screenResult) {
+                    android.util.Log.w("AlertManager", "Failed to turn screen on")
+                }
             }
 
-            extension.karooSystem.dispatch(
+            val alertResult = extension.karooSystem.dispatch(
                 InRideAlert(
                     id = id,
                     icon = R.drawable.ic_wattramp,
@@ -267,6 +270,9 @@ class AlertManager(private val extension: WattRampExtension) {
                     textColor = R.color.alert_text
                 )
             )
+            if (!alertResult) {
+                android.util.Log.w("AlertManager", "Failed to dispatch alert: $id")
+            }
 
             // Play beep sound using Karoo's internal beeper
             if (playSound) {
@@ -290,7 +296,10 @@ class AlertManager(private val extension: WattRampExtension) {
                             PlayBeepPattern.Tone(frequency = 800, durationMs = 150)
                         )
                     }
-                    extension.karooSystem.dispatch(PlayBeepPattern(tones))
+                    val beepResult = extension.karooSystem.dispatch(PlayBeepPattern(tones))
+                    if (!beepResult) {
+                        android.util.Log.w("AlertManager", "Failed to play beep for alert: $id")
+                    }
                 } catch (e: Exception) {
                     android.util.Log.w("AlertManager", "Failed to play beep: ${e.message}")
                 }

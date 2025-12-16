@@ -43,12 +43,26 @@ class PreferencesRepository(private val context: Context) {
         private val KEY_ACTIVE_SESSION = stringPreferencesKey("active_session")
 
         // Default values
-        const val DEFAULT_FTP = 150
-        const val DEFAULT_RAMP_START = 100
+        const val DEFAULT_FTP = 200
+        const val DEFAULT_RAMP_START = 150
         const val DEFAULT_RAMP_STEP = 20
         const val DEFAULT_ZONE_TOLERANCE = 5
         const val DEFAULT_WARMUP_DURATION = 5
         const val DEFAULT_COOLDOWN_DURATION = 5
+
+        // Validation bounds
+        const val MIN_FTP = 50
+        const val MAX_FTP = 500
+        const val MIN_RAMP_START = 50
+        const val MAX_RAMP_START = 300
+        const val MIN_RAMP_STEP = 5
+        const val MAX_RAMP_STEP = 50
+        const val MIN_ZONE_TOLERANCE = 0
+        const val MAX_ZONE_TOLERANCE = 20
+        const val MIN_WARMUP_DURATION = 0
+        const val MAX_WARMUP_DURATION = 30
+        const val MIN_COOLDOWN_DURATION = 0
+        const val MAX_COOLDOWN_DURATION = 30
     }
 
     // Settings data class
@@ -127,22 +141,25 @@ class PreferencesRepository(private val context: Context) {
         } ?: TestHistoryData()
     }
 
-    // Update individual settings
+    // Update individual settings with validation
     suspend fun updateCurrentFtp(ftp: Int) {
+        val validFtp = ftp.coerceIn(MIN_FTP, MAX_FTP)
         context.dataStore.edit { prefs ->
-            prefs[KEY_CURRENT_FTP] = ftp
+            prefs[KEY_CURRENT_FTP] = validFtp
         }
     }
 
     suspend fun updateRampStartPower(power: Int) {
+        val validPower = power.coerceIn(MIN_RAMP_START, MAX_RAMP_START)
         context.dataStore.edit { prefs ->
-            prefs[KEY_RAMP_START_POWER] = power
+            prefs[KEY_RAMP_START_POWER] = validPower
         }
     }
 
     suspend fun updateRampStep(step: Int) {
+        val validStep = step.coerceIn(MIN_RAMP_STEP, MAX_RAMP_STEP)
         context.dataStore.edit { prefs ->
-            prefs[KEY_RAMP_STEP] = step
+            prefs[KEY_RAMP_STEP] = validStep
         }
     }
 
@@ -171,20 +188,23 @@ class PreferencesRepository(private val context: Context) {
     }
 
     suspend fun updateZoneTolerance(tolerance: Int) {
+        val validTolerance = tolerance.coerceIn(MIN_ZONE_TOLERANCE, MAX_ZONE_TOLERANCE)
         context.dataStore.edit { prefs ->
-            prefs[KEY_ZONE_TOLERANCE] = tolerance
+            prefs[KEY_ZONE_TOLERANCE] = validTolerance
         }
     }
 
     suspend fun updateWarmupDuration(minutes: Int) {
+        val validMinutes = minutes.coerceIn(MIN_WARMUP_DURATION, MAX_WARMUP_DURATION)
         context.dataStore.edit { prefs ->
-            prefs[KEY_WARMUP_DURATION] = minutes
+            prefs[KEY_WARMUP_DURATION] = validMinutes
         }
     }
 
     suspend fun updateCooldownDuration(minutes: Int) {
+        val validMinutes = minutes.coerceIn(MIN_COOLDOWN_DURATION, MAX_COOLDOWN_DURATION)
         context.dataStore.edit { prefs ->
-            prefs[KEY_COOLDOWN_DURATION] = minutes
+            prefs[KEY_COOLDOWN_DURATION] = validMinutes
         }
     }
 

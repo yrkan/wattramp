@@ -20,7 +20,7 @@ import java.util.UUID
  * FTP = Average(8min_1, 8min_2) × 0.90
  */
 class EightMinTest(
-    private val currentFtp: Int = 200
+    private val currentFtp: Int = PreferencesRepository.DEFAULT_FTP
 ) : BaseTestProtocol() {
 
     companion object {

@@ -127,5 +127,6 @@ enum class FailureReason {
     USER_STOPPED,
     POWER_DROPOUT,
     RIDE_ENDED,
+    SYSTEM_ERROR,
     ERROR
 }

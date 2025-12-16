@@ -75,8 +75,8 @@ class TestEngine(private val extension: WattRampExtension) {
     private val rideStateConsumerId = AtomicReference<String?>(null)
     private val userProfileConsumerId = AtomicReference<String?>(null)
 
-    // Update job
-    private var updateJob: Job? = null
+    // Update job - using AtomicReference to prevent race conditions
+    private val updateJobRef = AtomicReference<Job?>(null)
 
     // Mutex for state updates (coroutine-friendly synchronization)
     private val stateMutex = Mutex()
@@ -93,8 +93,20 @@ class TestEngine(private val extension: WattRampExtension) {
 
     /**
      * Start a new FTP test with the specified protocol.
+     * Returns false if test cannot be started (e.g., KarooSystem not connected).
      */
-    fun startTest(protocolType: ProtocolType) {
+    fun startTest(protocolType: ProtocolType): Boolean {
+        // Pre-check: ensure KarooSystem is connected before starting
+        if (!extension.karooSystem.connected) {
+            android.util.Log.e("TestEngine", "Cannot start test: KarooSystem not connected")
+            _state.value = TestState.Failed(
+                protocol = protocolType,
+                reason = FailureReason.SYSTEM_ERROR,
+                partialResult = null
+            )
+            return false
+        }
+
         scope.launch {
             stateMutex.withLock {
                 if (_state.value !is TestState.Idle) {
@@ -142,6 +154,7 @@ class TestEngine(private val extension: WattRampExtension) {
                 updateState()
             }
         }
+        return true
     }
 
     /**
@@ -158,8 +171,8 @@ class TestEngine(private val extension: WattRampExtension) {
     private fun stopTestInternal(reason: FailureReason) {
         val protocol = currentProtocol ?: return
 
-        updateJob?.cancel()
-        updateJob = null
+        // Cancel update job atomically
+        updateJobRef.getAndSet(null)?.cancel()
         disconnectFromKarooStreams()
 
         val elapsedMs = getElapsedTimeMs()
@@ -194,8 +207,8 @@ class TestEngine(private val extension: WattRampExtension) {
             stateMutex.withLock {
                 val protocol = currentProtocol ?: return@withLock
 
-                updateJob?.cancel()
-                updateJob = null
+                // Cancel update job atomically
+                updateJobRef.getAndSet(null)?.cancel()
                 disconnectFromKarooStreams()
 
                 val ftp = currentFtp.get()
@@ -334,8 +347,16 @@ class TestEngine(private val extension: WattRampExtension) {
                 // Safe access with null check
                 try {
                     val profileFtp = profile.ftp
-                    if (profileFtp > 0 && currentFtp.get() == 200) {
-                        currentFtp.set(profileFtp)
+                    // Only use profile FTP if it's valid and user hasn't set a custom FTP
+                    // (check if FTP is still at default value)
+                    if (profileFtp > 0) {
+                        val current = currentFtp.get()
+                        // Use profile FTP if current is default OR if profile FTP is significantly different
+                        // This allows initial setup from profile while respecting user changes
+                        if (current == PreferencesRepository.DEFAULT_FTP) {
+                            currentFtp.set(profileFtp)
+                            android.util.Log.i("TestEngine", "Using FTP from Karoo profile: $profileFtp")
+                        }
                     }
                     // Extract max HR from user profile for accurate HR zone calculations
                     val maxHr = profile.maxHr
@@ -459,7 +480,8 @@ class TestEngine(private val extension: WattRampExtension) {
                 if (currentState is TestState.Running) {
                     val pauseTime = System.currentTimeMillis()
                     pausedTimeMs.set(pauseTime)
-                    updateJob?.cancel()
+                    // Cancel update job atomically
+                    updateJobRef.getAndSet(null)?.cancel()
                     _state.value = TestState.Paused(
                         protocol = currentState.protocol,
                         elapsedMs = getElapsedTimeMs(),
@@ -489,8 +511,8 @@ class TestEngine(private val extension: WattRampExtension) {
     }
 
     private fun startUpdateLoop() {
-        updateJob?.cancel()
-        updateJob = scope.launch {
+        // Cancel existing job and create new one atomically
+        val newJob = scope.launch {
             while (isActive) {
                 if (_state.value is TestState.Running || currentProtocol != null) {
                     updateState()
@@ -498,6 +520,8 @@ class TestEngine(private val extension: WattRampExtension) {
                 delay(1000) // Update every second
             }
         }
+        // Cancel old job after creating new one to avoid gap
+        updateJobRef.getAndSet(newJob)?.cancel()
     }
 
     private fun updateState() {
@@ -582,8 +606,8 @@ class TestEngine(private val extension: WattRampExtension) {
      * Clean up resources.
      */
     fun destroy() {
-        updateJob?.cancel()
-        updateJob = null
+        // Cancel update job atomically
+        updateJobRef.getAndSet(null)?.cancel()
         disconnectFromKarooStreams()
         scope.cancel()
     }

@@ -20,10 +20,10 @@ import java.util.concurrent.atomic.AtomicReference
  * Thread-safe implementation using atomic types for mutable state.
  */
 class RampTest(
-    private val startPower: Int = 100,
-    private val stepIncrement: Int = 20,
-    private val warmupDurationMin: Int = 5,
-    private val cooldownDurationMin: Int = 5
+    private val startPower: Int = PreferencesRepository.DEFAULT_RAMP_START,
+    private val stepIncrement: Int = PreferencesRepository.DEFAULT_RAMP_STEP,
+    private val warmupDurationMin: Int = PreferencesRepository.DEFAULT_WARMUP_DURATION,
+    private val cooldownDurationMin: Int = PreferencesRepository.DEFAULT_COOLDOWN_DURATION
 ) : BaseTestProtocol() {
 
     companion object {

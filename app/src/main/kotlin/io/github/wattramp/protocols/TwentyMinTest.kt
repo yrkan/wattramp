@@ -20,7 +20,7 @@ import java.util.UUID
  * FTP = 20-min Average Power × 0.95
  */
 class TwentyMinTest(
-    private val currentFtp: Int = 200
+    private val currentFtp: Int = PreferencesRepository.DEFAULT_FTP
 ) : BaseTestProtocol() {
 
     companion object {
