@@ -2,154 +2,280 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/Platform-Karoo%202%20%7C%20Karoo%203-orange.svg)](https://www.hammerhead.io)
+[![Release](https://img.shields.io/github/v/release/yrkan/wattramp)](https://github.com/yrkan/wattramp/releases)
+[![Downloads](https://img.shields.io/github/downloads/yrkan/wattramp/total)](https://github.com/yrkan/wattramp/releases)
 
-Free FTP testing extension for Hammerhead Karoo cycling computers. No subscriptions, no accounts, works offline.
+Free FTP testing extension for Hammerhead Karoo cycling computers. No subscriptions, no accounts, works completely offline.
 
 ## Features
 
-- **Three FTP Test Protocols**
-  - **Ramp Test**: Progressive power increase until failure (~20 min)
-  - **20-Minute Test**: Classic FTP protocol with max sustained effort (~60 min)
-  - **8-Minute Test**: Two max effort intervals with recovery (~50 min)
+### Three FTP Test Protocols
 
-- **Real-time Data Fields**
-  - Current interval with progress bar (2x1 graphical)
-  - Target power, test progress, power zone indicators
-  - Deviation from target, elapsed time, average/max power
-  - Live FTP prediction during ramp test
+| Protocol | Duration | Best For | Formula |
+|----------|----------|----------|---------|
+| **Ramp Test** | ~20 min | Quick assessment, time-crunched athletes | Max 1-min × 0.75 |
+| **20-Minute Test** | ~60 min | Gold standard, accurate results | 20-min avg × 0.95 |
+| **8-Minute Test** | ~50 min | Balance of accuracy and time | Avg of two 8-min × 0.90 |
 
-- **In-Ride Alerts**
-  - Interval change notifications
-  - Countdown warnings before transitions
-  - Motivational messages
-  - Test completion with calculated FTP
+### Real-time Data Fields
 
-- **Offline Operation**
-  - No internet or external accounts required
-  - All data stored locally on device
+9 data fields available for your ride screen:
+
+| Field | Size | Description |
+|-------|------|-------------|
+| **Current Interval** | 2x1 | Graphical widget with interval name, target power, progress bar |
+| **Target Power** | 1x1 | Current target wattage or "MAX" for max effort intervals |
+| **Test Progress** | 1x1 | Step number (Ramp) or percentage complete |
+| **Power Zone** | 1x1 | Zone indicator: IN ZONE / TOO LOW / TOO HIGH |
+| **Deviation** | 1x1 | Watts above/below target (e.g., +15W, -8W) |
+| **Elapsed Time** | 1x1 | Total test duration |
+| **Average Power** | 1x1 | Session average power |
+| **Max Power** | 1x1 | Session maximum power |
+| **FTP Prediction** | 1x1 | Live FTP estimate (updates during Ramp test) |
+
+### In-Ride Alerts
+
+- **Interval Changes**: Visual + audio notification when phases change
+- **Countdown Warnings**: 30-second and 10-second warnings before transitions
+- **Motivational Messages**: "HALFWAY!", "PUSH HARDER!" encouragement
+- **Low Cadence Warning**: Alert when cadence drops below optimal range
+- **Test Completion**: Final FTP result with comparison to previous
+
+### Sound Alerts
+
+Audible beep patterns using Karoo's internal beeper:
+- Single beep: Interval changes
+- Double beep: Test start / completion
+- Triple beep: Final 30 seconds
 
 ## Installation
 
-### From APK
+### From GitHub Releases (Recommended)
 
-1. Download the latest APK from releases
-2. Transfer to your Karoo via USB or web dashboard
-3. Install using file manager on device
+1. Download `wattramp-x.x.x.apk` from [Releases](https://github.com/yrkan/wattramp/releases)
+2. Transfer to Karoo:
+   - **Option A**: Use [Hammerhead Web Dashboard](https://dashboard.hammerhead.io) → Apps → Sideload
+   - **Option B**: Connect Karoo via USB, copy APK to device, install via file manager
+3. Launch WattRamp from app drawer
 
 ### Build from Source
 
-Requirements:
-- Android Studio or JDK 17+
+**Requirements:**
+- Android Studio Arctic Fox+ or JDK 17+
 - Gradle 8.x
-- GitHub account (for Karoo SDK access)
 
-#### 1. Configure GitHub Packages access
+**Setup GitHub Packages access** (Karoo SDK requires authentication):
 
-The Karoo Extension SDK is hosted on GitHub Packages which requires authentication. Create a [GitHub Personal Access Token](https://github.com/settings/tokens) with `read:packages` scope.
-
-Add to `~/.gradle/gradle.properties` (global) or project `local.properties`:
-
+1. Create [GitHub Personal Access Token](https://github.com/settings/tokens) with `read:packages` scope
+2. Add to `~/.gradle/gradle.properties`:
 ```properties
 gpr.user=YOUR_GITHUB_USERNAME
 gpr.key=YOUR_GITHUB_TOKEN
 ```
 
-#### 2. Build
-
+**Build:**
 ```bash
 git clone https://github.com/yrkan/wattramp.git
 cd wattramp
-./gradlew assembleDebug
+./gradlew assembleRelease
 ```
 
-APK location: `app/build/outputs/apk/debug/app-debug.apk`
+APK: `app/build/outputs/apk/release/wattramp-x.x.x.apk`
 
-## Usage
+## Usage Guide
 
-1. **Setup**: Open WattRamp app on Karoo, configure your current FTP and test preferences
-2. **Add Data Fields**: In ride profile setup, add WattRamp data fields to your screen
-3. **Start Ride**: Begin recording a ride
-4. **Run Test**: Open WattRamp app during ride and select a test protocol
-5. **Follow Prompts**: Watch data fields for target power and interval changes
-6. **View Results**: After test completion, see calculated FTP and save to history
+### Initial Setup
 
-## FTP Calculation
+1. **Open WattRamp** on your Karoo
+2. **Set your current FTP** (used for warmup/recovery zone calculations)
+3. **Configure test parameters** (optional):
+   - Ramp start power (default: 100W)
+   - Ramp step increment (default: 20W/min)
+   - Warmup/cooldown duration
+   - Sound and screen wake preferences
 
-| Protocol | Formula | Default Coefficient |
-|----------|---------|---------------------|
-| Ramp Test | Max 1-min Power × k | 0.75 |
-| 20-Minute Test | 20-min Average × k | 0.95 |
-| 8-Minute Test | Avg(8min₁, 8min₂) × k | 0.90 |
+### Adding Data Fields
 
-Coefficient can be adjusted in settings (conservative/standard/aggressive).
+1. Go to **Profiles** → Select your ride profile → **Edit**
+2. Add a new page or edit existing
+3. Tap empty slot → **More Data** → **WattRamp**
+4. Select desired fields (recommended: Current Interval 2x1 + 2-3 numeric fields)
 
-## Data Fields
+### Running a Test
 
-| Field | Size | Description |
-|-------|------|-------------|
-| Current Interval | 2x1 | Graphical widget with interval name, target, progress |
-| Target Power | 1x1 | Current target wattage |
-| Test Progress | 1x1 | Step number or time progress |
-| Power Zone | 1x1 | Zone indicator relative to target |
-| Deviation | 1x1 | Watts above/below target |
-| Elapsed Time | 1x1 | Total test duration |
-| Average Power | 1x1 | Session average |
-| Max Power | 1x1 | Session maximum |
-| FTP Prediction | 1x1 | Live FTP estimate (Ramp test) |
+1. **Start a ride** (WattRamp requires an active recording)
+2. **Open WattRamp app** during ride
+3. **Select test protocol** (Ramp / 20-min / 8-min)
+4. **Follow the intervals**:
+   - Watch target power on data fields
+   - Stay in zone (green = good, red = too low/high)
+   - Listen for audio cues
+5. **Complete the test**:
+   - Ramp: Continue until you can't maintain power (auto-detects failure)
+   - 20-min / 8-min: Follow all intervals to completion
+6. **View results** and optionally save to history
+
+### Test Protocol Details
+
+#### Ramp Test
+```
+[5 min Warmup @ 50%] → [Ramp: +20W every minute until failure] → [5 min Cooldown]
+```
+- Starts at configurable power (default 100W)
+- Increases by configurable step (default 20W) every minute
+- Auto-ends when power drops >30% below target for 10+ seconds
+- FTP = Max 1-minute average × 0.75
+
+#### 20-Minute Test
+```
+[20 min Warmup] → [5 min Blow-out @ 105%] → [5 min Recovery] → [20 min MAX EFFORT] → [10 min Cooldown]
+```
+- Classic protocol for accurate FTP measurement
+- Requires pacing strategy for 20-min effort
+- FTP = 20-minute average × 0.95
+
+#### 8-Minute Test
+```
+[15 min Warmup] → [8 min MAX #1] → [10 min Recovery] → [8 min MAX #2] → [10 min Cooldown]
+```
+- Two efforts allow for pacing adjustment
+- Average of both efforts used
+- FTP = Average of two 8-min efforts × 0.90
 
 ## Settings
 
-- **Current FTP**: Your baseline FTP for zone calculations
-- **Ramp Start Power**: Initial wattage for ramp test (default: 100W)
-- **Ramp Step**: Power increase per minute (default: 20W)
-- **Warmup/Cooldown Duration**: Configurable warmup and cooldown periods
-- **Sound Alerts**: Enable/disable audio notifications
-- **Screen Wake**: Wake screen on important alerts
-- **Motivational Messages**: Show encouragement during test
-- **Language**: Multiple languages supported
-- **Theme**: Orange or Blue color scheme
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Current FTP** | Your baseline FTP for zone calculations | 200W |
+| **Ramp Start Power** | Initial power for ramp test | 100W |
+| **Ramp Step** | Power increase per minute | 20W |
+| **Warmup Duration** | Warmup period length | 5 min |
+| **Cooldown Duration** | Cooldown period length | 5 min |
+| **FTP Calculation Method** | Conservative (0.72) / Standard / Aggressive (0.77) | Standard |
+| **Sound Alerts** | Enable beep notifications | On |
+| **Screen Wake** | Wake screen on important alerts | On |
+| **Motivational Messages** | Show encouragement during test | On |
+| **Language** | UI language | System |
+| **Theme** | Orange or Blue color scheme | Orange |
+
+## Architecture
+
+```
+io.github.wattramp/
+├── WattRampExtension.kt     # KarooExtension service entry point
+├── MainActivity.kt          # Settings UI (Jetpack Compose)
+├── MainViewModel.kt         # State management for UI
+├── datatypes/               # 9 Karoo data field implementations
+│   ├── CurrentIntervalDataType.kt  # 2x1 graphical widget
+│   ├── TargetPowerDataType.kt
+│   ├── TestProgressDataType.kt
+│   └── ...
+├── protocols/               # FTP test protocol implementations
+│   ├── TestProtocol.kt      # Base interface + common logic
+│   ├── RampTest.kt
+│   ├── TwentyMinTest.kt
+│   └── EightMinTest.kt
+├── engine/
+│   ├── TestEngine.kt        # State machine, Karoo stream handling
+│   ├── TestState.kt         # Sealed class for test states
+│   └── AlertManager.kt      # In-ride alert management
+├── data/
+│   ├── PreferencesRepository.kt  # DataStore persistence
+│   └── TestHistory.kt       # Test result storage
+└── ui/                      # Compose UI screens
+```
+
+### Key Technical Details
+
+- **Thread Safety**: All shared state uses `AtomicInteger`, `AtomicLong`, `AtomicReference`, and `Mutex`
+- **Memory Management**: Bounded data structures prevent unbounded growth (max 4000 power samples)
+- **Karoo SDK**: Uses `KarooSystemService` for power/HR/cadence streams, alerts, and beeps
+- **State Flow**: Reactive state management with Kotlin `StateFlow`
+
+## Troubleshooting
+
+### Data fields show "--" or 0
+- Ensure a ride is actively recording
+- Start a test from the WattRamp app
+- Check that power meter is connected
+
+### No sound alerts
+- Verify "Sound Alerts" is enabled in settings
+- Check Karoo system volume
+- Some older Karoo firmware may have beeper limitations
+
+### Test doesn't auto-end (Ramp)
+- Power must drop >30% below target for 10+ consecutive seconds
+- Ensure power meter is transmitting consistently
+- You can manually stop via the app if needed
+
+### FTP seems too high/low
+- Try different calculation methods in settings (Conservative/Aggressive)
+- Ensure you gave maximum effort during test intervals
+- Compare with other FTP tests for validation
 
 ## Requirements
 
-- Hammerhead Karoo 2 or Karoo 3
-- Power meter (required for FTP testing)
+- **Device**: Hammerhead Karoo 2 or Karoo 3
+- **Sensors**: Power meter (required)
+- **Optional**: Heart rate monitor (for HR zone display)
 
 ## Privacy
 
-WattRamp is designed with privacy in mind:
+WattRamp respects your privacy:
 
-- **All data stays on your device** — no external servers, no cloud sync
-- **No accounts required** — just install and use
-- **No analytics or tracking** — we don't collect any usage data
-- **Open source** — verify our privacy practices yourself
+- **100% Offline**: No internet connection required or used
+- **Local Storage Only**: All data stays on your device
+- **No Accounts**: No registration, login, or cloud sync
+- **No Analytics**: Zero tracking or telemetry
+- **Open Source**: Verify everything yourself
 
-Read our full [Privacy Policy](https://wattramp.com/privacy).
+## Changelog
+
+### v1.3.0
+- Thread safety improvements for Karoo 3 stability
+- Implemented sound alerts (PlayBeepPattern)
+- Fixed HR zones using actual user max HR from profile
+- Fixed progress calculation for 20-min and 8-min tests
+- Memory optimization with bounded data structures
+- R8 minification (APK size: 17MB → 2.1MB)
+
+### v1.2.2
+- Added configurable warmup/cooldown duration
+- Karoo settings integration
+
+### v1.2.1
+- Registered all 9 data types
+- Localization fixes
+
+### v1.2.0
+- Performance improvements
+- Added MainViewModel for state management
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome! Please:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/yrkan/wattramp/issues)
-- **Email**: [info@wattramp.com](mailto:info@wattramp.com)
-- **Website**: [wattramp.com](https://wattramp.com)
+- **Discussions**: [GitHub Discussions](https://github.com/yrkan/wattramp/discussions)
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) file for details.
+MIT License — see [LICENSE](LICENSE) file.
 
 ## Acknowledgments
 
 - Built with [Karoo Extension SDK](https://github.com/hammerheadnav/karoo-ext)
-- FTP protocols based on established cycling science methodologies
+- FTP protocols based on established cycling science (Coggan, Allen, Friel)
 
 ---
 
-**Disclaimer**: WattRamp is not affiliated with Hammerhead or SRAM. Karoo is a trademark of Hammerhead.
+**Disclaimer**: WattRamp is an independent project, not affiliated with Hammerhead or SRAM. Karoo is a trademark of Hammerhead.
