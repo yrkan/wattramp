@@ -86,8 +86,7 @@ Audible beep patterns using Karoo's internal beeper:
 
 1. Download `wattramp-x.x.x.apk` from [Releases](https://github.com/yrkan/wattramp/releases)
 2. Transfer to Karoo:
-   - **Option A**: Use [Hammerhead Web Dashboard](https://dashboard.hammerhead.io) → Apps → Sideload
-   - **Option B**: Connect Karoo via USB, copy APK to device, install via file manager
+   - **Option A**: Connect Karoo via USB, copy APK to device, install file
 3. Launch WattRamp from app drawer
 
 ### Build from Source
