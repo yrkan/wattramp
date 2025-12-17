@@ -7,6 +7,13 @@
 
 Free FTP testing extension for Hammerhead Karoo cycling computers. No subscriptions, no accounts, works completely offline.
 
+<p align="center">
+  <img src="screenshots/1.png" width="23%" />&nbsp;&nbsp;
+  <img src="screenshots/2.png" width="23%" />&nbsp;&nbsp;
+  <img src="screenshots/3.png" width="23%" />&nbsp;&nbsp;
+  <img src="screenshots/4.png" width="23%" />
+</p>
+
 ## Features
 
 ### Three FTP Test Protocols
