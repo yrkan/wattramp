@@ -62,6 +62,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _recoverySession = MutableStateFlow<TestSession?>(null)
     val recoverySession: StateFlow<TestSession?> = _recoverySession.asStateFlow()
 
+    // Guide tour state
+    private val _guideTourStep = MutableStateFlow(-1) // -1 means tour not active
+    val guideTourStep: StateFlow<Int> = _guideTourStep.asStateFlow()
+
+    val isGuideTourActive: Boolean
+        get() = _guideTourStep.value >= 0
+
     // Whether we're in demo mode (no Karoo extension)
     val isDemoMode: Boolean
         get() = getExtensionSafely() == null
@@ -69,10 +76,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Active test state - properly switches between extension and demo state.
      * Uses flatMapLatest to correctly observe the right flow.
+     * During guide tour, always use demo state.
      */
-    val activeTestState: StateFlow<TestState> = _extensionBound
-        .flatMapLatest { bound ->
-            if (bound) {
+    val activeTestState: StateFlow<TestState> = combine(
+        _extensionBound,
+        _guideTourStep
+    ) { bound, tourStep -> Pair(bound, tourStep) }
+        .flatMapLatest { (bound, tourStep) ->
+            // During guide tour, always use demo state
+            if (tourStep >= 0) {
+                _demoTestState
+            } else if (bound) {
                 // Get extension safely
                 val ext = getExtensionSafely()
                 if (ext != null) {
@@ -141,42 +155,57 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        // Observe test state changes for session persistence
+        // Observe test state changes for session persistence with throttling
         viewModelScope.launch(Dispatchers.Default) {
+            var lastSaveTimestamp = 0L
+
             activeTestState.collect { state ->
-                withContext(Dispatchers.IO) {
-                    try {
-                        when (state) {
-                            is TestState.Running -> {
-                                // Save comprehensive session for recovery
-                                preferencesRepository.saveActiveSession(
-                                    TestSession(
-                                        protocol = state.protocol,
-                                        startTimeMs = System.currentTimeMillis() - state.elapsedMs,
-                                        currentPhase = state.phase,
-                                        currentIntervalIndex = state.intervalIndex,
-                                        elapsedTimeMs = state.elapsedMs,
-                                        maxOneMinutePower = state.maxOneMinutePower.toDouble(),
-                                        isActive = true,
-                                        lastSaveTimestamp = System.currentTimeMillis(),
-                                        settingsSnapshot = SessionSettings(
-                                            currentFtp = settings.value.currentFtp,
-                                            rampStartPower = settings.value.rampStartPower,
-                                            rampStep = settings.value.rampStep
+                val currentTime = System.currentTimeMillis()
+
+                when (state) {
+                    is TestState.Running -> {
+                        // Throttle saves to every SESSION_SAVE_INTERVAL_MS to reduce serialization overhead
+                        if (currentTime - lastSaveTimestamp >= SESSION_SAVE_INTERVAL_MS) {
+                            lastSaveTimestamp = currentTime
+                            withContext(Dispatchers.IO) {
+                                try {
+                                    // Save comprehensive session for recovery
+                                    preferencesRepository.saveActiveSession(
+                                        TestSession(
+                                            protocol = state.protocol,
+                                            startTimeMs = currentTime - state.elapsedMs,
+                                            currentPhase = state.phase,
+                                            currentIntervalIndex = state.intervalIndex,
+                                            elapsedTimeMs = state.elapsedMs,
+                                            maxOneMinutePower = state.maxOneMinutePower.toDouble(),
+                                            isActive = true,
+                                            lastSaveTimestamp = currentTime,
+                                            settingsSnapshot = SessionSettings(
+                                                currentFtp = settings.value.currentFtp,
+                                                rampStartPower = settings.value.rampStartPower,
+                                                rampStep = settings.value.rampStep
+                                            )
                                         )
                                     )
-                                )
-                            }
-                            is TestState.Completed, is TestState.Failed, is TestState.Idle -> {
-                                // Clear active session
-                                preferencesRepository.saveActiveSession(null)
-                            }
-                            is TestState.Paused -> {
-                                // Keep session active but mark as paused
+                                } catch (e: Exception) {
+                                    // Ignore save errors - not critical
+                                }
                             }
                         }
-                    } catch (e: Exception) {
-                        // Ignore save errors - not critical
+                    }
+                    is TestState.Completed, is TestState.Failed, is TestState.Idle -> {
+                        // Clear active session immediately (no throttling for cleanup)
+                        withContext(Dispatchers.IO) {
+                            try {
+                                preferencesRepository.saveActiveSession(null)
+                            } catch (e: Exception) {
+                                // Ignore save errors - not critical
+                            }
+                        }
+                        lastSaveTimestamp = 0L
+                    }
+                    is TestState.Paused -> {
+                        // Keep session active but mark as paused
                     }
                 }
             }
@@ -212,8 +241,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // which will be observed via activeTestState
         } else {
             // Demo mode - simulate test
-            _sessionTestStarted.value = true
+            // Reset state first to ensure clean start
+            _demoTestState.value = TestState.Idle
             _sessionHasNavigated.value = false
+            _sessionTestStarted.value = true
             startDemoTest(protocol)
         }
     }
@@ -283,6 +314,131 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             )
 
             _demoTestState.value = TestState.Completed(demoResult)
+        }
+    }
+
+    /**
+     * Start the guided app tour from Settings.
+     */
+    fun startGuideTour() {
+        _guideTourStep.value = 0
+    }
+
+    /**
+     * Move to next step in guide tour.
+     * Returns the screen to navigate to, or null if tour ended.
+     */
+    fun nextGuideTourStep(): String? {
+        val currentStep = _guideTourStep.value
+        val screens = listOf("home", "settings", "history", "zones", "running", "result")
+
+        if (currentStep < 0) return null
+
+        val nextStep = currentStep + 1
+        if (nextStep >= screens.size) {
+            // Tour finished
+            endGuideTour()
+            return null
+        }
+
+        _guideTourStep.value = nextStep
+        return screens[nextStep]
+    }
+
+    /**
+     * Get current guide tour screen.
+     */
+    fun getCurrentGuideTourScreen(): String {
+        val screens = listOf("home", "settings", "history", "zones", "running", "result")
+        val step = _guideTourStep.value.coerceIn(0, screens.size - 1)
+        return screens[step]
+    }
+
+    /**
+     * End the guide tour.
+     */
+    fun endGuideTour() {
+        _guideTourStep.value = -1
+        // Clean up demo states
+        _demoTestState.value = TestState.Idle
+        _sessionTestStarted.value = false
+        _sessionHasNavigated.value = false
+    }
+
+    /**
+     * Set demo running state for guide tour.
+     */
+    fun setGuideDemoRunningState() {
+        val currentFtp = settings.value.currentFtp
+        _sessionTestStarted.value = true
+        _demoTestState.value = TestState.Running(
+            protocol = ProtocolType.RAMP,
+            phase = TestPhase.TESTING,
+            currentInterval = Interval(
+                name = "Ramp Step 8",
+                phase = TestPhase.TESTING,
+                durationMs = 60 * 1000L,
+                targetPowerPercent = null,
+                isRamp = true,
+                rampStartPower = settings.value.rampStartPower,
+                rampStepWatts = settings.value.rampStep
+            ),
+            intervalIndex = 8,
+            elapsedMs = 13 * 60 * 1000L,
+            timeRemainingInInterval = 32 * 1000L,
+            currentPower = (currentFtp * 0.95).toInt(),
+            targetPower = (currentFtp * 0.97).toInt(),
+            currentStep = 8,
+            estimatedTotalSteps = 12,
+            maxOneMinutePower = (currentFtp * 0.95).toInt(),
+            heartRate = 165,
+            cadence = 88
+        )
+    }
+
+    /**
+     * Set demo completed state for guide tour.
+     */
+    fun setGuideDemoCompletedState() {
+        val currentFtp = settings.value.currentFtp
+        val maxPower = (currentFtp * 1.33).toInt()
+        val newFtp = (maxPower * 0.75).toInt()
+
+        _sessionTestStarted.value = true
+        _sessionHasNavigated.value = true
+        _demoTestState.value = TestState.Completed(
+            TestResult(
+                id = UUID.randomUUID().toString(),
+                timestamp = System.currentTimeMillis(),
+                protocol = ProtocolType.RAMP,
+                calculatedFtp = newFtp,
+                previousFtp = currentFtp,
+                testDurationMs = 22 * 60 * 1000L,
+                maxOneMinutePower = maxPower,
+                averagePower = (currentFtp * 0.85).toInt(),
+                stepsCompleted = 12,
+                formula = "$maxPower × 0.75 = $newFtp",
+                normalizedPower = (currentFtp * 0.92).toInt(),
+                variabilityIndex = 1.08,
+                averageHeartRate = 168,
+                efficiencyFactor = 1.52,
+                saved = false
+            )
+        )
+    }
+
+    /**
+     * Stop the running test (user pressed STOP).
+     */
+    fun stopTest() {
+        _sessionTestStarted.value = false
+        _sessionHasNavigated.value = false
+
+        val extension = getExtensionSafely()
+        if (extension != null) {
+            extension.testEngine.stopTest()
+        } else {
+            _demoTestState.value = TestState.Idle
         }
     }
 
@@ -448,6 +604,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateShowChecklist(false)
         }
+    }
+
+    /**
+     * Start sensor check to detect power meter.
+     */
+    fun startSensorCheck() {
+        getExtensionSafely()?.testEngine?.startSensorCheck()
+    }
+
+    /**
+     * Stop sensor check.
+     */
+    fun stopSensorCheck() {
+        getExtensionSafely()?.testEngine?.stopSensorCheck()
+    }
+
+    /**
+     * Check if power sensor is available.
+     */
+    fun isPowerSensorAvailable(): Boolean {
+        return getExtensionSafely()?.testEngine?.isPowerSensorAvailable() ?: false
     }
 
     override fun onCleared() {

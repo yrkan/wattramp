@@ -5,19 +5,23 @@
 
     <!-- Home Screen -->
     <string name="home_ftp">FTP</string>
+    <string name="home_current_ftp">CURRENT FTP</string>
     <string name="home_select_test">SELECT TEST</string>
     <string name="home_start">START</string>
 
     <!-- Protocol names and info -->
     <string name="protocol_ramp">RAMP</string>
+    <string name="protocol_ramp_short">RAMP</string>
     <string name="protocol_ramp_formula">MAX×0.75</string>
     <string name="protocol_ramp_duration">~20m</string>
 
     <string name="protocol_20min">20-MIN</string>
+    <string name="protocol_20min_short">20-MIN</string>
     <string name="protocol_20min_formula">AVG×0.95</string>
     <string name="protocol_20min_duration">~60m</string>
 
     <string name="protocol_8min">2×8-MIN</string>
+    <string name="protocol_8min_short">2×8-MIN</string>
     <string name="protocol_8min_formula">AVG×0.90</string>
     <string name="protocol_8min_duration">~50m</string>
 
@@ -98,6 +102,29 @@
     <string name="settings_cancel">CANCEL</string>
     <string name="settings_clear">RESET</string>
 
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">GUIDE</string>
+    <string name="settings_demo_mode">APP GUIDE</string>
+    <string name="settings_demo_desc">Tour all screens</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">HOME SCREEN</string>
+    <string name="guide_home_desc">Select your FTP test protocol here. Tap on a protocol card to choose, then press START.</string>
+    <string name="guide_settings_title">SETTINGS</string>
+    <string name="guide_settings_desc">Configure FTP, ramp test parameters, warmup/cooldown duration, and alerts.</string>
+    <string name="guide_history_title">HISTORY</string>
+    <string name="guide_history_desc">Track your FTP progress over time. View past tests and statistics.</string>
+    <string name="guide_zones_title">POWER ZONES</string>
+    <string name="guide_zones_desc">See your training zones based on current FTP. 7 zones from recovery to neuromuscular.</string>
+    <string name="guide_running_title">TEST IN PROGRESS</string>
+    <string name="guide_running_desc">During test: follow target power, monitor time remaining, and track your progress.</string>
+    <string name="guide_result_title">RESULTS</string>
+    <string name="guide_result_desc">After test: see your new FTP, stats, and choose to save or discard.</string>
+    <string name="guide_skip">SKIP</string>
+    <string name="guide_next">NEXT</string>
+    <string name="guide_finish">DONE</string>
+    <string name="guide_tap_hint">Tap anywhere to continue</string>
+
     <!-- About Section -->
     <string name="settings_about">ABOUT</string>
     <string name="settings_version">VERSION</string>
@@ -166,6 +193,12 @@
     <string name="tutorial_tip1">Warm up well before starting the test</string>
     <string name="tutorial_tip2">Use ERG mode on your trainer for best results</string>
     <string name="tutorial_tip3">Stop when you cannot maintain the target power</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">NO POWER SENSOR</string>
+    <string name="sensor_warning_message">Power meter not detected. Continue without power data?</string>
+    <string name="sensor_warning_start">START</string>
+    <string name="sensor_warning_cancel">CANCEL</string>
 
     <!-- General -->
     <string name="back">Back</string>

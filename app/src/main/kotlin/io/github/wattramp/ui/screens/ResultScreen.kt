@@ -39,7 +39,7 @@ fun ResultScreen(
     modifier: Modifier = Modifier
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val isCompact = screenHeight < 420.dp
+    val isCompact = screenHeight < 480.dp
     val borderColor = SurfaceVariant.copy(alpha = 0.5f)
 
     Column(
@@ -48,13 +48,13 @@ fun ResultScreen(
             .background(Background)
     ) {
         // ═══════════════════════════════════════════════════════════════════
-        // SUCCESS HEADER
+        // SUCCESS HEADER (FIXED) - Compact
         // ═══════════════════════════════════════════════════════════════════
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Success)
-                .padding(vertical = if (isCompact) 6.dp else 10.dp),
+                .padding(vertical = if (isCompact) 4.dp else 6.dp),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -65,12 +65,12 @@ fun ResultScreen(
                     Icons.Default.CheckCircle,
                     contentDescription = null,
                     tint = Color.Black,
-                    modifier = Modifier.size(if (isCompact) 18.dp else 22.dp)
+                    modifier = Modifier.size(if (isCompact) 16.dp else 18.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = stringResource(R.string.result_complete),
-                    fontSize = if (isCompact) 14.sp else 16.sp,
+                    fontSize = if (isCompact) 12.sp else 14.sp,
                     fontWeight = FontWeight.Black,
                     color = Color.Black,
                     letterSpacing = 2.sp
@@ -79,194 +79,177 @@ fun ResultScreen(
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // MAIN FTP DISPLAY - Hero metric
+        // CONTENT (no scroll needed with compact layout)
         // ═══════════════════════════════════════════════════════════════════
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .garminBorder(borderColor),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.weight(1f)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+            // ═══════════════════════════════════════════════════════════════════
+            // MAIN FTP DISPLAY - Compact hero metric
+            // ═══════════════════════════════════════════════════════════════════
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .garminBorder(borderColor)
+                    .padding(vertical = if (isCompact) 8.dp else 12.dp),
+                contentAlignment = Alignment.Center
             ) {
-                // Label
-                Text(
-                    text = stringResource(R.string.result_new_ftp),
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = OnSurfaceVariant,
-                    letterSpacing = 2.sp
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    // FTP Value with W suffix inline
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "${result.calculatedFtp}",
+                            fontSize = if (isCompact) 56.sp else 72.sp,
+                            fontWeight = FontWeight.Black,
+                            color = Primary,
+                            lineHeight = if (isCompact) 56.sp else 72.sp
+                        )
+                        Text(
+                            text = "W",
+                            fontSize = if (isCompact) 20.sp else 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OnSurfaceVariant,
+                            modifier = Modifier.padding(bottom = if (isCompact) 8.dp else 10.dp, start = 2.dp)
+                        )
+
+                        // Change indicator inline
+                        result.ftpChange?.let { change ->
+                            val isPositive = change >= 0
+                            val color = if (isPositive) Success else Error
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = "${if (isPositive) "+" else ""}${change}",
+                                fontSize = if (isCompact) 20.sp else 24.sp,
+                                fontWeight = FontWeight.Black,
+                                color = color,
+                                modifier = Modifier.padding(bottom = if (isCompact) 8.dp else 10.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // STATS GRID - Compact Garmin Edge style data fields
+            // ═══════════════════════════════════════════════════════════════════
+            val cellHeight = if (isCompact) 40.dp else 46.dp
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                // Protocol (use shortName for compact display)
+                DataField(
+                    label = stringResource(R.string.result_test),
+                    value = result.protocol.shortName,
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor,
+                    isCompact = isCompact
                 )
 
-                // FTP Value - HUGE
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "${result.calculatedFtp}",
-                        fontSize = if (isCompact) 80.sp else 100.sp,
-                        fontWeight = FontWeight.Black,
-                        color = Primary,
-                        lineHeight = if (isCompact) 80.sp else 100.sp
+                // Duration
+                DataField(
+                    label = stringResource(R.string.result_time),
+                    value = formatDuration(result.testDurationMs),
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor,
+                    isCompact = isCompact
+                )
+
+                // Previous FTP
+                DataField(
+                    label = stringResource(R.string.result_prev),
+                    value = result.previousFtp?.let { "${it}W" } ?: "--",
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor,
+                    isCompact = isCompact
+                )
+            }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                // Max power
+                DataField(
+                    label = stringResource(R.string.result_max),
+                    value = result.maxOneMinutePower?.let { "${it}W" } ?: "--",
+                    valueColor = Primary,
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor,
+                    isCompact = isCompact
+                )
+
+                // Average power
+                DataField(
+                    label = stringResource(R.string.result_avg),
+                    value = result.averagePower?.let { "${it}W" } ?: "--",
+                    valueColor = Primary,
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor,
+                    isCompact = isCompact
+                )
+
+                // FTP coefficient (for context)
+                DataField(
+                    label = stringResource(R.string.result_coeff),
+                    value = "${(result.protocol.ftpCoefficient * 100).toInt()}%",
+                    modifier = Modifier.weight(1f).height(cellHeight),
+                    borderColor = borderColor,
+                    isCompact = isCompact
+                )
+            }
+
+            // ═══════════════════════════════════════════════════════════════════
+            // ANALYTICS ROW - NP, VI, EF (only show if available)
+            // ═══════════════════════════════════════════════════════════════════
+            if (result.normalizedPower != null || result.variabilityIndex != null || result.efficiencyFactor != null) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    // Normalized Power
+                    DataField(
+                        label = stringResource(R.string.result_np),
+                        value = result.normalizedPower?.let { "${it}W" } ?: "--",
+                        valueColor = Zone4,
+                        modifier = Modifier.weight(1f).height(cellHeight),
+                        borderColor = borderColor,
+                        isCompact = isCompact
                     )
-                    Text(
-                        text = "W",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = OnSurfaceVariant,
-                        modifier = Modifier.padding(bottom = if (isCompact) 12.dp else 16.dp, start = 4.dp)
+
+                    // Variability Index
+                    DataField(
+                        label = stringResource(R.string.result_vi),
+                        value = result.variabilityIndex?.let { String.format("%.2f", it) } ?: "--",
+                        valueColor = Zone4,
+                        modifier = Modifier.weight(1f).height(cellHeight),
+                        borderColor = borderColor,
+                        isCompact = isCompact
                     )
-                }
 
-                // Change indicator
-                result.ftpChange?.let { change ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(top = 4.dp)
-                    ) {
-                        val isPositive = change >= 0
-                        val color = if (isPositive) Success else Error
-                        val icon = if (isPositive) "▲" else "▼"
-
-                        Text(
-                            text = icon,
-                            fontSize = 20.sp,
-                            color = color
+                    // Efficiency Factor or Avg HR
+                    if (result.efficiencyFactor != null) {
+                        DataField(
+                            label = stringResource(R.string.result_ef),
+                            value = String.format("%.2f", result.efficiencyFactor),
+                            valueColor = Zone4,
+                            modifier = Modifier.weight(1f).height(cellHeight),
+                            borderColor = borderColor,
+                            isCompact = isCompact
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "${if (isPositive) "+" else ""}${change}W",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Black,
-                            color = color
+                    } else {
+                        DataField(
+                            label = stringResource(R.string.result_hr),
+                            value = result.averageHeartRate?.let { "${it}" } ?: "--",
+                            modifier = Modifier.weight(1f).height(cellHeight),
+                            borderColor = borderColor,
+                            isCompact = isCompact
                         )
-
-                        // Percentage change
-                        result.previousFtp?.let { prev ->
-                            if (prev > 0) {
-                                val pct = (change.toFloat() / prev * 100).toInt()
-                                Text(
-                                    text = " (${if (pct >= 0) "+" else ""}$pct%)",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = color.copy(alpha = 0.8f)
-                                )
-                            }
-                        }
                     }
                 }
             }
         }
 
         // ═══════════════════════════════════════════════════════════════════
-        // STATS GRID - Garmin Edge style data fields
-        // ═══════════════════════════════════════════════════════════════════
-        val cellHeight = if (isCompact) 48.dp else 56.dp
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            // Protocol (use shortName for compact display)
-            DataField(
-                label = stringResource(R.string.result_test),
-                value = result.protocol.shortName,
-                modifier = Modifier.weight(1f).height(cellHeight),
-                borderColor = borderColor
-            )
-
-            // Duration
-            DataField(
-                label = stringResource(R.string.result_time),
-                value = formatDuration(result.testDurationMs),
-                modifier = Modifier.weight(1f).height(cellHeight),
-                borderColor = borderColor
-            )
-
-            // Previous FTP
-            DataField(
-                label = stringResource(R.string.result_prev),
-                value = result.previousFtp?.let { "${it}W" } ?: "--",
-                modifier = Modifier.weight(1f).height(cellHeight),
-                borderColor = borderColor
-            )
-        }
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            // Max power
-            DataField(
-                label = stringResource(R.string.result_max),
-                value = result.maxOneMinutePower?.let { "${it}W" } ?: "--",
-                valueColor = Primary,
-                modifier = Modifier.weight(1f).height(cellHeight),
-                borderColor = borderColor
-            )
-
-            // Average power
-            DataField(
-                label = stringResource(R.string.result_avg),
-                value = result.averagePower?.let { "${it}W" } ?: "--",
-                valueColor = Primary,
-                modifier = Modifier.weight(1f).height(cellHeight),
-                borderColor = borderColor
-            )
-
-            // FTP coefficient (for context)
-            DataField(
-                label = stringResource(R.string.result_coeff),
-                value = "${(result.protocol.ftpCoefficient * 100).toInt()}%",
-                modifier = Modifier.weight(1f).height(cellHeight),
-                borderColor = borderColor
-            )
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // ANALYTICS ROW - NP, VI, EF (only show if available)
-        // ═══════════════════════════════════════════════════════════════════
-        if (result.normalizedPower != null || result.variabilityIndex != null || result.efficiencyFactor != null) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                // Normalized Power
-                DataField(
-                    label = stringResource(R.string.result_np),
-                    value = result.normalizedPower?.let { "${it}W" } ?: "--",
-                    valueColor = Zone4,
-                    modifier = Modifier.weight(1f).height(cellHeight),
-                    borderColor = borderColor
-                )
-
-                // Variability Index
-                DataField(
-                    label = stringResource(R.string.result_vi),
-                    value = result.variabilityIndex?.let { String.format("%.2f", it) } ?: "--",
-                    valueColor = Zone4,
-                    modifier = Modifier.weight(1f).height(cellHeight),
-                    borderColor = borderColor
-                )
-
-                // Efficiency Factor or Avg HR
-                if (result.efficiencyFactor != null) {
-                    DataField(
-                        label = stringResource(R.string.result_ef),
-                        value = String.format("%.2f", result.efficiencyFactor),
-                        valueColor = Zone4,
-                        modifier = Modifier.weight(1f).height(cellHeight),
-                        borderColor = borderColor
-                    )
-                } else {
-                    DataField(
-                        label = stringResource(R.string.result_hr),
-                        value = result.averageHeartRate?.let { "${it}" } ?: "--",
-                        modifier = Modifier.weight(1f).height(cellHeight),
-                        borderColor = borderColor
-                    )
-                }
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════════
-        // ACTION BUTTONS
+        // ACTION BUTTONS (FIXED) - Compact
         // ═══════════════════════════════════════════════════════════════════
 
         // Save button - Primary action
@@ -274,7 +257,7 @@ fun ResultScreen(
             onClick = onSaveToKaroo,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(if (isCompact) 48.dp else 56.dp),
+                .height(if (isCompact) 42.dp else 48.dp),
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Primary,
@@ -284,12 +267,12 @@ fun ResultScreen(
             Icon(
                 Icons.Default.Save,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(if (isCompact) 16.dp else 18.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = stringResource(R.string.result_save),
-                fontSize = 16.sp,
+                fontSize = if (isCompact) 14.sp else 15.sp,
                 fontWeight = FontWeight.Black,
                 letterSpacing = 2.sp
             )
@@ -300,13 +283,13 @@ fun ResultScreen(
             onClick = onDiscard,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(if (isCompact) 36.dp else 42.dp),
+                .height(if (isCompact) 32.dp else 36.dp),
             shape = RectangleShape,
             colors = ButtonDefaults.textButtonColors(contentColor = OnSurfaceVariant)
         ) {
             Text(
                 text = stringResource(R.string.result_discard),
-                fontSize = 12.sp,
+                fontSize = if (isCompact) 11.sp else 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp
             )
@@ -315,7 +298,7 @@ fun ResultScreen(
 }
 
 // =============================================================================
-// DATA FIELD COMPONENT - Garmin Edge style
+// DATA FIELD COMPONENT - Garmin Edge style (Compact)
 // =============================================================================
 
 @Composable
@@ -324,12 +307,13 @@ private fun DataField(
     value: String,
     modifier: Modifier = Modifier,
     valueColor: Color = OnSurface,
-    borderColor: Color = SurfaceVariant
+    borderColor: Color = SurfaceVariant,
+    isCompact: Boolean = false
 ) {
     Box(
         modifier = modifier
             .garminBorder(borderColor)
-            .padding(vertical = 6.dp),
+            .padding(vertical = if (isCompact) 3.dp else 5.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -339,7 +323,7 @@ private fun DataField(
             // Label at top
             Text(
                 text = label,
-                fontSize = 9.sp,
+                fontSize = if (isCompact) 8.sp else 9.sp,
                 fontWeight = FontWeight.Medium,
                 color = OnSurfaceVariant,
                 letterSpacing = 1.sp
@@ -348,7 +332,7 @@ private fun DataField(
             // Value
             Text(
                 text = value,
-                fontSize = 18.sp,
+                fontSize = if (isCompact) 15.sp else 17.sp,
                 fontWeight = FontWeight.Black,
                 color = valueColor
             )

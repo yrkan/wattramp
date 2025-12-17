@@ -174,7 +174,7 @@ fun RunningScreen(
         // POWER GRAPH - Compact visualization
         // ═══════════════════════════════════════════════════════════════════
         PowerGraph(
-            powerHistory = powerHistory.toList(),
+            powerHistory = powerHistory,  // Already a List, no need for toList()
             targetPower = runningState.targetPower,
             modifier = Modifier
                 .fillMaxWidth()

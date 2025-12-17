@@ -202,8 +202,11 @@ fun HistoryScreen(
                     SectionHeader(stringResource(R.string.history_all_tests))
                 }
 
-                // Test items
-                itemsIndexed(history.results) { index, result ->
+                // Test items - using keys for efficient updates
+                itemsIndexed(
+                    items = history.results,
+                    key = { _, result -> result.id }
+                ) { index, result ->
                     TestRow(
                         result = result,
                         index = index + 1,
@@ -381,11 +384,17 @@ private fun FtpProgressChart(
 
 @Composable
 private fun StatsRow(history: TestHistoryData) {
-    val best = history.results.maxOfOrNull { it.calculatedFtp } ?: 0
-    val avg = history.results.map { it.calculatedFtp }.average().toInt()
-    val totalGain = history.results.lastOrNull()?.calculatedFtp?.let { first ->
-        history.results.firstOrNull()?.calculatedFtp?.minus(first)
-    } ?: 0
+    // Memoize calculations to avoid recalculating on every recomposition
+    val (best, avg, totalGain) = remember(history.results) {
+        val bestFtp = history.results.maxOfOrNull { it.calculatedFtp } ?: 0
+        val avgFtp = if (history.results.isEmpty()) 0 else {
+            history.results.sumOf { it.calculatedFtp } / history.results.size
+        }
+        val gain = history.results.lastOrNull()?.calculatedFtp?.let { first ->
+            history.results.firstOrNull()?.calculatedFtp?.minus(first)
+        } ?: 0
+        Triple(bestFtp, avgFtp, gain)
+    }
 
     Row(
         modifier = Modifier
@@ -454,14 +463,21 @@ private fun StatCell(
     }
 }
 
+// Cached date formatter - created once per composition, not per item
+private val dateFormatter: SimpleDateFormat by lazy {
+    SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+}
+
 @Composable
 private fun TestRow(
     result: TestResult,
     index: Int,
     isLast: Boolean
 ) {
-    val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
-    val date = Date(result.timestamp)
+    // Use cached formatter, just format the date
+    val formattedDate = remember(result.timestamp) {
+        dateFormatter.format(Date(result.timestamp))
+    }
 
     // Protocol color
     val protocolColor = when (result.protocol) {
@@ -517,7 +533,7 @@ private fun TestRow(
                 color = OnSurface
             )
             Text(
-                text = dateFormat.format(date),
+                text = formattedDate,
                 fontSize = 10.sp,
                 color = OnSurfaceVariant
             )

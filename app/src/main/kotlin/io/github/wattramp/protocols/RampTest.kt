@@ -45,6 +45,8 @@ class RampTest(
     private val totalSteps = AtomicInteger(0)
     private val consecutiveLowPowerCount = AtomicInteger(0)
     private val testEndTimeMs = AtomicLong(0L) // 0 means not ended
+    private val hasSeenValidPower = AtomicReference(false) // Track if we've seen real power data
+    private val currentElapsedMs = AtomicLong(0L) // Track current elapsed time
 
     override val type = ProtocolType.RAMP
 
@@ -111,7 +113,15 @@ class RampTest(
         // Add to base class samples with bounds (handled by BaseTestProtocol)
         addPowerSample(power, elapsedMs)
 
-        // Only track during test phase
+        // Track elapsed time for shouldEndTest
+        currentElapsedMs.set(elapsedMs)
+
+        // Track if we've seen valid power (> 50W indicates actual pedaling)
+        if (power > 50) {
+            hasSeenValidPower.set(true)
+        }
+
+        // Only track for max power calculation during test phase
         if (elapsedMs < warmupDurationMs) return
 
         // Thread-safe update of rolling buffer
@@ -139,7 +149,20 @@ class RampTest(
     override fun shouldEndTest(currentPower: Int, targetPower: Int): Boolean {
         if (targetPower <= 0) return false
 
-        // Check if power dropped significantly
+        // Don't end test during warmup phase
+        val elapsed = currentElapsedMs.get()
+        if (elapsed < warmupDurationMs) {
+            consecutiveLowPowerCount.set(0)
+            return false
+        }
+
+        // Don't end test if we haven't seen valid power data yet
+        // This prevents false endings when sensors are still connecting
+        if (!hasSeenValidPower.get()) {
+            return false
+        }
+
+        // Check if power dropped significantly below target
         val threshold = (targetPower * POWER_DROP_THRESHOLD).toInt()
         if (currentPower < threshold) {
             val count = consecutiveLowPowerCount.incrementAndGet()
@@ -234,5 +257,7 @@ class RampTest(
         totalSteps.set(0)
         consecutiveLowPowerCount.set(0)
         testEndTimeMs.set(0L)
+        hasSeenValidPower.set(false)
+        currentElapsedMs.set(0L)
     }
 }

@@ -136,6 +136,53 @@
     <string name="tutorial_tip2">Verwenden Sie den ERG-Modus auf Ihrem Trainer</string>
     <string name="tutorial_tip3">Stoppen Sie, wenn Sie die Zielleistung nicht halten können</string>
 
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">SITZUNG GEFUNDEN</string>
+    <string name="recovery_message">Ein unvollständiger %1$s Test wurde gefunden (%2$s vergangen). Möchten Sie ihn verwerfen?</string>
+    <string name="recovery_discard">VERWERFEN</string>
+    <string name="recovery_keep">SCHLIESSEN</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">CHECKLISTE VOR DEM TEST</string>
+    <string name="checklist_dismiss">Checkliste ausblenden</string>
+    <string name="checklist_calibrate">Leistungsmesser kalibrieren</string>
+    <string name="checklist_calibrate_desc">Nullpunkt für genaue Messwerte</string>
+    <string name="checklist_sensors">Sensoren verbunden</string>
+    <string name="checklist_sensors_desc">HF, Leistung, Kadenz gekoppelt</string>
+    <string name="checklist_hydration">Flüssigkeitszufuhr prüfen</string>
+    <string name="checklist_hydration_desc">Wasserflasche bereit</string>
+    <string name="checklist_ftp">FTP-Einstellung prüfen</string>
+    <string name="checklist_ftp_desc">Aktueller FTP ist korrekt</string>
+
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">GUIDE</string>
+    <string name="settings_demo_mode">APP-GUIDE</string>
+    <string name="settings_demo_desc">Alle Bildschirme zeigen</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">STARTBILDSCHIRM</string>
+    <string name="guide_home_desc">FTP-Testprotokoll hier auswählen. Auf Karte tippen und START drücken.</string>
+    <string name="guide_settings_title">EINSTELLUNGEN</string>
+    <string name="guide_settings_desc">FTP, Rampentest, Aufwärmen/Abkühlen und Hinweise konfigurieren.</string>
+    <string name="guide_history_title">VERLAUF</string>
+    <string name="guide_history_desc">FTP-Fortschritt verfolgen. Frühere Tests und Statistiken ansehen.</string>
+    <string name="guide_zones_title">LEISTUNGSZONEN</string>
+    <string name="guide_zones_desc">Trainingszonen basierend auf FTP. 7 Zonen von Erholung bis Neuromuskulär.</string>
+    <string name="guide_running_title">TEST LÄUFT</string>
+    <string name="guide_running_desc">Im Test: Zielleistung folgen, Restzeit beachten, Fortschritt verfolgen.</string>
+    <string name="guide_result_title">ERGEBNISSE</string>
+    <string name="guide_result_desc">Nach Test: Neue FTP und Statistiken sehen, speichern oder verwerfen.</string>
+    <string name="guide_skip">ÜBERSPRINGEN</string>
+    <string name="guide_next">WEITER</string>
+    <string name="guide_finish">FERTIG</string>
+    <string name="guide_tap_hint">Tippen zum Fortfahren</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">KEIN SENSOR</string>
+    <string name="sensor_warning_message">Leistungsmesser nicht erkannt. Ohne Daten fortfahren?</string>
+    <string name="sensor_warning_start">START</string>
+    <string name="sensor_warning_cancel">ABBRECHEN</string>
+
     <!-- General -->
     <string name="back">Zurück</string>
     <string name="edit">Bearbeiten</string>

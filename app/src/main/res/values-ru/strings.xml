@@ -5,19 +5,23 @@
 
     <!-- Home Screen -->
     <string name="home_ftp">FTP</string>
+    <string name="home_current_ftp">ТЕКУЩИЙ FTP</string>
     <string name="home_select_test">ВЫБРАТЬ ТЕСТ</string>
     <string name="home_start">СТАРТ</string>
 
     <!-- Protocol names and info -->
     <string name="protocol_ramp">РАМПА</string>
+    <string name="protocol_ramp_short">РАМПА</string>
     <string name="protocol_ramp_formula">МАКС×0.75</string>
     <string name="protocol_ramp_duration">~20м</string>
 
     <string name="protocol_20min">20-МИН</string>
+    <string name="protocol_20min_short">20-МИН</string>
     <string name="protocol_20min_formula">СР×0.95</string>
     <string name="protocol_20min_duration">~60м</string>
 
     <string name="protocol_8min">2×8-МИН</string>
+    <string name="protocol_8min_short">2×8-МИН</string>
     <string name="protocol_8min_formula">СР×0.90</string>
     <string name="protocol_8min_duration">~50м</string>
 
@@ -32,6 +36,10 @@
     <string name="result_avg">СР</string>
     <string name="result_prev">ПРЕД</string>
     <string name="result_coeff">КОЭФ</string>
+    <string name="result_np">НМ</string>
+    <string name="result_vi">ИВ</string>
+    <string name="result_ef">ФЭ</string>
+    <string name="result_hr">ЧСС</string>
 
     <!-- History Screen -->
     <string name="history_title">ИСТОРИЯ</string>
@@ -94,6 +102,15 @@
     <string name="settings_cancel">ОТМЕНА</string>
     <string name="settings_clear">СБРОС</string>
 
+    <!-- About Section -->
+    <string name="settings_about">О ПРИЛОЖЕНИИ</string>
+    <string name="settings_version">ВЕРСИЯ</string>
+    <string name="settings_github">ИСХОДНЫЙ КОД</string>
+    <string name="settings_github_desc">Смотреть на GitHub</string>
+    <string name="settings_privacy">ПОЛИТИКА КОНФ.</string>
+    <string name="settings_contact">КОНТАКТ</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
+
     <!-- Running Screen -->
     <string name="running_warmup">РАЗМИНКА</string>
     <string name="running_testing">ТЕСТИРОВАНИЕ</string>
@@ -136,6 +153,53 @@
     <string name="tutorial_tip2">Используйте режим ERG на тренажёре</string>
     <string name="tutorial_tip3">Остановитесь, когда не можете держать целевую мощность</string>
 
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">СЕССИЯ НАЙДЕНА</string>
+    <string name="recovery_message">Найден незавершённый тест %1$s (%2$s прошло). Хотите сбросить его?</string>
+    <string name="recovery_discard">СБРОСИТЬ</string>
+    <string name="recovery_keep">ЗАКРЫТЬ</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">ЧЕКЛИСТ ПЕРЕД ТЕСТОМ</string>
+    <string name="checklist_dismiss">Скрыть чеклист</string>
+    <string name="checklist_calibrate">Калибровка измерителя мощности</string>
+    <string name="checklist_calibrate_desc">Обнуление для точных показаний</string>
+    <string name="checklist_sensors">Сенсоры подключены</string>
+    <string name="checklist_sensors_desc">ЧСС, Мощность, Каденс сопряжены</string>
+    <string name="checklist_hydration">Проверка гидратации</string>
+    <string name="checklist_hydration_desc">Бутылка воды готова</string>
+    <string name="checklist_ftp">Проверка FTP</string>
+    <string name="checklist_ftp_desc">Текущий FTP актуален</string>
+
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">ГАЙД</string>
+    <string name="settings_demo_mode">ГАЙД ПО APP</string>
+    <string name="settings_demo_desc">Тур по всем экранам</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">ГЛАВНЫЙ ЭКРАН</string>
+    <string name="guide_home_desc">Выберите протокол теста FTP. Нажмите на карточку, затем СТАРТ.</string>
+    <string name="guide_settings_title">НАСТРОЙКИ</string>
+    <string name="guide_settings_desc">Настройте FTP, параметры рампы, разминку/заминку и оповещения.</string>
+    <string name="guide_history_title">ИСТОРИЯ</string>
+    <string name="guide_history_desc">Отслеживайте прогресс FTP. Просматривайте прошлые тесты и статистику.</string>
+    <string name="guide_zones_title">ЗОНЫ МОЩНОСТИ</string>
+    <string name="guide_zones_desc">Тренировочные зоны на основе FTP. 7 зон от восстановления до нервно-мышечной.</string>
+    <string name="guide_running_title">ТЕСТ ИДЁТ</string>
+    <string name="guide_running_desc">Во время теста: следуйте целевой мощности, следите за временем и прогрессом.</string>
+    <string name="guide_result_title">РЕЗУЛЬТАТЫ</string>
+    <string name="guide_result_desc">После теста: смотрите новый FTP, статистику, сохраняйте или отклоняйте.</string>
+    <string name="guide_skip">ПРОПУСТИТЬ</string>
+    <string name="guide_next">ДАЛЕЕ</string>
+    <string name="guide_finish">ГОТОВО</string>
+    <string name="guide_tap_hint">Нажмите для продолжения</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">НЕТ ДАТЧИКА</string>
+    <string name="sensor_warning_message">Датчик мощности не найден. Продолжить без данных?</string>
+    <string name="sensor_warning_start">СТАРТ</string>
+    <string name="sensor_warning_cancel">ОТМЕНА</string>
+
     <!-- General -->
     <string name="back">Назад</string>
     <string name="edit">Изменить</string>
@@ -151,6 +215,14 @@
     <string name="datatype_progress_desc">Текущий шаг или временной прогресс теста</string>
     <string name="datatype_zone_name">Зона мощности</string>
     <string name="datatype_zone_desc">Показывает, находится ли текущая мощность в целевой зоне</string>
+    <string name="datatype_deviation_name">Отклонение мощности</string>
+    <string name="datatype_deviation_desc">Разница между текущей и целевой мощностью</string>
+    <string name="datatype_elapsed_name">Время теста</string>
+    <string name="datatype_elapsed_desc">Время с начала теста</string>
+    <string name="datatype_avg_name">Средняя мощность</string>
+    <string name="datatype_avg_desc">Средняя мощность за тест</string>
+    <string name="datatype_max_name">Макс 1-мин мощность</string>
+    <string name="datatype_max_desc">Максимальная 1-минутная средняя мощность</string>
     <string name="datatype_ftp_name">Прогноз FTP</string>
     <string name="datatype_ftp_desc">Расчётный FTP на основе текущих показателей</string>
 </resources>

@@ -31,22 +31,36 @@ object AnalyticsCalculator {
             return null
         }
 
-        // Calculate 30-second rolling averages
-        val rollingAverages = mutableListOf<Double>()
-        for (i in (NP_WINDOW_SIZE - 1) until samples.size) {
-            val windowStart = i - NP_WINDOW_SIZE + 1
-            val windowSum = samples.subList(windowStart, i + 1).sum()
-            val windowAvg = windowSum.toDouble() / NP_WINDOW_SIZE
-            rollingAverages.add(windowAvg)
+        // Calculate 30-second rolling averages using sliding window sum (O(n) instead of O(n²))
+        // Initialize window sum with first 30 samples
+        var windowSum = 0
+        for (i in 0 until NP_WINDOW_SIZE) {
+            windowSum += samples[i]
         }
 
-        if (rollingAverages.isEmpty()) {
+        // Process rolling averages while accumulating 4th power sum
+        var fourthPowerSum = 0.0
+        var count = 0
+
+        // First window
+        val firstAvg = windowSum.toDouble() / NP_WINDOW_SIZE
+        fourthPowerSum += firstAvg.pow(4)
+        count++
+
+        // Slide window through remaining samples
+        for (i in NP_WINDOW_SIZE until samples.size) {
+            windowSum += samples[i] - samples[i - NP_WINDOW_SIZE]  // Add new, remove old
+            val windowAvg = windowSum.toDouble() / NP_WINDOW_SIZE
+            fourthPowerSum += windowAvg.pow(4)
+            count++
+        }
+
+        if (count == 0) {
             return null
         }
 
-        // Raise to 4th power, average, then take 4th root
-        val fourthPowerSum = rollingAverages.sumOf { it.pow(4) }
-        val fourthPowerAvg = fourthPowerSum / rollingAverages.size
+        // Take 4th root of average
+        val fourthPowerAvg = fourthPowerSum / count
         val normalizedPower = fourthPowerAvg.pow(0.25)
 
         return normalizedPower.toInt()

@@ -136,6 +136,53 @@
     <string name="tutorial_tip2">Gebruik ERG-modus op je trainer voor beste resultaten</string>
     <string name="tutorial_tip3">Stop wanneer je het doelvermogen niet kunt vasthouden</string>
 
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">SESSIE GEVONDEN</string>
+    <string name="recovery_message">Er is een onvolledige %1$s test gevonden (%2$s verstreken). Wil je deze verwijderen?</string>
+    <string name="recovery_discard">VERWIJDEREN</string>
+    <string name="recovery_keep">SLUITEN</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">CHECKLIST VOOR TEST</string>
+    <string name="checklist_dismiss">Checklist verbergen</string>
+    <string name="checklist_calibrate">Vermogensmeter kalibreren</string>
+    <string name="checklist_calibrate_desc">Nulpunt voor nauwkeurige metingen</string>
+    <string name="checklist_sensors">Sensoren verbonden</string>
+    <string name="checklist_sensors_desc">HF, Vermogen, Kadans gekoppeld</string>
+    <string name="checklist_hydration">Hydratatie controleren</string>
+    <string name="checklist_hydration_desc">Bidon klaar</string>
+    <string name="checklist_ftp">FTP-instelling controleren</string>
+    <string name="checklist_ftp_desc">Huidige FTP is correct</string>
+
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">GIDS</string>
+    <string name="settings_demo_mode">APP-GIDS</string>
+    <string name="settings_demo_desc">Tour door alle schermen</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">STARTSCHERM</string>
+    <string name="guide_home_desc">Kies je FTP-testprotocol. Tik op een kaart en druk START.</string>
+    <string name="guide_settings_title">INSTELLINGEN</string>
+    <string name="guide_settings_desc">Configureer FTP, oploopparameters, warming-up/cooling-down en meldingen.</string>
+    <string name="guide_history_title">GESCHIEDENIS</string>
+    <string name="guide_history_desc">Volg je FTP-voortgang. Bekijk eerdere tests en statistieken.</string>
+    <string name="guide_zones_title">VERMOGENSZONES</string>
+    <string name="guide_zones_desc">Trainingszones gebaseerd op FTP. 7 zones van herstel tot neuromusculair.</string>
+    <string name="guide_running_title">TEST LOOPT</string>
+    <string name="guide_running_desc">Tijdens test: volg doelvermogen, monitor tijd en voortgang.</string>
+    <string name="guide_result_title">RESULTATEN</string>
+    <string name="guide_result_desc">Na test: bekijk nieuwe FTP, statistieken, opslaan of verwijderen.</string>
+    <string name="guide_skip">OVERSLAAN</string>
+    <string name="guide_next">VOLGENDE</string>
+    <string name="guide_finish">KLAAR</string>
+    <string name="guide_tap_hint">Tik om door te gaan</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">GEEN SENSOR</string>
+    <string name="sensor_warning_message">Vermogensmeter niet gedetecteerd. Doorgaan zonder data?</string>
+    <string name="sensor_warning_start">START</string>
+    <string name="sensor_warning_cancel">ANNULEER</string>
+
     <!-- General -->
     <string name="back">Terug</string>
     <string name="edit">Bewerken</string>

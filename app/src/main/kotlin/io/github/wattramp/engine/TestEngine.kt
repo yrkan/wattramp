@@ -48,6 +48,9 @@ class TestEngine(private val extension: WattRampExtension) {
     private val currentCadence = AtomicInteger(0)
     private val currentFtp = AtomicInteger(200)
 
+    // Track last time we received valid power data
+    private val lastPowerReceivedMs = AtomicLong(0L)
+
     // Max HR from user profile for zone calculations
     private val userMaxHr = AtomicInteger(190) // Default 190
 
@@ -65,6 +68,10 @@ class TestEngine(private val extension: WattRampExtension) {
     private val hrSamples = CopyOnWriteArrayList<Int>() // For analytics calculation
     private val maxOneMinutePower = AtomicInteger(0)
 
+    // Running sums for efficient average calculation (avoid toList().average())
+    private val powerSamplesSum = AtomicLong(0)
+    private val hrSamplesSum = AtomicLong(0)
+
     // Thread-safe bounded deque for rolling average
     private val lastMinutePowerSamples = ArrayDeque<Int>(ROLLING_WINDOW_SIZE + 5)
     private val powerSamplesLock = Any()
@@ -78,6 +85,10 @@ class TestEngine(private val extension: WattRampExtension) {
 
     // Update job - using AtomicReference to prevent race conditions
     private val updateJobRef = AtomicReference<Job?>(null)
+
+    // Track if ride was ever recording during this test session
+    @Volatile
+    private var wasRideRecording = false
 
     // Mutex for state updates (coroutine-friendly synchronization)
     private val stateMutex = Mutex()
@@ -97,6 +108,10 @@ class TestEngine(private val extension: WattRampExtension) {
      * Returns false if test cannot be started (e.g., KarooSystem not connected).
      */
     fun startTest(protocolType: ProtocolType): Boolean {
+        // Reset state to Idle first to ensure clean start
+        // This prevents stale Failed/Completed states from interfering
+        _state.value = TestState.Idle
+
         // Pre-check: ensure KarooSystem is connected before starting
         if (!extension.karooSystem.connected) {
             android.util.Log.e("TestEngine", "Cannot start test: KarooSystem not connected")
@@ -108,7 +123,8 @@ class TestEngine(private val extension: WattRampExtension) {
             return false
         }
 
-        scope.launch {
+        // Do initialization on Default dispatcher to avoid blocking UI
+        scope.launch(Dispatchers.Default) {
             stateMutex.withLock {
                 if (_state.value !is TestState.Idle) {
                     stopTestInternal(FailureReason.USER_STOPPED)
@@ -139,21 +155,27 @@ class TestEngine(private val extension: WattRampExtension) {
                 powerSamples.clear()
                 hrSamples.clear()
                 maxOneMinutePower.set(0)
+                powerSamplesSum.set(0)
+                hrSamplesSum.set(0)
                 synchronized(powerSamplesLock) {
                     lastMinutePowerSamples.clear()
                 }
                 currentHeartRate.set(0)
                 currentCadence.set(0)
                 currentPower.set(0)
+                wasRideRecording = false
+            }
 
-                // Connect to Karoo streams
+            // Connect to Karoo streams (needs to be on Main for callbacks)
+            withContext(Dispatchers.Main) {
                 connectToKarooStreams()
+            }
 
-                // Start update loop
+            // Start update loop and initial state update
+            withContext(Dispatchers.Main.immediate) {
                 startUpdateLoop()
-
-                // Initial state
                 updateState()
+                android.util.Log.i("TestEngine", "Test started, state: ${_state.value}")
             }
         }
         return true
@@ -215,8 +237,9 @@ class TestEngine(private val extension: WattRampExtension) {
 
                 val ftp = currentFtp.get()
                 val maxPower = maxOneMinutePower.get()
-                val avgPower = if (powerSamples.isNotEmpty()) {
-                    powerSamples.toList().average().toInt()
+                val sampleCount = powerSamples.size
+                val avgPower = if (sampleCount > 0) {
+                    (powerSamplesSum.get() / sampleCount).toInt()
                 } else 0
 
                 val baseResult = try {
@@ -337,6 +360,7 @@ class TestEngine(private val extension: WattRampExtension) {
                             if (hr > 0 && _state.value is TestState.Running &&
                                 hrSamples.size < MAX_POWER_SAMPLES) {
                                 hrSamples.add(hr)
+                                hrSamplesSum.addAndGet(hr.toLong())
                             }
                         }
                     }
@@ -435,6 +459,11 @@ class TestEngine(private val extension: WattRampExtension) {
     private fun onPowerUpdate(power: Int) {
         currentPower.set(power)
 
+        // Track when we last received valid power data
+        if (power > 0) {
+            lastPowerReceivedMs.set(System.currentTimeMillis())
+        }
+
         // Get protocol atomically to ensure consistency
         val protocol = currentProtocol ?: return
 
@@ -451,6 +480,7 @@ class TestEngine(private val extension: WattRampExtension) {
             // Add to power samples with size limit to prevent unbounded growth
             if (powerSamples.size < MAX_POWER_SAMPLES) {
                 powerSamples.add(power)
+                powerSamplesSum.addAndGet(power.toLong())
             }
 
             // Thread-safe update of rolling window
@@ -472,23 +502,33 @@ class TestEngine(private val extension: WattRampExtension) {
             }
         }
 
-        // Check for auto-end (Ramp test)
-        val ftp = currentFtp.get()
-        val targetPower = protocol.getTargetPower(elapsedMs, ftp) ?: 0
-        if (protocol.shouldEndTest(power, targetPower)) {
-            completeTest()
+        // Check for auto-end (Ramp test) - only during TESTING phase
+        // Don't check during WARMUP or COOLDOWN as power may be low or zero intentionally
+        val currentPhase = protocol.getCurrentPhase(elapsedMs)
+        if (currentPhase == TestPhase.TESTING || currentPhase == TestPhase.TESTING_2) {
+            val ftp = currentFtp.get()
+            val targetPower = protocol.getTargetPower(elapsedMs, ftp) ?: 0
+            if (protocol.shouldEndTest(power, targetPower)) {
+                completeTest()
+            }
         }
     }
 
     private fun onRideStateChange(rideState: RideState) {
         when (rideState) {
             is RideState.Paused -> pauseTest()
-            RideState.Recording -> resumeTest()
+            RideState.Recording -> {
+                wasRideRecording = true
+                resumeTest()
+            }
             RideState.Idle -> {
-                // Ride ended
-                val currentState = _state.value
-                if (currentState is TestState.Running || currentState is TestState.Paused) {
-                    stopTest(FailureReason.RIDE_ENDED)
+                // Only stop the test if a ride was actually recording and then ended
+                // Don't stop if no ride was ever started (user testing without recording)
+                if (wasRideRecording) {
+                    val currentState = _state.value
+                    if (currentState is TestState.Running || currentState is TestState.Paused) {
+                        stopTest(FailureReason.RIDE_ENDED)
+                    }
                 }
             }
         }
@@ -564,9 +604,10 @@ class TestEngine(private val extension: WattRampExtension) {
         val ftp = currentFtp.get()
         val targetPower = protocol.getTargetPower(elapsedMs, ftp)
 
-        // Calculate average power from thread-safe list
-        val avgPower = if (powerSamples.isNotEmpty()) {
-            powerSamples.toList().average().toInt()
+        // Calculate average power using running sum (avoids toList() allocation)
+        val sampleCount = powerSamples.size
+        val avgPower = if (sampleCount > 0) {
+            (powerSamplesSum.get() / sampleCount).toInt()
         } else 0
 
         val runningState = TestState.Running(
@@ -624,11 +665,64 @@ class TestEngine(private val extension: WattRampExtension) {
     fun getUserMaxHr(): Int = userMaxHr.get()
 
     /**
+     * Check if power sensor data was received recently.
+     * Returns true if we've received valid power data in the last 5 seconds.
+     */
+    fun isPowerSensorAvailable(): Boolean {
+        val lastReceived = lastPowerReceivedMs.get()
+        if (lastReceived == 0L) return false
+        return (System.currentTimeMillis() - lastReceived) < 5000
+    }
+
+    /**
+     * Start listening for power data temporarily (for sensor check before test).
+     * Call stopSensorCheck() to stop listening.
+     */
+    private val sensorCheckConsumerId = AtomicReference<String?>(null)
+
+    fun startSensorCheck() {
+        if (!extension.karooSystem.connected) return
+
+        // Don't start if already checking
+        if (sensorCheckConsumerId.get() != null) return
+
+        try {
+            sensorCheckConsumerId.set(extension.karooSystem.addConsumer(
+                OnStreamState.StartStreaming(DataType.Type.POWER)
+            ) { event: OnStreamState ->
+                when (val streamState = event.state) {
+                    is StreamState.Streaming -> {
+                        streamState.dataPoint.singleValue?.toInt()?.let { power ->
+                            if (power > 0) {
+                                lastPowerReceivedMs.set(System.currentTimeMillis())
+                            }
+                        }
+                    }
+                    else -> { /* Ignore */ }
+                }
+            })
+        } catch (e: Exception) {
+            android.util.Log.w("TestEngine", "Error starting sensor check: ${e.message}")
+        }
+    }
+
+    fun stopSensorCheck() {
+        sensorCheckConsumerId.getAndSet(null)?.let { id ->
+            try {
+                extension.karooSystem.removeConsumer(id)
+            } catch (e: Exception) {
+                android.util.Log.w("TestEngine", "Error stopping sensor check: ${e.message}")
+            }
+        }
+    }
+
+    /**
      * Clean up resources.
      */
     fun destroy() {
         // Cancel update job atomically
         updateJobRef.getAndSet(null)?.cancel()
+        stopSensorCheck()
         disconnectFromKarooStreams()
         scope.cancel()
     }

@@ -73,35 +73,35 @@ val OrangeColors = WattRampColors(
 )
 
 // =============================================================================
-// BLUE THEME - Blue accent, clean modern look
+// BLUE THEME - Electric blue with vibrant accents
 // =============================================================================
 
 val BlueColors = WattRampColors(
-    primary = Color(0xFF00A0E4),        // Blue
-    primaryDark = Color(0xFF0080B8),
-    primaryLight = Color(0xFF33B5EC),
-    onPrimary = Color(0xFFFFFFFF),
-    secondary = Color(0xFF00D4AA),      // Teal
-    accent = Color(0xFF00A0E4),
-    background = Color(0xFF0A0A0A),     // Near black
-    surface = Color(0xFF141414),
-    surfaceVariant = Color(0xFF1E1E1E),
-    surfaceElevated = Color(0xFF282828),
+    primary = Color(0xFF00B4FF),        // Electric blue
+    primaryDark = Color(0xFF0088CC),
+    primaryLight = Color(0xFF66D4FF),
+    onPrimary = Color(0xFF000000),      // Black text on bright blue
+    secondary = Color(0xFFFF00AA),      // Magenta accent
+    accent = Color(0xFF00FFCC),         // Cyan accent
+    background = Color(0xFF0A0A0F),     // Deep blue-black
+    surface = Color(0xFF12121A),        // Slight blue tint
+    surfaceVariant = Color(0xFF1A1A25),
+    surfaceElevated = Color(0xFF252533),
     onBackground = Color(0xFFFFFFFF),
     onSurface = Color(0xFFFFFFFF),
-    onSurfaceVariant = Color(0xFF999999),
-    success = Color(0xFF00D4AA),        // Teal success
-    warning = Color(0xFFFFB800),        // Amber
-    error = Color(0xFFFF4757),          // Coral red
-    inZone = Color(0xFF00D4AA),
-    outOfZone = Color(0xFFFF4757),
-    zone1 = Color(0xFF666666),
-    zone2 = Color(0xFF00A0E4),          // Blue
-    zone3 = Color(0xFF00D4AA),          // Teal
-    zone4 = Color(0xFFFFB800),          // Amber
-    zone5 = Color(0xFFFF6B35),          // Orange
-    zone6 = Color(0xFFFF4757),          // Red
-    zone7 = Color(0xFFAA66FF)           // Purple
+    onSurfaceVariant = Color(0xFF8888AA), // Blue-gray
+    success = Color(0xFF00FF88),        // Bright green
+    warning = Color(0xFFFFCC00),        // Golden yellow
+    error = Color(0xFFFF3366),          // Pink-red
+    inZone = Color(0xFF00FF88),
+    outOfZone = Color(0xFFFF3366),
+    zone1 = Color(0xFF6677AA),          // Blue-gray
+    zone2 = Color(0xFF00B4FF),          // Electric blue
+    zone3 = Color(0xFF00DDAA),          // Turquoise
+    zone4 = Color(0xFFFFCC00),          // Gold
+    zone5 = Color(0xFFFF6600),          // Orange
+    zone6 = Color(0xFFFF3366),          // Pink-red
+    zone7 = Color(0xFFCC44FF)           // Bright purple
 )
 
 // =============================================================================

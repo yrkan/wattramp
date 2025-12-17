@@ -136,6 +136,53 @@
     <string name="tutorial_tip2">Use o modo ERG no seu rolo para melhores resultados</string>
     <string name="tutorial_tip3">Pare quando não conseguir manter a potência alvo</string>
 
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">SESSÃO ENCONTRADA</string>
+    <string name="recovery_message">Foi encontrado um teste %1$s incompleto (%2$s decorrido). Deseja descartá-lo?</string>
+    <string name="recovery_discard">DESCARTAR</string>
+    <string name="recovery_keep">FECHAR</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">CHECKLIST PRÉ-TESTE</string>
+    <string name="checklist_dismiss">Ocultar checklist</string>
+    <string name="checklist_calibrate">Calibrar medidor de potência</string>
+    <string name="checklist_calibrate_desc">Zeragem para leituras precisas</string>
+    <string name="checklist_sensors">Sensores conectados</string>
+    <string name="checklist_sensors_desc">FC, Potência, Cadência emparelhados</string>
+    <string name="checklist_hydration">Verificar hidratação</string>
+    <string name="checklist_hydration_desc">Garrafa de água pronta</string>
+    <string name="checklist_ftp">Verificar configuração FTP</string>
+    <string name="checklist_ftp_desc">O FTP atual está correto</string>
+
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">GUIA</string>
+    <string name="settings_demo_mode">GUIA DO APP</string>
+    <string name="settings_demo_desc">Tour por todas as telas</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">TELA INICIAL</string>
+    <string name="guide_home_desc">Selecione seu protocolo de teste FTP. Toque em um cartão e pressione INICIAR.</string>
+    <string name="guide_settings_title">CONFIGURAÇÕES</string>
+    <string name="guide_settings_desc">Configure FTP, parâmetros de rampa, aquecimento/resfriamento e alertas.</string>
+    <string name="guide_history_title">HISTÓRICO</string>
+    <string name="guide_history_desc">Acompanhe seu progresso de FTP. Veja testes anteriores e estatísticas.</string>
+    <string name="guide_zones_title">ZONAS DE POTÊNCIA</string>
+    <string name="guide_zones_desc">Zonas de treino baseadas no FTP. 7 zonas de recuperação a neuromuscular.</string>
+    <string name="guide_running_title">TESTE EM ANDAMENTO</string>
+    <string name="guide_running_desc">Durante o teste: siga a potência alvo, monitore tempo e progresso.</string>
+    <string name="guide_result_title">RESULTADOS</string>
+    <string name="guide_result_desc">Após o teste: veja novo FTP, estatísticas, salve ou descarte.</string>
+    <string name="guide_skip">PULAR</string>
+    <string name="guide_next">PRÓXIMO</string>
+    <string name="guide_finish">CONCLUIR</string>
+    <string name="guide_tap_hint">Toque para continuar</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">SEM SENSOR</string>
+    <string name="sensor_warning_message">Medidor de potência não detectado. Continuar sem dados?</string>
+    <string name="sensor_warning_start">INICIAR</string>
+    <string name="sensor_warning_cancel">CANCELAR</string>
+
     <!-- General -->
     <string name="back">Voltar</string>
     <string name="edit">Editar</string>

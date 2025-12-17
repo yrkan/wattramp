@@ -48,11 +48,18 @@ Results include advanced metrics:
 
 ### Pre-Test Checklist
 
-Expandable reminder before starting:
+Dedicated checklist screen before each test:
 - Calibrate power meter
 - Sensors connected
 - Hydration ready
 - FTP setting verified
+
+### App Guide Tour
+
+Interactive walkthrough accessible from Settings → Guide:
+- Step-by-step tour of all screens
+- Explains test protocols, settings, and results
+- Perfect for first-time users
 
 ### Session Recovery
 
@@ -211,7 +218,13 @@ io.github.wattramp/
 │   └── TestSession.kt       # Session recovery data
 └── ui/
     ├── screens/             # Compose UI screens
-    └── components/          # Reusable UI (charts, checklist)
+    │   ├── HomeScreen.kt         # Protocol selection, FTP display
+    │   ├── ChecklistScreen.kt    # Pre-test checklist
+    │   ├── SensorWarningScreen.kt # Power meter warning
+    │   ├── RunningScreen.kt      # Active test display
+    │   ├── ResultScreen.kt       # Test results
+    │   └── ...
+    └── components/          # Reusable UI (charts, guide tour)
 ```
 
 ### Key Technical Details
@@ -260,6 +273,21 @@ WattRamp respects your privacy:
 - **Open Source**: Verify everything yourself
 
 ## Changelog
+
+### v1.5.0
+- **HomeScreen Redesign**: Compact Garmin Edge-style layout
+  - Hero FTP display (large centered value)
+  - Horizontal protocol selector (RAMP / 20-MIN / 2×8-MIN)
+  - Clean visual hierarchy
+- **Navigation Improvements**: Fixed screen flickering during transitions
+  - Unified navigation using popBackStack
+  - Separated LaunchedEffects for different state changes
+  - Proper state cleanup on test stop
+- **Pre-Test Checklist**: Dedicated full-screen checklist before test
+- **Sensor Warning Screen**: Clear warning when power meter not detected
+- **App Guide Tour**: Interactive walkthrough of all screens (Settings → Guide)
+- **Translation Updates**: Complete synchronization of all 10 languages
+- **UI Polish**: Better spacing, typography, and touch targets
 
 ### v1.4.0
 - **Extended Analytics**: NP, Variability Index, Efficiency Factor in results

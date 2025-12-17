@@ -136,6 +136,53 @@
     <string name="tutorial_tip2">使用骑行台的ERG模式获得最佳效果</string>
     <string name="tutorial_tip3">无法维持目标功率时停止</string>
 
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">发现会话</string>
+    <string name="recovery_message">发现未完成的%1$s测试（已用时%2$s）。是否放弃？</string>
+    <string name="recovery_discard">放弃</string>
+    <string name="recovery_keep">关闭</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">测试前检查清单</string>
+    <string name="checklist_dismiss">隐藏检查清单</string>
+    <string name="checklist_calibrate">校准功率计</string>
+    <string name="checklist_calibrate_desc">归零以获得准确读数</string>
+    <string name="checklist_sensors">传感器已连接</string>
+    <string name="checklist_sensors_desc">心率、功率、踏频已配对</string>
+    <string name="checklist_hydration">检查补水</string>
+    <string name="checklist_hydration_desc">水壶已准备好</string>
+    <string name="checklist_ftp">验证FTP设置</string>
+    <string name="checklist_ftp_desc">当前FTP正确</string>
+
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">指南</string>
+    <string name="settings_demo_mode">应用指南</string>
+    <string name="settings_demo_desc">浏览所有界面</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">主界面</string>
+    <string name="guide_home_desc">选择FTP测试协议。点击卡片后按开始。</string>
+    <string name="guide_settings_title">设置</string>
+    <string name="guide_settings_desc">配置FTP、递增参数、热身/放松和提醒。</string>
+    <string name="guide_history_title">历史记录</string>
+    <string name="guide_history_desc">追踪FTP进展。查看历史测试和统计数据。</string>
+    <string name="guide_zones_title">功率区间</string>
+    <string name="guide_zones_desc">基于FTP的训练区间。从恢复到神经肌肉共7个区间。</string>
+    <string name="guide_running_title">测试进行中</string>
+    <string name="guide_running_desc">测试时：跟随目标功率，监控时间和进度。</string>
+    <string name="guide_result_title">结果</string>
+    <string name="guide_result_desc">测试后：查看新FTP、统计数据，保存或放弃。</string>
+    <string name="guide_skip">跳过</string>
+    <string name="guide_next">下一步</string>
+    <string name="guide_finish">完成</string>
+    <string name="guide_tap_hint">点击继续</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">无传感器</string>
+    <string name="sensor_warning_message">未检测到功率计。继续无数据？</string>
+    <string name="sensor_warning_start">开始</string>
+    <string name="sensor_warning_cancel">取消</string>
+
     <!-- General -->
     <string name="back">返回</string>
     <string name="edit">编辑</string>

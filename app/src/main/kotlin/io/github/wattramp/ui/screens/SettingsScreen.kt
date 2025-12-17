@@ -50,6 +50,7 @@ fun SettingsScreen(
     onUpdateLanguage: (PreferencesRepository.AppLanguage) -> Unit,
     onUpdateTheme: (PreferencesRepository.AppTheme) -> Unit,
     onClearHistory: () -> Unit,
+    onStartDemo: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -208,6 +209,15 @@ fun SettingsScreen(
                 isCompact = isCompact
             )
 
+            // Demo Section
+            SectionHeader(stringResource(R.string.settings_demo))
+
+            DemoRow(
+                onStartDemo = onStartDemo,
+                borderColor = borderColor,
+                isCompact = isCompact
+            )
+
             // About Section
             SectionHeader(stringResource(R.string.settings_about))
 
@@ -254,13 +264,13 @@ private fun FtpRow(
             .fillMaxWidth()
             .garminBorder(borderColor)
             .background(Background)
-            .height(if (isCompact) 52.dp else 60.dp),
+            .height(if (isCompact) 48.dp else 56.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Color indicator
         Box(
             modifier = Modifier
-                .width(4.dp)
+                .width(3.dp)
                 .fillMaxHeight()
                 .background(Primary)
         )
@@ -268,13 +278,13 @@ private fun FtpRow(
         Row(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp),
+                .padding(start = 6.dp, end = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = stringResource(R.string.settings_current_ftp),
-                fontSize = 12.sp,
+                fontSize = if (isCompact) 11.sp else 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurface
             )
@@ -285,12 +295,12 @@ private fun FtpRow(
                         value = textValue,
                         onValueChange = { textValue = it.filter { c -> c.isDigit() }.take(3) },
                         modifier = Modifier
-                            .width(64.dp)
-                            .height(40.dp),
+                            .width(if (isCompact) 56.dp else 64.dp)
+                            .height(if (isCompact) 36.dp else 40.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         textStyle = LocalTextStyle.current.copy(
-                            fontSize = 18.sp,
+                            fontSize = if (isCompact) 16.sp else 18.sp,
                             fontWeight = FontWeight.Black,
                             color = Primary,
                             textAlign = TextAlign.Center
@@ -308,9 +318,9 @@ private fun FtpRow(
                             }
                             isEditing = false
                         },
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(if (isCompact) 32.dp else 36.dp)
                     ) {
-                        Icon(Icons.Default.Check, null, tint = Success)
+                        Icon(Icons.Default.Check, null, tint = Success, modifier = Modifier.size(18.dp))
                     }
                 }
             } else {
@@ -319,18 +329,24 @@ private fun FtpRow(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "${value}W",
-                        fontSize = 24.sp,
+                        text = "$value",
+                        fontSize = if (isCompact) 20.sp else 24.sp,
                         fontWeight = FontWeight.Black,
                         color = Primary
+                    )
+                    Text(
+                        text = "W",
+                        fontSize = if (isCompact) 12.sp else 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Primary.copy(alpha = 0.7f)
                     )
                     Icon(
                         Icons.Default.Edit,
                         contentDescription = null,
                         tint = OnSurfaceVariant,
                         modifier = Modifier
-                            .padding(start = 6.dp)
-                            .size(16.dp)
+                            .padding(start = 4.dp)
+                            .size(14.dp)
                     )
                 }
             }
@@ -354,13 +370,13 @@ private fun CompactValueRow(
             .fillMaxWidth()
             .garminBorder(borderColor)
             .background(Background)
-            .height(if (isCompact) 44.dp else 50.dp),
+            .height(if (isCompact) 42.dp else 48.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Color indicator
         Box(
             modifier = Modifier
-                .width(4.dp)
+                .width(3.dp)
                 .fillMaxHeight()
                 .background(color.copy(alpha = 0.6f))
         )
@@ -368,21 +384,21 @@ private fun CompactValueRow(
         // Label
         Text(
             text = label,
-            fontSize = 12.sp,
+            fontSize = if (isCompact) 11.sp else 12.sp,
             fontWeight = FontWeight.Bold,
             color = OnSurface,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp),
+                .padding(start = 6.dp, end = 4.dp),
             maxLines = 1
         )
 
-        // Controls
+        // Controls - more compact
         Row(verticalAlignment = Alignment.CenterVertically) {
             // Decrease
             Box(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(if (isCompact) 28.dp else 32.dp)
                     .background(SurfaceVariant)
                     .clickable(onClick = onDecrease),
                 contentAlignment = Alignment.Center
@@ -391,24 +407,34 @@ private fun CompactValueRow(
                     Icons.Default.Remove,
                     contentDescription = null,
                     tint = OnSurface,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
-            // Value
-            Text(
-                text = "$value$unit",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Black,
-                color = color,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.width(56.dp)
-            )
+            // Value - separate value and unit for better fit
+            Row(
+                modifier = Modifier.width(if (isCompact) 52.dp else 58.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "$value",
+                    fontSize = if (isCompact) 14.sp else 16.sp,
+                    fontWeight = FontWeight.Black,
+                    color = color
+                )
+                Text(
+                    text = unit,
+                    fontSize = if (isCompact) 10.sp else 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = color.copy(alpha = 0.7f)
+                )
+            }
 
             // Increase
             Box(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(if (isCompact) 28.dp else 32.dp)
                     .background(SurfaceVariant)
                     .clickable(onClick = onIncrease),
                 contentAlignment = Alignment.Center
@@ -417,7 +443,7 @@ private fun CompactValueRow(
                     Icons.Default.Add,
                     contentDescription = null,
                     tint = OnSurface,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
         }
@@ -440,44 +466,45 @@ private fun ToggleRow(
             .garminBorder(borderColor)
             .background(Background)
             .clickable { onToggle(!checked) }
-            .height(if (isCompact) 40.dp else 46.dp),
+            .height(if (isCompact) 38.dp else 44.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Color indicator
         Box(
             modifier = Modifier
-                .width(4.dp)
+                .width(3.dp)
                 .fillMaxHeight()
                 .background(if (checked) Success else SurfaceVariant)
         )
 
         Text(
             text = label,
-            fontSize = 12.sp,
+            fontSize = if (isCompact) 11.sp else 12.sp,
             fontWeight = FontWeight.Bold,
             color = OnSurface,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp)
+                .padding(start = 6.dp, end = 4.dp),
+            maxLines = 1
         )
 
         // Toggle indicator
         Box(
             modifier = Modifier
-                .width(40.dp)
-                .height(22.dp)
+                .width(if (isCompact) 36.dp else 40.dp)
+                .height(if (isCompact) 20.dp else 22.dp)
                 .background(if (checked) Success else SurfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = stringResource(if (checked) R.string.settings_on else R.string.settings_off),
-                fontSize = 10.sp,
+                fontSize = if (isCompact) 9.sp else 10.sp,
                 fontWeight = FontWeight.Black,
                 color = if (checked) Color.Black else OnSurfaceVariant
             )
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(6.dp))
     }
 }
 
@@ -496,25 +523,26 @@ private fun LanguageRow(
             .garminBorder(borderColor)
             .background(Background)
             .clickable { expanded = true }
-            .height(if (isCompact) 44.dp else 50.dp),
+            .height(if (isCompact) 40.dp else 46.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Color indicator
         Box(
             modifier = Modifier
-                .width(4.dp)
+                .width(3.dp)
                 .fillMaxHeight()
                 .background(Primary.copy(alpha = 0.6f))
         )
 
         Text(
             text = stringResource(R.string.settings_app_language),
-            fontSize = 12.sp,
+            fontSize = if (isCompact) 11.sp else 12.sp,
             fontWeight = FontWeight.Bold,
             color = OnSurface,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp)
+                .padding(start = 6.dp, end = 4.dp),
+            maxLines = 1
         )
 
         Box {
@@ -522,11 +550,11 @@ private fun LanguageRow(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .background(SurfaceVariant)
-                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                    .padding(horizontal = 6.dp, vertical = 4.dp)
             ) {
                 Text(
                     text = currentLanguage.displayName,
-                    fontSize = 12.sp,
+                    fontSize = if (isCompact) 11.sp else 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = Primary
                 )
@@ -534,7 +562,7 @@ private fun LanguageRow(
                     Icons.Default.ArrowDropDown,
                     contentDescription = null,
                     tint = Primary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
@@ -552,13 +580,13 @@ private fun LanguageRow(
                                         Icons.Default.Check,
                                         contentDescription = null,
                                         tint = Primary,
-                                        modifier = Modifier.size(16.dp)
+                                        modifier = Modifier.size(14.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
                                 }
                                 Text(
                                     text = language.displayName,
-                                    fontSize = 13.sp,
+                                    fontSize = 12.sp,
                                     fontWeight = if (language == currentLanguage) FontWeight.Bold else FontWeight.Normal,
                                     color = if (language == currentLanguage) Primary else OnSurface
                                 )
@@ -573,7 +601,7 @@ private fun LanguageRow(
             }
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(6.dp))
     }
 }
 
@@ -589,42 +617,43 @@ private fun ThemeRow(
             .fillMaxWidth()
             .garminBorder(borderColor)
             .background(Background)
-            .height(if (isCompact) 44.dp else 50.dp),
+            .height(if (isCompact) 40.dp else 46.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Color indicator
         Box(
             modifier = Modifier
-                .width(4.dp)
+                .width(3.dp)
                 .fillMaxHeight()
                 .background(Primary)
         )
 
         Text(
             text = stringResource(R.string.settings_color_scheme),
-            fontSize = 12.sp,
+            fontSize = if (isCompact) 11.sp else 12.sp,
             fontWeight = FontWeight.Bold,
             color = OnSurface,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp)
+                .padding(start = 6.dp, end = 4.dp),
+            maxLines = 1
         )
 
         // Theme toggle buttons
         Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.padding(end = 8.dp)
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            modifier = Modifier.padding(end = 6.dp)
         ) {
             PreferencesRepository.AppTheme.entries.forEach { theme ->
                 val isSelected = theme == currentTheme
                 Box(
                     modifier = Modifier
-                        .height(28.dp)
+                        .height(if (isCompact) 24.dp else 28.dp)
                         .background(
                             if (isSelected) Primary else SurfaceVariant
                         )
                         .clickable { onSelectTheme(theme) }
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = if (isCompact) 8.dp else 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -632,7 +661,7 @@ private fun ThemeRow(
                             PreferencesRepository.AppTheme.ORANGE -> stringResource(R.string.theme_orange)
                             PreferencesRepository.AppTheme.BLUE -> stringResource(R.string.theme_blue)
                         },
-                        fontSize = 11.sp,
+                        fontSize = if (isCompact) 10.sp else 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = if (isSelected) {
                             if (theme == PreferencesRepository.AppTheme.BLUE) Color.White else Color.Black
@@ -663,24 +692,25 @@ private fun ClearHistoryRow(
             .garminBorder(borderColor)
             .background(Background)
             .clickable { showConfirmDialog = true }
-            .height(if (isCompact) 40.dp else 46.dp),
+            .height(if (isCompact) 36.dp else 42.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .width(4.dp)
+                .width(3.dp)
                 .fillMaxHeight()
                 .background(errorColor)
         )
 
         Text(
             text = stringResource(R.string.settings_clear_history),
-            fontSize = 12.sp,
+            fontSize = if (isCompact) 11.sp else 12.sp,
             fontWeight = FontWeight.Bold,
             color = errorColor,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp)
+                .padding(start = 6.dp, end = 4.dp),
+            maxLines = 1
         )
 
         Icon(
@@ -688,8 +718,8 @@ private fun ClearHistoryRow(
             contentDescription = null,
             tint = errorColor,
             modifier = Modifier
-                .padding(end = 8.dp)
-                .size(18.dp)
+                .padding(end = 6.dp)
+                .size(16.dp)
         )
     }
 
@@ -733,11 +763,64 @@ private fun ClearHistoryRow(
 }
 
 @Composable
+private fun DemoRow(
+    onStartDemo: () -> Unit,
+    borderColor: Color,
+    isCompact: Boolean
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .garminBorder(borderColor)
+            .background(Background)
+            .clickable(onClick = onStartDemo)
+            .height(if (isCompact) 40.dp else 46.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .fillMaxHeight()
+                .background(Primary)
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 6.dp, end = 4.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.settings_demo_mode),
+                fontSize = if (isCompact) 11.sp else 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = OnSurface
+            )
+            Text(
+                text = stringResource(R.string.settings_demo_desc),
+                fontSize = if (isCompact) 8.sp else 9.sp,
+                color = OnSurfaceVariant,
+                maxLines = 1
+            )
+        }
+
+        Icon(
+            Icons.Default.PlayArrow,
+            contentDescription = null,
+            tint = Primary,
+            modifier = Modifier
+                .padding(end = 6.dp)
+                .size(18.dp)
+        )
+    }
+}
+
+@Composable
 private fun AboutRow(
     borderColor: Color,
     isCompact: Boolean
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
+    val rowHeight = if (isCompact) 36.dp else 42.dp
 
     Column {
         // Version
@@ -746,30 +829,30 @@ private fun AboutRow(
                 .fillMaxWidth()
                 .garminBorder(borderColor)
                 .background(Background)
-                .height(if (isCompact) 40.dp else 46.dp),
+                .height(rowHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
+                    .width(3.dp)
                     .fillMaxHeight()
                     .background(OnSurfaceVariant)
             )
             Text(
                 text = stringResource(R.string.settings_version),
-                fontSize = 12.sp,
+                fontSize = if (isCompact) 11.sp else 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurface,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 8.dp)
+                    .padding(start = 6.dp, end = 4.dp)
             )
             Text(
                 text = BuildConfig.VERSION_NAME,
-                fontSize = 12.sp,
+                fontSize = if (isCompact) 11.sp else 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurfaceVariant,
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier.padding(end = 6.dp)
             )
         }
 
@@ -783,31 +866,31 @@ private fun AboutRow(
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/yrkan/wattramp"))
                     context.startActivity(intent)
                 }
-                .height(if (isCompact) 40.dp else 46.dp),
+                .height(rowHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
+                    .width(3.dp)
                     .fillMaxHeight()
                     .background(Primary)
             )
             Text(
                 text = stringResource(R.string.settings_github),
-                fontSize = 12.sp,
+                fontSize = if (isCompact) 11.sp else 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurface,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 8.dp)
+                    .padding(start = 6.dp, end = 4.dp)
             )
             Icon(
                 Icons.Default.OpenInNew,
                 contentDescription = null,
                 tint = Primary,
                 modifier = Modifier
-                    .padding(end = 8.dp)
-                    .size(16.dp)
+                    .padding(end = 6.dp)
+                    .size(14.dp)
             )
         }
 
@@ -821,31 +904,31 @@ private fun AboutRow(
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://wattramp.com/privacy"))
                     context.startActivity(intent)
                 }
-                .height(if (isCompact) 40.dp else 46.dp),
+                .height(rowHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
+                    .width(3.dp)
                     .fillMaxHeight()
                     .background(Zone2)
             )
             Text(
                 text = stringResource(R.string.settings_privacy),
-                fontSize = 12.sp,
+                fontSize = if (isCompact) 11.sp else 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurface,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 8.dp)
+                    .padding(start = 6.dp, end = 4.dp)
             )
             Icon(
                 Icons.Default.OpenInNew,
                 contentDescription = null,
                 tint = Zone2,
                 modifier = Modifier
-                    .padding(end = 8.dp)
-                    .size(16.dp)
+                    .padding(end = 6.dp)
+                    .size(14.dp)
             )
         }
 
@@ -861,30 +944,30 @@ private fun AboutRow(
                     }
                     context.startActivity(intent)
                 }
-                .height(if (isCompact) 40.dp else 46.dp),
+                .height(rowHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
+                    .width(3.dp)
                     .fillMaxHeight()
                     .background(Zone3)
             )
             Text(
                 text = stringResource(R.string.settings_contact),
-                fontSize = 12.sp,
+                fontSize = if (isCompact) 11.sp else 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = OnSurface,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 8.dp)
+                    .padding(start = 6.dp, end = 4.dp)
             )
             Text(
                 text = stringResource(R.string.settings_contact_email),
-                fontSize = 11.sp,
+                fontSize = if (isCompact) 10.sp else 11.sp,
                 fontWeight = FontWeight.Medium,
                 color = Zone3,
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier.padding(end = 6.dp)
             )
         }
     }

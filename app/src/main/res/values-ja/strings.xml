@@ -136,6 +136,53 @@
     <string name="tutorial_tip2">最良の結果のためにERGモードを使用</string>
     <string name="tutorial_tip3">目標パワーを維持できなくなったら停止</string>
 
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">セッション発見</string>
+    <string name="recovery_message">未完了の%1$sテストが見つかりました（%2$s経過）。破棄しますか？</string>
+    <string name="recovery_discard">破棄</string>
+    <string name="recovery_keep">閉じる</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">テスト前チェックリスト</string>
+    <string name="checklist_dismiss">チェックリストを非表示</string>
+    <string name="checklist_calibrate">パワーメーターを校正</string>
+    <string name="checklist_calibrate_desc">正確な測定のためのゼロ調整</string>
+    <string name="checklist_sensors">センサー接続済み</string>
+    <string name="checklist_sensors_desc">心拍、パワー、ケイデンスがペアリング済み</string>
+    <string name="checklist_hydration">水分補給の確認</string>
+    <string name="checklist_hydration_desc">ボトル準備完了</string>
+    <string name="checklist_ftp">FTP設定の確認</string>
+    <string name="checklist_ftp_desc">現在のFTPが正確</string>
+
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">ガイド</string>
+    <string name="settings_demo_mode">アプリガイド</string>
+    <string name="settings_demo_desc">全画面をツアー</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">ホーム画面</string>
+    <string name="guide_home_desc">FTPテストプロトコルを選択。カードをタップして選び、スタートを押す。</string>
+    <string name="guide_settings_title">設定</string>
+    <string name="guide_settings_desc">FTP、ランプテスト、ウォームアップ/クールダウン、アラートを設定。</string>
+    <string name="guide_history_title">履歴</string>
+    <string name="guide_history_desc">FTPの推移を追跡。過去のテストと統計を表示。</string>
+    <string name="guide_zones_title">パワーゾーン</string>
+    <string name="guide_zones_desc">現在のFTPに基づくトレーニングゾーン。リカバリーから神経筋まで7ゾーン。</string>
+    <string name="guide_running_title">テスト中</string>
+    <string name="guide_running_desc">テスト中：目標パワーに従い、残り時間を確認し、進捗を追跡。</string>
+    <string name="guide_result_title">結果</string>
+    <string name="guide_result_desc">テスト後：新しいFTP、統計を確認し、保存または破棄を選択。</string>
+    <string name="guide_skip">スキップ</string>
+    <string name="guide_next">次へ</string>
+    <string name="guide_finish">完了</string>
+    <string name="guide_tap_hint">タップして続行</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">センサーなし</string>
+    <string name="sensor_warning_message">パワーメーター未検出。データなしで続行？</string>
+    <string name="sensor_warning_start">開始</string>
+    <string name="sensor_warning_cancel">戻る</string>
+
     <!-- General -->
     <string name="back">戻る</string>
     <string name="edit">編集</string>

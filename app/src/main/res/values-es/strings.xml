@@ -136,6 +136,53 @@
     <string name="tutorial_tip2">Usa el modo ERG en tu rodillo para mejores resultados</string>
     <string name="tutorial_tip3">Para cuando no puedas mantener la potencia objetivo</string>
 
+    <!-- Recovery Dialog -->
+    <string name="recovery_title">SESIÓN ENCONTRADA</string>
+    <string name="recovery_message">Se encontró un test %1$s incompleto (%2$s transcurrido). ¿Deseas descartarlo?</string>
+    <string name="recovery_discard">DESCARTAR</string>
+    <string name="recovery_keep">CERRAR</string>
+
+    <!-- Pre-test Checklist -->
+    <string name="checklist_title">LISTA PREVIA AL TEST</string>
+    <string name="checklist_dismiss">Ocultar lista</string>
+    <string name="checklist_calibrate">Calibrar medidor de potencia</string>
+    <string name="checklist_calibrate_desc">Puesta a cero para lecturas precisas</string>
+    <string name="checklist_sensors">Sensores conectados</string>
+    <string name="checklist_sensors_desc">FC, Potencia, Cadencia emparejados</string>
+    <string name="checklist_hydration">Verificar hidratación</string>
+    <string name="checklist_hydration_desc">Botella de agua lista</string>
+    <string name="checklist_ftp">Verificar configuración FTP</string>
+    <string name="checklist_ftp_desc">El FTP actual es correcto</string>
+
+    <!-- Guide Tour Section -->
+    <string name="settings_demo">GUÍA</string>
+    <string name="settings_demo_mode">GUÍA DE APP</string>
+    <string name="settings_demo_desc">Recorrer todas las pantallas</string>
+
+    <!-- Guide Tour Steps -->
+    <string name="guide_home_title">PANTALLA PRINCIPAL</string>
+    <string name="guide_home_desc">Selecciona tu protocolo de test FTP. Toca una tarjeta y pulsa INICIAR.</string>
+    <string name="guide_settings_title">AJUSTES</string>
+    <string name="guide_settings_desc">Configura FTP, parámetros de rampa, calentamiento/enfriamiento y alertas.</string>
+    <string name="guide_history_title">HISTORIAL</string>
+    <string name="guide_history_desc">Sigue tu progreso de FTP. Consulta tests anteriores y estadísticas.</string>
+    <string name="guide_zones_title">ZONAS DE POTENCIA</string>
+    <string name="guide_zones_desc">Zonas de entrenamiento según tu FTP. 7 zonas desde recuperación hasta neuromuscular.</string>
+    <string name="guide_running_title">TEST EN CURSO</string>
+    <string name="guide_running_desc">Durante el test: sigue la potencia objetivo, controla el tiempo y el progreso.</string>
+    <string name="guide_result_title">RESULTADOS</string>
+    <string name="guide_result_desc">Después del test: revisa tu nuevo FTP, estadísticas, y guarda o descarta.</string>
+    <string name="guide_skip">SALTAR</string>
+    <string name="guide_next">SIGUIENTE</string>
+    <string name="guide_finish">LISTO</string>
+    <string name="guide_tap_hint">Toca para continuar</string>
+
+    <!-- Power Sensor Warning -->
+    <string name="sensor_warning_title">SIN SENSOR</string>
+    <string name="sensor_warning_message">Potenciómetro no detectado. ¿Continuar sin datos?</string>
+    <string name="sensor_warning_start">INICIAR</string>
+    <string name="sensor_warning_cancel">CANCELAR</string>
+
     <!-- General -->
     <string name="back">Atrás</string>
     <string name="edit">Editar</string>
