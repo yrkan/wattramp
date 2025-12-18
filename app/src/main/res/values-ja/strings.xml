@@ -65,6 +65,8 @@
     <string name="settings_power">パワー</string>
     <string name="settings_current_ftp">現在のFTP</string>
     <string name="settings_ftp_desc">機能的閾値パワー</string>
+    <string name="settings_weight">体重</string>
+    <string name="settings_weight_desc">W/kg計算用</string>
     <string name="settings_ramp_test">ランプテスト</string>
     <string name="settings_start_power">開始パワー</string>
     <string name="settings_start_power_desc">ランプ開始パワー</string>
@@ -119,22 +121,82 @@
     <string name="unit_min">分</string>
     <string name="unit_minutes">%d分</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">チュートリアル</string>
-    <string name="tutorial_title">使い方</string>
-    <string name="tutorial_how_to_use">はじめに</string>
-    <string name="tutorial_step1">設定で現在のFTPを設定</string>
-    <string name="tutorial_step2">ホーム画面でテストプロトコルを選択</string>
-    <string name="tutorial_step3">スタートを押してターゲットに従う</string>
-    <string name="tutorial_step4">結果を保存してFTPを更新</string>
-    <string name="tutorial_tests">テストプロトコル</string>
-    <string name="tutorial_ramp_desc">約20分の短時間テスト。限界まで毎分パワーが増加。</string>
-    <string name="tutorial_20min_desc">約60分の定番テスト。ウォームアップ後20分間の全力走。</string>
-    <string name="tutorial_8min_desc">8分インターバル2本、合計約50分。ペース配分の練習に最適。</string>
-    <string name="tutorial_tips">ヒント</string>
-    <string name="tutorial_tip1">テスト前にしっかりウォームアップ</string>
-    <string name="tutorial_tip2">最良の結果のためにERGモードを使用</string>
-    <string name="tutorial_tip3">目標パワーを維持できなくなったら停止</string>
+    <string name="tutorial_title">チュートリアル</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">FTPとは？</string>
+    <string name="tutorial_ftp_desc">FTP（機能的閾値パワー）は約1時間維持できる最大パワーです。サイクリングの体力測定とトレーニングゾーン設定の基準です。</string>
+    <string name="tutorial_ftp_why">なぜFTPを測定？</string>
+    <string name="tutorial_ftp_reason1">正確なトレーニングゾーンの設定</string>
+    <string name="tutorial_ftp_reason2">体力の進歩を追跡</string>
+    <string name="tutorial_ftp_reason3">レースでのペース配分</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">ランプテスト</string>
+    <string name="tutorial_ramp_subtitle">短時間で効率的</string>
+    <string name="tutorial_ramp_duration">約20分</string>
+    <string name="tutorial_ramp_formula">FTP = 最大 × 0.75</string>
+    <string name="tutorial_ramp_desc">パワーが毎分20W増加し限界まで継続。FTPは最大1分パワーから計算。</string>
+    <string name="tutorial_ramp_best">最適：素早い評価、時間制限あり、定期テスト</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">20分テスト</string>
+    <string name="tutorial_20min_subtitle">ゴールドスタンダード</string>
+    <string name="tutorial_20min_duration">約55分</string>
+    <string name="tutorial_20min_formula">FTP = 平均 × 0.95</string>
+    <string name="tutorial_20min_desc">ウォームアップ後、20分間最大持続努力で走行。FTP = 平均パワーの95%。</string>
+    <string name="tutorial_20min_best">最適：正確な結果、経験豊富なサイクリスト</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">2×8分テスト</string>
+    <string name="tutorial_8min_subtitle">ペース練習</string>
+    <string name="tutorial_8min_duration">約45分</string>
+    <string name="tutorial_8min_formula">FTP = 平均 × 0.90</string>
+    <string name="tutorial_8min_desc">8分間の最大努力2本、間に回復。両インターバルの平均を使用。</string>
+    <string name="tutorial_8min_best">最適：ペース練習、初心者</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">パワーゾーン</string>
+    <string name="tutorial_zones_desc">FTPは7つのトレーニングゾーンを定義：</string>
+    <string name="tutorial_zone1_desc">回復 • 軽いペダリング</string>
+    <string name="tutorial_zone2_desc">持久力 • 長距離ベース</string>
+    <string name="tutorial_zone3_desc">テンポ • 中程度の強度</string>
+    <string name="tutorial_zone4_desc">閾値 • FTPワーク</string>
+    <string name="tutorial_zone5_desc">VO2max • 高強度インターバル</string>
+    <string name="tutorial_zone6_desc">無酸素 • 短時間努力</string>
+    <string name="tutorial_zone7_desc">神経筋 • スプリント</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">テスト中</string>
+    <string name="tutorial_during_desc">テスト画面の理解：</string>
+    <string name="tutorial_during_power">現在パワー - リアルタイム出力</string>
+    <string name="tutorial_during_target">目標パワー - 目指すべき値</string>
+    <string name="tutorial_during_deviation">偏差 - 目標からの距離（+/-）</string>
+    <string name="tutorial_during_time">時間 - 現フェーズの残り</string>
+    <string name="tutorial_during_hr">心拍数 - ゾーン表示付き</string>
+    <string name="tutorial_during_cadence">ケイデンス - ペダル回転数（rpm）</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">結果の理解</string>
+    <string name="tutorial_results_desc">テスト完了後に表示：</string>
+    <string name="tutorial_results_ftp">新FTP - 計算された閾値パワー</string>
+    <string name="tutorial_results_wkg">W/kg - パワー重量比</string>
+    <string name="tutorial_results_np">NP - 正規化パワー</string>
+    <string name="tutorial_results_vi">VI - 変動指数</string>
+    <string name="tutorial_results_ef">EF - 効率係数</string>
+    <string name="tutorial_results_save">保存を押してFTPとゾーンを更新</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">成功のコツ</string>
+    <string name="tutorial_tip1">テスト前にパワーメーターを校正</string>
+    <string name="tutorial_tip2">10〜15分のウォームアップ</string>
+    <string name="tutorial_tip3">水分補給を忘れずに</string>
+    <string name="tutorial_tip4">スマートトレーナーでERGモード使用</string>
+    <string name="tutorial_tip5">休養後にテスト、ハードトレーニング後は避ける</string>
+    <string name="tutorial_tip6">ランプ：限界まで継続</string>
+    <string name="tutorial_tip7">4〜6週間ごとに再テスト</string>
 
     <!-- Recovery Dialog -->
     <string name="recovery_title">セッション発見</string>

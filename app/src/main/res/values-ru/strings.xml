@@ -73,6 +73,8 @@
     <string name="settings_power">МОЩНОСТЬ</string>
     <string name="settings_current_ftp">ТЕКУЩИЙ FTP</string>
     <string name="settings_ftp_desc">Функциональная пороговая мощность</string>
+    <string name="settings_weight">ВЕС</string>
+    <string name="settings_weight_desc">Вес тела для Вт/кг</string>
     <string name="settings_ramp_test">ТЕСТ РАМПА</string>
     <string name="settings_start_power">СТАРТОВАЯ МОЩНОСТЬ</string>
     <string name="settings_start_power_desc">Начальная мощность рампы</string>
@@ -136,22 +138,82 @@
     <string name="unit_min">мин</string>
     <string name="unit_minutes">%dм</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">Обучение</string>
-    <string name="tutorial_title">КАК ИСПОЛЬЗОВАТЬ</string>
-    <string name="tutorial_how_to_use">НАЧАЛО РАБОТЫ</string>
-    <string name="tutorial_step1">Установите текущий FTP в Настройках</string>
-    <string name="tutorial_step2">Выберите протокол теста на главном экране</string>
-    <string name="tutorial_step3">Нажмите СТАРТ и следуйте целям</string>
-    <string name="tutorial_step4">Сохраните результат для обновления FTP</string>
-    <string name="tutorial_tests">ПРОТОКОЛЫ ТЕСТОВ</string>
-    <string name="tutorial_ramp_desc">Быстрый тест ~20мин. Мощность растёт каждую минуту до отказа.</string>
-    <string name="tutorial_20min_desc">Классический тест ~60мин. 20-минутное максимальное усилие после разминки.</string>
-    <string name="tutorial_8min_desc">Два 8-минутных интервала ~50мин. Хорош для практики пейсинга.</string>
-    <string name="tutorial_tips">СОВЕТЫ</string>
-    <string name="tutorial_tip1">Хорошо разомнитесь перед тестом</string>
-    <string name="tutorial_tip2">Используйте режим ERG на тренажёре</string>
-    <string name="tutorial_tip3">Остановитесь, когда не можете держать целевую мощность</string>
+    <string name="tutorial_title">ОБУЧЕНИЕ</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">ЧТО ТАКОЕ FTP?</string>
+    <string name="tutorial_ftp_desc">FTP (Функциональная Пороговая Мощность) — максимальная мощность, которую вы можете поддерживать около часа. Это золотой стандарт измерения велосипедной формы и настройки тренировочных зон.</string>
+    <string name="tutorial_ftp_why">Зачем тестировать FTP?</string>
+    <string name="tutorial_ftp_reason1">Точные тренировочные зоны</string>
+    <string name="tutorial_ftp_reason2">Отслеживание прогресса формы</string>
+    <string name="tutorial_ftp_reason3">Правильный пейсинг на гонках</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">ТЕСТ РАМПА</string>
+    <string name="tutorial_ramp_subtitle">Быстрый и эффективный</string>
+    <string name="tutorial_ramp_duration">~20 минут</string>
+    <string name="tutorial_ramp_formula">FTP = МАКС × 0.75</string>
+    <string name="tutorial_ramp_desc">Мощность увеличивается на 20Вт каждую минуту до отказа. FTP рассчитывается по максимальной 1-минутной мощности.</string>
+    <string name="tutorial_ramp_best">Лучше для: быстрой оценки, ограниченного времени, регулярного тестирования</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">20-МИНУТНЫЙ ТЕСТ</string>
+    <string name="tutorial_20min_subtitle">Золотой стандарт</string>
+    <string name="tutorial_20min_duration">~55 минут</string>
+    <string name="tutorial_20min_formula">FTP = СР × 0.95</string>
+    <string name="tutorial_20min_desc">После разминки езда 20 минут на максимальном устойчивом усилии. FTP = 95% средней мощности.</string>
+    <string name="tutorial_20min_best">Лучше для: точных результатов, опытных велосипедистов</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">ТЕСТ 2×8 МИНУТ</string>
+    <string name="tutorial_8min_subtitle">Практика пейсинга</string>
+    <string name="tutorial_8min_duration">~45 минут</string>
+    <string name="tutorial_8min_formula">FTP = СР × 0.90</string>
+    <string name="tutorial_8min_desc">Два 8-минутных максимальных усилия с восстановлением между ними. Используется среднее обоих интервалов.</string>
+    <string name="tutorial_8min_best">Лучше для: практики пейсинга, начинающих, меньше ментальной усталости</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">ЗОНЫ МОЩНОСТИ</string>
+    <string name="tutorial_zones_desc">Ваш FTP определяет 7 тренировочных зон для разных адаптаций:</string>
+    <string name="tutorial_zone1_desc">Восстановление • Лёгкое педалирование</string>
+    <string name="tutorial_zone2_desc">Выносливость • База длинных заездов</string>
+    <string name="tutorial_zone3_desc">Темпо • Умеренная интенсивность</string>
+    <string name="tutorial_zone4_desc">Порог • Работа на FTP</string>
+    <string name="tutorial_zone5_desc">VO2max • Тяжёлые интервалы</string>
+    <string name="tutorial_zone6_desc">Анаэробная • Короткие рывки</string>
+    <string name="tutorial_zone7_desc">Нервно-мышечная • Спринты</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">ВО ВРЕМЯ ТЕСТА</string>
+    <string name="tutorial_during_desc">Понимание экрана теста:</string>
+    <string name="tutorial_during_power">Текущая мощность - ваш вывод в реальном времени</string>
+    <string name="tutorial_during_target">Целевая мощность - к чему стремиться</string>
+    <string name="tutorial_during_deviation">Отклонение - насколько далеко от цели (+/-)</string>
+    <string name="tutorial_during_time">Время - оставшееся в текущей фазе</string>
+    <string name="tutorial_during_hr">ЧСС - с индикатором зоны</string>
+    <string name="tutorial_during_cadence">Каденс - скорость педалирования (об/мин)</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">ПОНИМАНИЕ РЕЗУЛЬТАТОВ</string>
+    <string name="tutorial_results_desc">После завершения теста вы увидите:</string>
+    <string name="tutorial_results_ftp">Новый FTP - рассчитанная пороговая мощность</string>
+    <string name="tutorial_results_wkg">Вт/кг - соотношение мощности к весу (индикатор формы)</string>
+    <string name="tutorial_results_np">NP - Нормализованная мощность (с учётом вариативности)</string>
+    <string name="tutorial_results_vi">VI - Индекс вариативности (стабильность пейсинга)</string>
+    <string name="tutorial_results_ef">EF - Фактор эффективности (мощность на удар сердца)</string>
+    <string name="tutorial_results_save">Нажмите СОХРАНИТЬ для обновления FTP и зон</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">СОВЕТЫ ДЛЯ УСПЕХА</string>
+    <string name="tutorial_tip1">Калибруйте измеритель мощности перед тестом</string>
+    <string name="tutorial_tip2">Разминка 10–15 минут перед тестом</string>
+    <string name="tutorial_tip3">Пейте воду - держите бутылку наготове</string>
+    <string name="tutorial_tip4">Используйте ERG режим на умных тренажёрах</string>
+    <string name="tutorial_tip5">Тестируйте отдохнувшим, не после тяжёлых тренировок</string>
+    <string name="tutorial_tip6">Для РАМПЫ: крутите до невозможности продолжать</string>
+    <string name="tutorial_tip7">Повторяйте тест каждые 4–6 недель</string>
 
     <!-- Recovery Dialog -->
     <string name="recovery_title">СЕССИЯ НАЙДЕНА</string>

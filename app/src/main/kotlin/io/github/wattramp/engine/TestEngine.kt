@@ -387,7 +387,7 @@ class TestEngine(private val extension: WattRampExtension) {
                 onRideStateChange(rideState)
             })
 
-            // Get user profile (initial FTP and max HR)
+            // Get user profile (initial FTP, max HR, and weight)
             userProfileConsumerId.set(extension.karooSystem.addConsumer<UserProfile> { profile ->
                 // Safe access with null check
                 try {
@@ -407,6 +407,14 @@ class TestEngine(private val extension: WattRampExtension) {
                     val maxHr = profile.maxHr
                     if (maxHr > 0) {
                         userMaxHr.set(maxHr)
+                    }
+                    // Extract weight from user profile for W/kg calculations
+                    val weight = profile.weight
+                    if (weight > 0) {
+                        scope.launch(Dispatchers.IO) {
+                            preferencesRepository.updateUserWeight(weight)
+                            android.util.Log.i("TestEngine", "Using weight from Karoo profile: ${weight}kg")
+                        }
                     }
                 } catch (e: Exception) {
                     android.util.Log.w("TestEngine", "Error reading user profile: ${e.message}")
@@ -625,7 +633,8 @@ class TestEngine(private val extension: WattRampExtension) {
             averagePower = avgPower,
             heartRate = currentHeartRate.get(),
             cadence = currentCadence.get(),
-            userMaxHr = userMaxHr.get() // Pass user's max HR for zone calculations
+            userMaxHr = userMaxHr.get(),
+            zoneTolerance = settings.zoneTolerance
         )
 
         // Only update if state actually changed (reduces unnecessary recompositions)

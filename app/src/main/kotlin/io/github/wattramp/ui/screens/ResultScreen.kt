@@ -34,10 +34,13 @@ import io.github.wattramp.ui.theme.*
 @Composable
 fun ResultScreen(
     result: TestResult,
+    userWeight: Float = 70f,
     onSaveToKaroo: () -> Unit,
     onDiscard: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Calculate W/kg
+    val wattsPerKg = if (userWeight > 0) result.calculatedFtp / userWeight.toDouble() else 0.0
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val isCompact = screenHeight < 480.dp
     val borderColor = SurfaceVariant.copy(alpha = 0.5f)
@@ -131,6 +134,16 @@ fun ResultScreen(
                                 modifier = Modifier.padding(bottom = if (isCompact) 8.dp else 10.dp)
                             )
                         }
+                    }
+
+                    // W/kg display
+                    if (wattsPerKg > 0) {
+                        Text(
+                            text = String.format("%.2f W/kg", wattsPerKg),
+                            fontSize = if (isCompact) 16.sp else 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OnSurfaceVariant
+                        )
                     }
                 }
             }

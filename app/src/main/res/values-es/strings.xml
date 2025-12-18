@@ -65,6 +65,8 @@
     <string name="settings_power">POTENCIA</string>
     <string name="settings_current_ftp">FTP ACTUAL</string>
     <string name="settings_ftp_desc">Potencia de Umbral Funcional</string>
+    <string name="settings_weight">PESO</string>
+    <string name="settings_weight_desc">Peso corporal para W/kg</string>
     <string name="settings_ramp_test">TEST RAMPA</string>
     <string name="settings_start_power">POTENCIA INICIAL</string>
     <string name="settings_start_power_desc">Potencia inicial de rampa</string>
@@ -119,22 +121,82 @@
     <string name="unit_min">min</string>
     <string name="unit_minutes">%dm</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">Tutorial</string>
-    <string name="tutorial_title">CÓMO USAR</string>
-    <string name="tutorial_how_to_use">PRIMEROS PASOS</string>
-    <string name="tutorial_step1">Configura tu FTP actual en Ajustes</string>
-    <string name="tutorial_step2">Elige un protocolo de test en la pantalla principal</string>
-    <string name="tutorial_step3">Pulsa INICIAR y sigue los objetivos</string>
-    <string name="tutorial_step4">Guarda el resultado para actualizar tu FTP</string>
-    <string name="tutorial_tests">PROTOCOLOS DE TEST</string>
-    <string name="tutorial_ramp_desc">Test rápido ~20min. La potencia aumenta cada minuto hasta el agotamiento.</string>
-    <string name="tutorial_20min_desc">Test clásico ~60min. Esfuerzo máximo de 20 minutos tras calentamiento.</string>
-    <string name="tutorial_8min_desc">Dos intervalos de 8 minutos ~50min total. Bueno para practicar ritmo.</string>
-    <string name="tutorial_tips">CONSEJOS</string>
-    <string name="tutorial_tip1">Calienta bien antes de empezar el test</string>
-    <string name="tutorial_tip2">Usa el modo ERG en tu rodillo para mejores resultados</string>
-    <string name="tutorial_tip3">Para cuando no puedas mantener la potencia objetivo</string>
+    <string name="tutorial_title">TUTORIAL</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">¿QUÉ ES EL FTP?</string>
+    <string name="tutorial_ftp_desc">FTP (Potencia de Umbral Funcional) es la potencia máxima que puedes sostener durante una hora. Es el estándar para medir la forma ciclista.</string>
+    <string name="tutorial_ftp_why">¿Por qué medir el FTP?</string>
+    <string name="tutorial_ftp_reason1">Establecer zonas de entrenamiento precisas</string>
+    <string name="tutorial_ftp_reason2">Seguir el progreso de forma</string>
+    <string name="tutorial_ftp_reason3">Gestionar el ritmo en carreras</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">TEST RAMPA</string>
+    <string name="tutorial_ramp_subtitle">Rápido y eficiente</string>
+    <string name="tutorial_ramp_duration">~20 minutos</string>
+    <string name="tutorial_ramp_formula">FTP = MÁX × 0.75</string>
+    <string name="tutorial_ramp_desc">La potencia aumenta 20W cada minuto hasta el agotamiento. FTP calculado desde la potencia máx de 1 minuto.</string>
+    <string name="tutorial_ramp_best">Ideal para: Evaluación rápida, tiempo limitado, tests regulares</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">TEST 20 MINUTOS</string>
+    <string name="tutorial_20min_subtitle">Estándar de oro</string>
+    <string name="tutorial_20min_duration">~55 minutos</string>
+    <string name="tutorial_20min_formula">FTP = PROM × 0.95</string>
+    <string name="tutorial_20min_desc">Tras calentar, pedalea 20 minutos a esfuerzo máximo sostenible. FTP = 95% de potencia media.</string>
+    <string name="tutorial_20min_best">Ideal para: Resultados precisos, ciclistas experimentados</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">TEST 2×8 MINUTOS</string>
+    <string name="tutorial_8min_subtitle">Práctica de ritmo</string>
+    <string name="tutorial_8min_duration">~45 minutos</string>
+    <string name="tutorial_8min_formula">FTP = PROM × 0.90</string>
+    <string name="tutorial_8min_desc">Dos esfuerzos máximos de 8 minutos con recuperación. Promedio de ambos intervalos.</string>
+    <string name="tutorial_8min_best">Ideal para: Práctica de ritmo, principiantes</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">ZONAS DE POTENCIA</string>
+    <string name="tutorial_zones_desc">Tu FTP define 7 zonas de entrenamiento:</string>
+    <string name="tutorial_zone1_desc">Recuperación • Pedaleo suave</string>
+    <string name="tutorial_zone2_desc">Resistencia • Base de larga distancia</string>
+    <string name="tutorial_zone3_desc">Tempo • Intensidad moderada</string>
+    <string name="tutorial_zone4_desc">Umbral • Trabajo FTP</string>
+    <string name="tutorial_zone5_desc">VO2max • Intervalos intensos</string>
+    <string name="tutorial_zone6_desc">Anaeróbico • Esfuerzos cortos</string>
+    <string name="tutorial_zone7_desc">Neuromuscular • Sprints</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">DURANTE EL TEST</string>
+    <string name="tutorial_during_desc">Entendiendo la pantalla del test:</string>
+    <string name="tutorial_during_power">Potencia actual - Tu salida en tiempo real</string>
+    <string name="tutorial_during_target">Potencia objetivo - A qué apuntar</string>
+    <string name="tutorial_during_deviation">Desviación - Distancia del objetivo (+/-)</string>
+    <string name="tutorial_during_time">Tiempo - Restante en la fase actual</string>
+    <string name="tutorial_during_hr">Frecuencia cardíaca - Con indicador de zona</string>
+    <string name="tutorial_during_cadence">Cadencia - Velocidad de pedaleo (rpm)</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">ENTENDIENDO RESULTADOS</string>
+    <string name="tutorial_results_desc">Tras completar un test, verás:</string>
+    <string name="tutorial_results_ftp">Nuevo FTP - Tu potencia umbral calculada</string>
+    <string name="tutorial_results_wkg">W/kg - Ratio potencia/peso</string>
+    <string name="tutorial_results_np">NP - Potencia normalizada</string>
+    <string name="tutorial_results_vi">VI - Índice de variabilidad</string>
+    <string name="tutorial_results_ef">EF - Factor de eficiencia</string>
+    <string name="tutorial_results_save">Pulsa GUARDAR para actualizar FTP y zonas</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">CONSEJOS PARA EL ÉXITO</string>
+    <string name="tutorial_tip1">Calibra el potenciómetro antes del test</string>
+    <string name="tutorial_tip2">Calienta 10–15 minutos antes</string>
+    <string name="tutorial_tip3">Mantente hidratado - agua lista</string>
+    <string name="tutorial_tip4">Usa modo ERG en rodillos inteligentes</string>
+    <string name="tutorial_tip5">Testea descansado, no tras entrenos duros</string>
+    <string name="tutorial_tip6">Para RAMPA: empuja hasta no poder más</string>
+    <string name="tutorial_tip7">Retestea cada 4–6 semanas</string>
 
     <!-- Recovery Dialog -->
     <string name="recovery_title">SESIÓN ENCONTRADA</string>

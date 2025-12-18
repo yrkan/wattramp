@@ -254,7 +254,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     private fun startDemoTest(protocol: ProtocolType) {
         viewModelScope.launch {
-            val currentFtp = settings.value.currentFtp
+            val currentSettings = settings.value
+            val currentFtp = currentSettings.currentFtp
 
             // Create a running state to show progress
             val demoRunningState = TestState.Running(
@@ -272,7 +273,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 currentPower = (currentFtp * 0.5).toInt(),
                 targetPower = (currentFtp * 0.5).toInt(),
                 currentStep = if (protocol == ProtocolType.RAMP) 1 else null,
-                estimatedTotalSteps = if (protocol == ProtocolType.RAMP) 15 else null
+                estimatedTotalSteps = if (protocol == ProtocolType.RAMP) 15 else null,
+                zoneTolerance = currentSettings.zoneTolerance
             )
 
             // Show running state
@@ -369,7 +371,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Set demo running state for guide tour.
      */
     fun setGuideDemoRunningState() {
-        val currentFtp = settings.value.currentFtp
+        val currentSettings = settings.value
+        val currentFtp = currentSettings.currentFtp
         _sessionTestStarted.value = true
         _demoTestState.value = TestState.Running(
             protocol = ProtocolType.RAMP,
@@ -380,8 +383,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 durationMs = 60 * 1000L,
                 targetPowerPercent = null,
                 isRamp = true,
-                rampStartPower = settings.value.rampStartPower,
-                rampStepWatts = settings.value.rampStep
+                rampStartPower = currentSettings.rampStartPower,
+                rampStepWatts = currentSettings.rampStep
             ),
             intervalIndex = 8,
             elapsedMs = 13 * 60 * 1000L,
@@ -392,7 +395,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             estimatedTotalSteps = 12,
             maxOneMinutePower = (currentFtp * 0.95).toInt(),
             heartRate = 165,
-            cadence = 88
+            cadence = 88,
+            zoneTolerance = currentSettings.zoneTolerance
         )
     }
 
@@ -495,6 +499,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun updateCurrentFtp(ftp: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             preferencesRepository.updateCurrentFtp(ftp)
+        }
+    }
+
+    /**
+     * Update user weight in preferences.
+     */
+    fun updateUserWeight(weight: Float) {
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesRepository.updateUserWeight(weight)
         }
     }
 

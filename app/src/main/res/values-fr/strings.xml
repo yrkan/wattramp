@@ -65,6 +65,8 @@
     <string name="settings_power">PUISSANCE</string>
     <string name="settings_current_ftp">FTP ACTUEL</string>
     <string name="settings_ftp_desc">Puissance au Seuil Fonctionnel</string>
+    <string name="settings_weight">POIDS</string>
+    <string name="settings_weight_desc">Poids corporel pour W/kg</string>
     <string name="settings_ramp_test">TEST RAMPE</string>
     <string name="settings_start_power">PUISSANCE DÉPART</string>
     <string name="settings_start_power_desc">Puissance initiale de rampe</string>
@@ -119,22 +121,82 @@
     <string name="unit_min">min</string>
     <string name="unit_minutes">%dm</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">Tutoriel</string>
-    <string name="tutorial_title">MODE D\'EMPLOI</string>
-    <string name="tutorial_how_to_use">DÉMARRAGE</string>
-    <string name="tutorial_step1">Définissez votre FTP actuel dans les Paramètres</string>
-    <string name="tutorial_step2">Choisissez un protocole de test sur l\'écran d\'accueil</string>
-    <string name="tutorial_step3">Appuyez sur DÉMARRER et suivez les objectifs</string>
-    <string name="tutorial_step4">Enregistrez le résultat pour mettre à jour votre FTP</string>
-    <string name="tutorial_tests">PROTOCOLES DE TEST</string>
-    <string name="tutorial_ramp_desc">Test rapide ~20min. La puissance augmente chaque minute jusqu\'à épuisement.</string>
-    <string name="tutorial_20min_desc">Test classique ~60min. Effort maximal de 20 minutes après échauffement.</string>
-    <string name="tutorial_8min_desc">Deux intervalles de 8 minutes ~50min au total. Bon pour pratiquer l\'allure.</string>
-    <string name="tutorial_tips">CONSEILS</string>
-    <string name="tutorial_tip1">Échauffez-vous bien avant de commencer le test</string>
-    <string name="tutorial_tip2">Utilisez le mode ERG sur votre home-trainer</string>
-    <string name="tutorial_tip3">Arrêtez quand vous ne pouvez plus maintenir la puissance cible</string>
+    <string name="tutorial_title">TUTORIEL</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">QU\'EST-CE QUE LE FTP?</string>
+    <string name="tutorial_ftp_desc">Le FTP (Puissance au Seuil Fonctionnel) est la puissance maximale que vous pouvez maintenir pendant environ une heure. C\'est la référence pour mesurer la forme cycliste.</string>
+    <string name="tutorial_ftp_why">Pourquoi tester le FTP?</string>
+    <string name="tutorial_ftp_reason1">Définir des zones d\'entraînement précises</string>
+    <string name="tutorial_ftp_reason2">Suivre la progression de forme</string>
+    <string name="tutorial_ftp_reason3">Gérer l\'allure en course</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">TEST RAMPE</string>
+    <string name="tutorial_ramp_subtitle">Rapide et efficace</string>
+    <string name="tutorial_ramp_duration">~20 minutes</string>
+    <string name="tutorial_ramp_formula">FTP = MAX × 0.75</string>
+    <string name="tutorial_ramp_desc">La puissance augmente de 20W chaque minute jusqu\'à épuisement. FTP calculé depuis la puissance max sur 1 minute.</string>
+    <string name="tutorial_ramp_best">Idéal pour: Évaluation rapide, temps limité, tests réguliers</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">TEST 20 MINUTES</string>
+    <string name="tutorial_20min_subtitle">Référence absolue</string>
+    <string name="tutorial_20min_duration">~55 minutes</string>
+    <string name="tutorial_20min_formula">FTP = MOY × 0.95</string>
+    <string name="tutorial_20min_desc">Après échauffement, roulez 20 minutes à effort maximal soutenable. FTP = 95% de la puissance moyenne.</string>
+    <string name="tutorial_20min_best">Idéal pour: Résultats précis, cyclistes expérimentés</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">TEST 2×8 MINUTES</string>
+    <string name="tutorial_8min_subtitle">Pratique du rythme</string>
+    <string name="tutorial_8min_duration">~45 minutes</string>
+    <string name="tutorial_8min_formula">FTP = MOY × 0.90</string>
+    <string name="tutorial_8min_desc">Deux efforts maximaux de 8 minutes avec récupération entre. Moyenne des deux intervalles.</string>
+    <string name="tutorial_8min_best">Idéal pour: Pratique du rythme, débutants</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">ZONES DE PUISSANCE</string>
+    <string name="tutorial_zones_desc">Votre FTP définit 7 zones d\'entraînement:</string>
+    <string name="tutorial_zone1_desc">Récupération • Pédalage facile</string>
+    <string name="tutorial_zone2_desc">Endurance • Base longue distance</string>
+    <string name="tutorial_zone3_desc">Tempo • Intensité modérée</string>
+    <string name="tutorial_zone4_desc">Seuil • Travail FTP</string>
+    <string name="tutorial_zone5_desc">VO2max • Intervalles intenses</string>
+    <string name="tutorial_zone6_desc">Anaérobie • Efforts courts</string>
+    <string name="tutorial_zone7_desc">Neuromusculaire • Sprints</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">PENDANT LE TEST</string>
+    <string name="tutorial_during_desc">Comprendre l\'écran de test:</string>
+    <string name="tutorial_during_power">Puissance actuelle - Votre sortie en temps réel</string>
+    <string name="tutorial_during_target">Puissance cible - Objectif à viser</string>
+    <string name="tutorial_during_deviation">Écart - Distance de la cible (+/-)</string>
+    <string name="tutorial_during_time">Temps - Restant dans la phase actuelle</string>
+    <string name="tutorial_during_hr">Fréquence cardiaque - Avec indicateur de zone</string>
+    <string name="tutorial_during_cadence">Cadence - Vitesse de pédalage (tr/min)</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">COMPRENDRE LES RÉSULTATS</string>
+    <string name="tutorial_results_desc">Après un test, vous verrez:</string>
+    <string name="tutorial_results_ftp">Nouveau FTP - Votre puissance seuil calculée</string>
+    <string name="tutorial_results_wkg">W/kg - Ratio puissance/poids</string>
+    <string name="tutorial_results_np">NP - Puissance normalisée</string>
+    <string name="tutorial_results_vi">VI - Index de variabilité</string>
+    <string name="tutorial_results_ef">EF - Facteur d\'efficacité</string>
+    <string name="tutorial_results_save">Appuyez SAUVEGARDER pour mettre à jour FTP et zones</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">CONSEILS POUR RÉUSSIR</string>
+    <string name="tutorial_tip1">Calibrer le capteur de puissance avant le test</string>
+    <string name="tutorial_tip2">Échauffement de 10–15 minutes</string>
+    <string name="tutorial_tip3">Rester hydraté - eau à portée</string>
+    <string name="tutorial_tip4">Utiliser le mode ERG sur home-trainer</string>
+    <string name="tutorial_tip5">Tester reposé, pas après des entraînements durs</string>
+    <string name="tutorial_tip6">Pour RAMPE: pousser jusqu\'à épuisement</string>
+    <string name="tutorial_tip7">Retester toutes les 4–6 semaines</string>
 
     <!-- Recovery Dialog -->
     <string name="recovery_title">SESSION TROUVÉE</string>

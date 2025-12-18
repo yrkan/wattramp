@@ -90,7 +90,8 @@ class TwentyMinTest(
         addPowerSample(power, elapsedMs)
 
         // Collect samples only during the 20-min test interval with bounds
-        if (elapsedMs in testIntervalStartMs until testIntervalEndMs) {
+        // Filter out zero power readings (sensor dropouts)
+        if (power > 0 && elapsedMs in testIntervalStartMs until testIntervalEndMs) {
             if (testPowerSamples.size < MAX_TEST_SAMPLES) {
                 testPowerSamples.add(power)
             }

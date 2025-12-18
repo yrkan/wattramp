@@ -34,7 +34,9 @@ sealed class TestState {
         val heartRate: Int = 0,
         val cadence: Int = 0,
         // User's max HR from Karoo profile for accurate zone calculations
-        val userMaxHr: Int = 190
+        val userMaxHr: Int = 190,
+        // Zone tolerance percentage from settings (0-20%)
+        val zoneTolerance: Int = 5
     ) : TestState() {
 
         // HR zone calculation based on user's actual max HR from Karoo profile
@@ -61,7 +63,8 @@ sealed class TestState {
 
         val isInTargetZone: Boolean
             get() = targetPower?.let { target ->
-                val tolerance = target * 0.05
+                val tolerancePercent = zoneTolerance.coerceIn(0, 20) / 100.0
+                val tolerance = target * tolerancePercent
                 currentPower >= (target - tolerance) && currentPower <= (target + tolerance)
             } ?: true // No target = always in zone
 

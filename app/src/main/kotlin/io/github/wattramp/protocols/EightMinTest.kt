@@ -89,15 +89,18 @@ class EightMinTest(
         addPowerSample(power, elapsedMs)
 
         // Collect samples during test intervals with bounds
-        when {
-            elapsedMs in firstTestStartMs until firstTestEndMs -> {
-                if (firstTestPowerSamples.size < MAX_TEST_SAMPLES) {
-                    firstTestPowerSamples.add(power)
+        // Filter out zero power readings (sensor dropouts)
+        if (power > 0) {
+            when {
+                elapsedMs in firstTestStartMs until firstTestEndMs -> {
+                    if (firstTestPowerSamples.size < MAX_TEST_SAMPLES) {
+                        firstTestPowerSamples.add(power)
+                    }
                 }
-            }
-            elapsedMs in secondTestStartMs until secondTestEndMs -> {
-                if (secondTestPowerSamples.size < MAX_TEST_SAMPLES) {
-                    secondTestPowerSamples.add(power)
+                elapsedMs in secondTestStartMs until secondTestEndMs -> {
+                    if (secondTestPowerSamples.size < MAX_TEST_SAMPLES) {
+                        secondTestPowerSamples.add(power)
+                    }
                 }
             }
         }

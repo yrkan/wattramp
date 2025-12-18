@@ -73,6 +73,8 @@
     <string name="settings_power">POWER</string>
     <string name="settings_current_ftp">CURRENT FTP</string>
     <string name="settings_ftp_desc">Functional Threshold Power</string>
+    <string name="settings_weight">WEIGHT</string>
+    <string name="settings_weight_desc">Body weight for W/kg</string>
     <string name="settings_ramp_test">RAMP TEST</string>
     <string name="settings_start_power">START POWER</string>
     <string name="settings_start_power_desc">Initial ramp power</string>
@@ -177,22 +179,82 @@
     <string name="checklist_ftp">Verify FTP setting</string>
     <string name="checklist_ftp_desc">Current FTP is accurate</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">Tutorial</string>
-    <string name="tutorial_title">HOW TO USE</string>
-    <string name="tutorial_how_to_use">GETTING STARTED</string>
-    <string name="tutorial_step1">Set your current FTP in Settings</string>
-    <string name="tutorial_step2">Choose a test protocol on home screen</string>
-    <string name="tutorial_step3">Press START and follow the targets</string>
-    <string name="tutorial_step4">Save result to update your FTP</string>
-    <string name="tutorial_tests">TEST PROTOCOLS</string>
-    <string name="tutorial_ramp_desc">Quick ~20min test. Power increases every minute until exhaustion.</string>
-    <string name="tutorial_20min_desc">Classic ~60min test. 20-minute max effort after warmup.</string>
-    <string name="tutorial_8min_desc">Two 8-minute intervals ~50min total. Good for pacing practice.</string>
-    <string name="tutorial_tips">TIPS</string>
-    <string name="tutorial_tip1">Warm up well before starting the test</string>
-    <string name="tutorial_tip2">Use ERG mode on your trainer for best results</string>
-    <string name="tutorial_tip3">Stop when you cannot maintain the target power</string>
+    <string name="tutorial_title">TUTORIAL</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">WHAT IS FTP?</string>
+    <string name="tutorial_ftp_desc">FTP (Functional Threshold Power) is the maximum power you can sustain for about one hour. It\'s the gold standard for measuring cycling fitness and setting training zones.</string>
+    <string name="tutorial_ftp_why">Why test FTP?</string>
+    <string name="tutorial_ftp_reason1">Set accurate training zones</string>
+    <string name="tutorial_ftp_reason2">Track fitness progress over time</string>
+    <string name="tutorial_ftp_reason3">Pace yourself in races and workouts</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">RAMP TEST</string>
+    <string name="tutorial_ramp_subtitle">Quick &amp; Efficient</string>
+    <string name="tutorial_ramp_duration">~20 minutes</string>
+    <string name="tutorial_ramp_formula">FTP = MAX × 0.75</string>
+    <string name="tutorial_ramp_desc">Power increases by 20W every minute until exhaustion. Your FTP is calculated from your highest 1-minute power.</string>
+    <string name="tutorial_ramp_best">Best for: Quick assessment, limited time, regular testing</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">20-MINUTE TEST</string>
+    <string name="tutorial_20min_subtitle">Gold Standard</string>
+    <string name="tutorial_20min_duration">~55 minutes</string>
+    <string name="tutorial_20min_formula">FTP = AVG × 0.95</string>
+    <string name="tutorial_20min_desc">After warmup, ride 20 minutes at your maximum sustainable effort. FTP is 95% of your average power.</string>
+    <string name="tutorial_20min_best">Best for: Accurate results, experienced cyclists, baseline testing</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">2×8-MINUTE TEST</string>
+    <string name="tutorial_8min_subtitle">Pacing Practice</string>
+    <string name="tutorial_8min_duration">~45 minutes</string>
+    <string name="tutorial_8min_formula">FTP = AVG × 0.90</string>
+    <string name="tutorial_8min_desc">Two 8-minute maximum efforts with recovery between. Uses the average of both intervals.</string>
+    <string name="tutorial_8min_best">Best for: Pacing practice, newer cyclists, less mental fatigue</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">POWER ZONES</string>
+    <string name="tutorial_zones_desc">Your FTP defines 7 training zones, each targeting different physiological adaptations:</string>
+    <string name="tutorial_zone1_desc">Active Recovery • Easy spinning</string>
+    <string name="tutorial_zone2_desc">Endurance • Long rides base</string>
+    <string name="tutorial_zone3_desc">Tempo • Moderate intensity</string>
+    <string name="tutorial_zone4_desc">Threshold • FTP work</string>
+    <string name="tutorial_zone5_desc">VO2max • Hard intervals</string>
+    <string name="tutorial_zone6_desc">Anaerobic • Short bursts</string>
+    <string name="tutorial_zone7_desc">Neuromuscular • Sprints</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">DURING THE TEST</string>
+    <string name="tutorial_during_desc">Understanding the test screen:</string>
+    <string name="tutorial_during_power">Current Power - Your real-time output</string>
+    <string name="tutorial_during_target">Target Power - What to aim for</string>
+    <string name="tutorial_during_deviation">Deviation - How far from target (+/-)</string>
+    <string name="tutorial_during_time">Time - Remaining in current phase</string>
+    <string name="tutorial_during_hr">Heart Rate - With zone indicator</string>
+    <string name="tutorial_during_cadence">Cadence - Pedaling speed (RPM)</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">UNDERSTANDING RESULTS</string>
+    <string name="tutorial_results_desc">After completing a test, you\'ll see:</string>
+    <string name="tutorial_results_ftp">New FTP - Your calculated threshold power</string>
+    <string name="tutorial_results_wkg">W/kg - Power-to-weight ratio (fitness indicator)</string>
+    <string name="tutorial_results_np">NP - Normalized Power (adjusted for variability)</string>
+    <string name="tutorial_results_vi">VI - Variability Index (pacing consistency)</string>
+    <string name="tutorial_results_ef">EF - Efficiency Factor (power per heartbeat)</string>
+    <string name="tutorial_results_save">Tap SAVE to update your FTP and training zones</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">TIPS FOR SUCCESS</string>
+    <string name="tutorial_tip1">Calibrate power meter before testing</string>
+    <string name="tutorial_tip2">Warm up 10–15 minutes before the test</string>
+    <string name="tutorial_tip3">Stay hydrated - have water ready</string>
+    <string name="tutorial_tip4">Use ERG mode on smart trainers</string>
+    <string name="tutorial_tip5">Test when rested, not after hard workouts</string>
+    <string name="tutorial_tip6">For RAMP: push until you cannot continue</string>
+    <string name="tutorial_tip7">Retest every 4–6 weeks to track progress</string>
 
     <!-- Power Sensor Warning -->
     <string name="sensor_warning_title">NO POWER SENSOR</string>

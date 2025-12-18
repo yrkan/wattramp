@@ -24,6 +24,7 @@ class PreferencesRepository(private val context: Context) {
     companion object {
         // Settings keys
         private val KEY_CURRENT_FTP = intPreferencesKey("current_ftp")
+        private val KEY_USER_WEIGHT = floatPreferencesKey("user_weight")
         private val KEY_RAMP_START_POWER = intPreferencesKey("ramp_start_power")
         private val KEY_RAMP_STEP = intPreferencesKey("ramp_step")
         private val KEY_SOUND_ALERTS = booleanPreferencesKey("sound_alerts")
@@ -45,6 +46,7 @@ class PreferencesRepository(private val context: Context) {
 
         // Default values
         const val DEFAULT_FTP = 200
+        const val DEFAULT_USER_WEIGHT = 70f // kg
         const val DEFAULT_RAMP_START = 150
         const val DEFAULT_RAMP_STEP = 20
         const val DEFAULT_ZONE_TOLERANCE = 5
@@ -69,6 +71,7 @@ class PreferencesRepository(private val context: Context) {
     // Settings data class
     data class Settings(
         val currentFtp: Int = DEFAULT_FTP,
+        val userWeight: Float = DEFAULT_USER_WEIGHT,
         val rampStartPower: Int = DEFAULT_RAMP_START,
         val rampStep: Int = DEFAULT_RAMP_STEP,
         val soundAlerts: Boolean = true,
@@ -81,7 +84,11 @@ class PreferencesRepository(private val context: Context) {
         val language: AppLanguage = AppLanguage.SYSTEM,
         val theme: AppTheme = AppTheme.ORANGE,
         val showChecklist: Boolean = true
-    )
+    ) {
+        /** Calculate W/kg based on current FTP and weight */
+        val wattsPerKg: Double
+            get() = if (userWeight > 0) currentFtp / userWeight.toDouble() else 0.0
+    }
 
     enum class AppTheme(val displayName: String) {
         ORANGE("Orange"),
@@ -112,6 +119,7 @@ class PreferencesRepository(private val context: Context) {
     val settingsFlow: Flow<Settings> = context.dataStore.data.map { prefs ->
         Settings(
             currentFtp = prefs[KEY_CURRENT_FTP] ?: DEFAULT_FTP,
+            userWeight = prefs[KEY_USER_WEIGHT] ?: DEFAULT_USER_WEIGHT,
             rampStartPower = prefs[KEY_RAMP_START_POWER] ?: DEFAULT_RAMP_START,
             rampStep = prefs[KEY_RAMP_STEP] ?: DEFAULT_RAMP_STEP,
             soundAlerts = prefs[KEY_SOUND_ALERTS] ?: true,
@@ -149,6 +157,13 @@ class PreferencesRepository(private val context: Context) {
         val validFtp = ftp.coerceIn(MIN_FTP, MAX_FTP)
         context.dataStore.edit { prefs ->
             prefs[KEY_CURRENT_FTP] = validFtp
+        }
+    }
+
+    suspend fun updateUserWeight(weight: Float) {
+        val validWeight = weight.coerceIn(30f, 200f) // Reasonable bounds
+        context.dataStore.edit { prefs ->
+            prefs[KEY_USER_WEIGHT] = validWeight
         }
     }
 

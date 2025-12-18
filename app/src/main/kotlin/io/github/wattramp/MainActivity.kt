@@ -81,6 +81,7 @@ fun WattRampApp(viewModel: MainViewModel) {
     val testStarted by viewModel.sessionTestStarted.collectAsState()
     val hasNavigated by viewModel.sessionHasNavigated.collectAsState()
     val guideTourStep by viewModel.guideTourStep.collectAsState()
+    val settings by viewModel.settings.collectAsState()
 
     // Navigate to running screen when test starts
     LaunchedEffect(testState, testStarted) {
@@ -118,10 +119,12 @@ fun WattRampApp(viewModel: MainViewModel) {
 
     val context = androidx.compose.ui.platform.LocalContext.current
 
-    // Guide demo state - created once with stable FTP value
-    val initialFtp = remember { viewModel.settings.value.currentFtp }
-    val initialRampStart = remember { viewModel.settings.value.rampStartPower }
-    val initialRampStep = remember { viewModel.settings.value.rampStep }
+    // Guide demo state - created once with stable settings values
+    val initialSettings = remember { viewModel.settings.value }
+    val initialFtp = remember { initialSettings.currentFtp }
+    val initialRampStart = remember { initialSettings.rampStartPower }
+    val initialRampStep = remember { initialSettings.rampStep }
+    val initialZoneTolerance = remember { initialSettings.zoneTolerance }
 
     val guideDemoRunningState = remember(initialFtp) {
         val ftp = initialFtp
@@ -146,7 +149,8 @@ fun WattRampApp(viewModel: MainViewModel) {
             estimatedTotalSteps = 12,
             maxOneMinutePower = (ftp * 0.95).toInt(),
             heartRate = 165,
-            cadence = 88
+            cadence = 88,
+            zoneTolerance = initialZoneTolerance
         )
     }
 
@@ -198,8 +202,6 @@ fun WattRampApp(viewModel: MainViewModel) {
             popExitTransition = { ExitTransition.None }
         ) {
         composable("home") {
-            // Collect state locally for this screen
-            val settings by viewModel.settings.collectAsState()
             val recoverySession by viewModel.recoverySession.collectAsState()
 
             HomeScreen(
@@ -265,12 +267,13 @@ fun WattRampApp(viewModel: MainViewModel) {
         }
 
         composable("settings") {
-            val settings by viewModel.settings.collectAsState()
-
             SettingsScreen(
                 settings = settings,
                 onUpdateFtp = { ftp ->
                     viewModel.updateCurrentFtp(ftp)
+                },
+                onUpdateWeight = { weight ->
+                    viewModel.updateUserWeight(weight)
                 },
                 onUpdateRampStart = { power ->
                     viewModel.updateRampStartPower(power)
@@ -333,10 +336,9 @@ fun WattRampApp(viewModel: MainViewModel) {
         }
 
         composable("zones") {
-            val settings by viewModel.settings.collectAsState()
-
             ZonesScreen(
                 ftp = settings.currentFtp,
+                userWeight = settings.userWeight,
                 onNavigateBack = {
                     navController.popBackStack()
                 }
@@ -395,6 +397,7 @@ fun WattRampApp(viewModel: MainViewModel) {
             if (guideTourStep >= 0) {
                 ResultScreen(
                     result = guideDemoCompletedResult,
+                    userWeight = settings.userWeight,
                     onSaveToKaroo = { handleGuideTourNext() },
                     onDiscard = { handleGuideTourNext() }
                 )
@@ -413,6 +416,7 @@ fun WattRampApp(viewModel: MainViewModel) {
 
             ResultScreen(
                 result = completedState.result,
+                userWeight = settings.userWeight,
                 onSaveToKaroo = {
                     viewModel.updateCurrentFtp(completedState.result.calculatedFtp)
                     viewModel.saveTestResult(completedState.result.copy(saved = true))

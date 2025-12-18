@@ -125,18 +125,21 @@ class RampTest(
         if (elapsedMs < warmupDurationMs) return
 
         // Thread-safe update of rolling buffer
-        synchronized(bufferLock) {
-            oneMinuteBuffer.addLast(power)
-            if (oneMinuteBuffer.size > 60) {
-                oneMinuteBuffer.removeFirst()
-            }
+        // Only add valid power readings (filter out sensor dropouts)
+        if (power > 0) {
+            synchronized(bufferLock) {
+                oneMinuteBuffer.addLast(power)
+                if (oneMinuteBuffer.size > 60) {
+                    oneMinuteBuffer.removeFirst()
+                }
 
-            // Calculate current 1-minute average
-            if (oneMinuteBuffer.size >= 60) {
-                val currentAvg = oneMinuteBuffer.average()
-                // Atomically update max if current is higher
-                maxOneMinutePower.updateAndGet { current ->
-                    if (currentAvg > current) currentAvg else current
+                // Calculate current 1-minute average
+                if (oneMinuteBuffer.size >= 60) {
+                    val currentAvg = oneMinuteBuffer.average()
+                    // Atomically update max if current is higher
+                    maxOneMinutePower.updateAndGet { current ->
+                        if (currentAvg > current) currentAvg else current
+                    }
                 }
             }
         }

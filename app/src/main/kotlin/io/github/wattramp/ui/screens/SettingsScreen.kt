@@ -40,6 +40,7 @@ import io.github.wattramp.ui.theme.*
 fun SettingsScreen(
     settings: PreferencesRepository.Settings,
     onUpdateFtp: (Int) -> Unit,
+    onUpdateWeight: (Float) -> Unit,
     onUpdateRampStart: (Int) -> Unit,
     onUpdateRampStep: (Int) -> Unit,
     onUpdateSoundAlerts: (Boolean) -> Unit,
@@ -103,6 +104,13 @@ fun SettingsScreen(
             FtpRow(
                 value = settings.currentFtp,
                 onUpdate = onUpdateFtp,
+                borderColor = borderColor,
+                isCompact = isCompact
+            )
+
+            WeightRow(
+                value = settings.userWeight,
+                onUpdate = onUpdateWeight,
                 borderColor = borderColor,
                 isCompact = isCompact
             )
@@ -339,6 +347,111 @@ private fun FtpRow(
                         fontSize = if (isCompact) 12.sp else 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = Primary.copy(alpha = 0.7f)
+                    )
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = null,
+                        tint = OnSurfaceVariant,
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(14.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WeightRow(
+    value: Float,
+    onUpdate: (Float) -> Unit,
+    borderColor: Color,
+    isCompact: Boolean
+) {
+    var isEditing by remember { mutableStateOf(false) }
+    var textValue by remember(value) { mutableStateOf(value.toInt().toString()) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .garminBorder(borderColor)
+            .background(Background)
+            .height(if (isCompact) 44.dp else 52.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Color indicator
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .fillMaxHeight()
+                .background(Zone3)
+        )
+
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 6.dp, end = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.settings_weight),
+                fontSize = if (isCompact) 11.sp else 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = OnSurface
+            )
+
+            if (isEditing) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = textValue,
+                        onValueChange = { textValue = it.filter { c -> c.isDigit() }.take(3) },
+                        modifier = Modifier
+                            .width(if (isCompact) 56.dp else 64.dp)
+                            .height(if (isCompact) 36.dp else 40.dp),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        textStyle = LocalTextStyle.current.copy(
+                            fontSize = if (isCompact) 16.sp else 18.sp,
+                            fontWeight = FontWeight.Black,
+                            color = Zone3,
+                            textAlign = TextAlign.Center
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Zone3,
+                            unfocusedBorderColor = SurfaceVariant
+                        ),
+                        shape = RectangleShape
+                    )
+                    IconButton(
+                        onClick = {
+                            textValue.toIntOrNull()?.let {
+                                if (it in 30..200) onUpdate(it.toFloat())
+                            }
+                            isEditing = false
+                        },
+                        modifier = Modifier.size(if (isCompact) 32.dp else 36.dp)
+                    ) {
+                        Icon(Icons.Default.Check, null, tint = Success, modifier = Modifier.size(18.dp))
+                    }
+                }
+            } else {
+                Row(
+                    modifier = Modifier.clickable { isEditing = true },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${value.toInt()}",
+                        fontSize = if (isCompact) 18.sp else 22.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Zone3
+                    )
+                    Text(
+                        text = "kg",
+                        fontSize = if (isCompact) 11.sp else 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Zone3.copy(alpha = 0.7f)
                     )
                     Icon(
                         Icons.Default.Edit,

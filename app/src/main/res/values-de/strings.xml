@@ -65,6 +65,8 @@
     <string name="settings_power">LEISTUNG</string>
     <string name="settings_current_ftp">AKTUELLE FTP</string>
     <string name="settings_ftp_desc">Funktionelle Schwellenleistung</string>
+    <string name="settings_weight">GEWICHT</string>
+    <string name="settings_weight_desc">Körpergewicht für W/kg</string>
     <string name="settings_ramp_test">RAMPENTEST</string>
     <string name="settings_start_power">STARTLEISTUNG</string>
     <string name="settings_start_power_desc">Anfangsleistung der Rampe</string>
@@ -119,22 +121,82 @@
     <string name="unit_min">min</string>
     <string name="unit_minutes">%dm</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">Anleitung</string>
     <string name="tutorial_title">ANLEITUNG</string>
-    <string name="tutorial_how_to_use">ERSTE SCHRITTE</string>
-    <string name="tutorial_step1">Stellen Sie Ihren aktuellen FTP in den Einstellungen ein</string>
-    <string name="tutorial_step2">Wählen Sie ein Testprotokoll auf dem Startbildschirm</string>
-    <string name="tutorial_step3">Drücken Sie START und folgen Sie den Zielen</string>
-    <string name="tutorial_step4">Speichern Sie das Ergebnis um Ihren FTP zu aktualisieren</string>
-    <string name="tutorial_tests">TESTPROTOKOLLE</string>
-    <string name="tutorial_ramp_desc">Schneller ~20min Test. Leistung steigt jede Minute bis zur Erschöpfung.</string>
-    <string name="tutorial_20min_desc">Klassischer ~60min Test. 20-minütige Maximalbelastung nach dem Aufwärmen.</string>
-    <string name="tutorial_8min_desc">Zwei 8-Minuten-Intervalle ~50min gesamt. Gut für Pacing-Übung.</string>
-    <string name="tutorial_tips">TIPPS</string>
-    <string name="tutorial_tip1">Wärmen Sie sich vor dem Test gut auf</string>
-    <string name="tutorial_tip2">Verwenden Sie den ERG-Modus auf Ihrem Trainer</string>
-    <string name="tutorial_tip3">Stoppen Sie, wenn Sie die Zielleistung nicht halten können</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">WAS IST FTP?</string>
+    <string name="tutorial_ftp_desc">FTP (Funktionelle Schwellenleistung) ist die maximale Leistung, die Sie etwa eine Stunde halten können. Es ist der Goldstandard zur Messung der Radfitness und Festlegung von Trainingszonen.</string>
+    <string name="tutorial_ftp_why">Warum FTP testen?</string>
+    <string name="tutorial_ftp_reason1">Genaue Trainingszonen festlegen</string>
+    <string name="tutorial_ftp_reason2">Fitnessfortschritt verfolgen</string>
+    <string name="tutorial_ftp_reason3">Pacing bei Rennen und Training</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">RAMPENTEST</string>
+    <string name="tutorial_ramp_subtitle">Schnell und effizient</string>
+    <string name="tutorial_ramp_duration">~20 Minuten</string>
+    <string name="tutorial_ramp_formula">FTP = MAX × 0.75</string>
+    <string name="tutorial_ramp_desc">Leistung steigt alle Minute um 20W bis zur Erschöpfung. FTP wird aus der höchsten 1-Minuten-Leistung berechnet.</string>
+    <string name="tutorial_ramp_best">Ideal für: Schnelle Bewertung, wenig Zeit, regelmäßige Tests</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">20-MINUTEN-TEST</string>
+    <string name="tutorial_20min_subtitle">Goldstandard</string>
+    <string name="tutorial_20min_duration">~55 Minuten</string>
+    <string name="tutorial_20min_formula">FTP = MITT × 0.95</string>
+    <string name="tutorial_20min_desc">Nach dem Aufwärmen 20 Minuten mit maximaler nachhaltiger Leistung fahren. FTP ist 95% der Durchschnittsleistung.</string>
+    <string name="tutorial_20min_best">Ideal für: Genaue Ergebnisse, erfahrene Radfahrer</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">2×8-MINUTEN-TEST</string>
+    <string name="tutorial_8min_subtitle">Pacing-Übung</string>
+    <string name="tutorial_8min_duration">~45 Minuten</string>
+    <string name="tutorial_8min_formula">FTP = MITT × 0.90</string>
+    <string name="tutorial_8min_desc">Zwei 8-minütige Maximalbelastungen mit Erholung dazwischen. Durchschnitt beider Intervalle.</string>
+    <string name="tutorial_8min_best">Ideal für: Pacing-Übung, Anfänger, weniger mentale Erschöpfung</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">LEISTUNGSZONEN</string>
+    <string name="tutorial_zones_desc">Ihr FTP definiert 7 Trainingszonen für verschiedene Anpassungen:</string>
+    <string name="tutorial_zone1_desc">Aktive Erholung • Leichtes Treten</string>
+    <string name="tutorial_zone2_desc">Ausdauer • Basis für lange Fahrten</string>
+    <string name="tutorial_zone3_desc">Tempo • Moderate Intensität</string>
+    <string name="tutorial_zone4_desc">Schwelle • FTP-Arbeit</string>
+    <string name="tutorial_zone5_desc">VO2max • Harte Intervalle</string>
+    <string name="tutorial_zone6_desc">Anaerob • Kurze Sprints</string>
+    <string name="tutorial_zone7_desc">Neuromuskulär • Sprints</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">WÄHREND DES TESTS</string>
+    <string name="tutorial_during_desc">Den Testbildschirm verstehen:</string>
+    <string name="tutorial_during_power">Aktuelle Leistung - Ihre Echtzeit-Ausgabe</string>
+    <string name="tutorial_during_target">Zielleistung - Worauf Sie zielen</string>
+    <string name="tutorial_during_deviation">Abweichung - Entfernung vom Ziel (+/-)</string>
+    <string name="tutorial_during_time">Zeit - Verbleibend in aktueller Phase</string>
+    <string name="tutorial_during_hr">Herzfrequenz - Mit Zonenanzeige</string>
+    <string name="tutorial_during_cadence">Kadenz - Trittfrequenz (U/min)</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">ERGEBNISSE VERSTEHEN</string>
+    <string name="tutorial_results_desc">Nach Abschluss eines Tests sehen Sie:</string>
+    <string name="tutorial_results_ftp">Neuer FTP - Ihre berechnete Schwellenleistung</string>
+    <string name="tutorial_results_wkg">W/kg - Leistung-zu-Gewicht-Verhältnis</string>
+    <string name="tutorial_results_np">NP - Normalisierte Leistung</string>
+    <string name="tutorial_results_vi">VI - Variabilitätsindex (Pacing-Konsistenz)</string>
+    <string name="tutorial_results_ef">EF - Effizienzfaktor</string>
+    <string name="tutorial_results_save">SPEICHERN drücken um FTP und Zonen zu aktualisieren</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">TIPPS FÜR ERFOLG</string>
+    <string name="tutorial_tip1">Wattmesser vor dem Test kalibrieren</string>
+    <string name="tutorial_tip2">10–15 Minuten vor dem Test aufwärmen</string>
+    <string name="tutorial_tip3">Hydriert bleiben - Wasser bereithalten</string>
+    <string name="tutorial_tip4">ERG-Modus bei Smart-Trainern nutzen</string>
+    <string name="tutorial_tip5">Erholt testen, nicht nach harten Trainings</string>
+    <string name="tutorial_tip6">Bei RAMPE: Bis zur Erschöpfung weiterfahren</string>
+    <string name="tutorial_tip7">Alle 4–6 Wochen erneut testen</string>
 
     <!-- Recovery Dialog -->
     <string name="recovery_title">SITZUNG GEFUNDEN</string>

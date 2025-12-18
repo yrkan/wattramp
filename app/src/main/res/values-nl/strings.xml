@@ -65,6 +65,8 @@
     <string name="settings_power">VERMOGEN</string>
     <string name="settings_current_ftp">HUIDIGE FTP</string>
     <string name="settings_ftp_desc">Functioneel Drempelvermogen</string>
+    <string name="settings_weight">GEWICHT</string>
+    <string name="settings_weight_desc">Lichaamsgewicht voor W/kg</string>
     <string name="settings_ramp_test">OPLOOP TEST</string>
     <string name="settings_start_power">STARTVERMOGEN</string>
     <string name="settings_start_power_desc">Beginvermogen van de oploop</string>
@@ -119,22 +121,82 @@
     <string name="unit_min">min</string>
     <string name="unit_minutes">%dm</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">Handleiding</string>
     <string name="tutorial_title">HANDLEIDING</string>
-    <string name="tutorial_how_to_use">AAN DE SLAG</string>
-    <string name="tutorial_step1">Stel je huidige FTP in bij Instellingen</string>
-    <string name="tutorial_step2">Kies een testprotocol op het startscherm</string>
-    <string name="tutorial_step3">Druk op START en volg de doelen</string>
-    <string name="tutorial_step4">Sla het resultaat op om je FTP bij te werken</string>
-    <string name="tutorial_tests">TESTPROTOCOLLEN</string>
-    <string name="tutorial_ramp_desc">Snelle ~20min test. Vermogen stijgt elke minuut tot uitputting.</string>
-    <string name="tutorial_20min_desc">Klassieke ~60min test. 20-minuten maximale inspanning na warming-up.</string>
-    <string name="tutorial_8min_desc">Twee 8-minuten intervallen ~50min totaal. Goed voor pacing oefenen.</string>
-    <string name="tutorial_tips">TIPS</string>
-    <string name="tutorial_tip1">Warm goed op voor je begint met de test</string>
-    <string name="tutorial_tip2">Gebruik ERG-modus op je trainer voor beste resultaten</string>
-    <string name="tutorial_tip3">Stop wanneer je het doelvermogen niet kunt vasthouden</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">WAT IS FTP?</string>
+    <string name="tutorial_ftp_desc">FTP (Functioneel Drempelvermogen) is het maximale vermogen dat je ongeveer een uur kunt volhouden. Het is de standaard voor het meten van fietsvorm.</string>
+    <string name="tutorial_ftp_why">Waarom FTP testen?</string>
+    <string name="tutorial_ftp_reason1">Nauwkeurige trainingszones instellen</string>
+    <string name="tutorial_ftp_reason2">Vormverbetering volgen</string>
+    <string name="tutorial_ftp_reason3">Pacing in wedstrijden</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">OPLOOP TEST</string>
+    <string name="tutorial_ramp_subtitle">Snel en efficiënt</string>
+    <string name="tutorial_ramp_duration">~20 minuten</string>
+    <string name="tutorial_ramp_formula">FTP = MAX × 0.75</string>
+    <string name="tutorial_ramp_desc">Vermogen stijgt elke minuut met 20W tot uitputting. FTP berekend uit hoogste 1-minuut vermogen.</string>
+    <string name="tutorial_ramp_best">Ideaal voor: Snelle beoordeling, weinig tijd, regelmatig testen</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">20-MINUTEN TEST</string>
+    <string name="tutorial_20min_subtitle">Gouden standaard</string>
+    <string name="tutorial_20min_duration">~55 minuten</string>
+    <string name="tutorial_20min_formula">FTP = GEM × 0.95</string>
+    <string name="tutorial_20min_desc">Na warming-up, 20 minuten fietsen op maximaal houdbare inspanning. FTP = 95% van gemiddeld vermogen.</string>
+    <string name="tutorial_20min_best">Ideaal voor: Nauwkeurige resultaten, ervaren fietsers</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">2×8-MINUTEN TEST</string>
+    <string name="tutorial_8min_subtitle">Pacing oefening</string>
+    <string name="tutorial_8min_duration">~45 minuten</string>
+    <string name="tutorial_8min_formula">FTP = GEM × 0.90</string>
+    <string name="tutorial_8min_desc">Twee maximale 8-minuten inspanningen met herstel. Gemiddelde van beide intervallen.</string>
+    <string name="tutorial_8min_best">Ideaal voor: Pacing oefenen, beginners</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">VERMOGENSZONES</string>
+    <string name="tutorial_zones_desc">Je FTP definieert 7 trainingszones:</string>
+    <string name="tutorial_zone1_desc">Herstel • Licht trappen</string>
+    <string name="tutorial_zone2_desc">Uithoudingsvermogen • Lange ritten basis</string>
+    <string name="tutorial_zone3_desc">Tempo • Matige intensiteit</string>
+    <string name="tutorial_zone4_desc">Drempel • FTP werk</string>
+    <string name="tutorial_zone5_desc">VO2max • Zware intervallen</string>
+    <string name="tutorial_zone6_desc">Anaeroob • Korte inspanningen</string>
+    <string name="tutorial_zone7_desc">Neuromusculair • Sprints</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">TIJDENS DE TEST</string>
+    <string name="tutorial_during_desc">Het testscherm begrijpen:</string>
+    <string name="tutorial_during_power">Huidig vermogen - Je realtime output</string>
+    <string name="tutorial_during_target">Doelvermogen - Waar je op moet mikken</string>
+    <string name="tutorial_during_deviation">Afwijking - Afstand van doel (+/-)</string>
+    <string name="tutorial_during_time">Tijd - Resterend in huidige fase</string>
+    <string name="tutorial_during_hr">Hartslag - Met zone indicator</string>
+    <string name="tutorial_during_cadence">Cadans - Trapsnelheid (rpm)</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">RESULTATEN BEGRIJPEN</string>
+    <string name="tutorial_results_desc">Na een test zie je:</string>
+    <string name="tutorial_results_ftp">Nieuwe FTP - Je berekende drempelvermogen</string>
+    <string name="tutorial_results_wkg">W/kg - Vermogen/gewicht ratio</string>
+    <string name="tutorial_results_np">NP - Genormaliseerd vermogen</string>
+    <string name="tutorial_results_vi">VI - Variabiliteitsindex</string>
+    <string name="tutorial_results_ef">EF - Efficiëntiefactor</string>
+    <string name="tutorial_results_save">Druk OPSLAAN om FTP en zones bij te werken</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">TIPS VOOR SUCCES</string>
+    <string name="tutorial_tip1">Kalibreer vermogensmeter voor de test</string>
+    <string name="tutorial_tip2">10–15 minuten warming-up</string>
+    <string name="tutorial_tip3">Blijf gehydrateerd - water bij de hand</string>
+    <string name="tutorial_tip4">Gebruik ERG-modus op slimme trainers</string>
+    <string name="tutorial_tip5">Test uitgerust, niet na zware trainingen</string>
+    <string name="tutorial_tip6">Bij OPLOOP: doorduwen tot je niet meer kunt</string>
+    <string name="tutorial_tip7">Hertest elke 4–6 weken</string>
 
     <!-- Recovery Dialog -->
     <string name="recovery_title">SESSIE GEVONDEN</string>

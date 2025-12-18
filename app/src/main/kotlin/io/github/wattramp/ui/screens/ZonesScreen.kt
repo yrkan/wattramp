@@ -30,9 +30,12 @@ import io.github.wattramp.ui.theme.*
 @Composable
 fun ZonesScreen(
     ftp: Int,
+    userWeight: Float = 70f,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Calculate W/kg
+    val wattsPerKg = if (userWeight > 0) ftp / userWeight.toDouble() else 0.0
     // Capture theme colors
     val zone1Color = Zone1
     val zone2Color = Zone2
@@ -87,14 +90,26 @@ fun ZonesScreen(
                 )
             }
 
-            // FTP value
-            Text(
-                text = "${ftp}W",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Black,
-                color = Color.Black,
+            // FTP value and W/kg
+            Column(
+                horizontalAlignment = Alignment.End,
                 modifier = Modifier.padding(end = 8.dp)
-            )
+            ) {
+                Text(
+                    text = "${ftp}W",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color.Black
+                )
+                if (wattsPerKg > 0) {
+                    Text(
+                        text = String.format("%.2f W/kg", wattsPerKg),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black.copy(alpha = 0.7f)
+                    )
+                }
+            }
         }
 
         // ═══════════════════════════════════════════════════════════════════

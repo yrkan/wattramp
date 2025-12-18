@@ -65,6 +65,8 @@
     <string name="settings_power">功率</string>
     <string name="settings_current_ftp">当前FTP</string>
     <string name="settings_ftp_desc">功能性阈值功率</string>
+    <string name="settings_weight">体重</string>
+    <string name="settings_weight_desc">用于W/kg计算</string>
     <string name="settings_ramp_test">递增测试</string>
     <string name="settings_start_power">起始功率</string>
     <string name="settings_start_power_desc">递增起始功率</string>
@@ -119,22 +121,82 @@
     <string name="unit_min">分钟</string>
     <string name="unit_minutes">%d分钟</string>
 
-    <!-- Tutorial Screen -->
+    <!-- Tutorial Screen - Interactive 8-page guide -->
     <string name="tutorial_link">教程</string>
-    <string name="tutorial_title">使用说明</string>
-    <string name="tutorial_how_to_use">开始使用</string>
-    <string name="tutorial_step1">在设置中设置当前FTP</string>
-    <string name="tutorial_step2">在主屏幕选择测试协议</string>
-    <string name="tutorial_step3">按开始并跟随目标</string>
-    <string name="tutorial_step4">保存结果以更新FTP</string>
-    <string name="tutorial_tests">测试协议</string>
-    <string name="tutorial_ramp_desc">快速~20分钟测试。功率每分钟递增直到力竭。</string>
-    <string name="tutorial_20min_desc">经典~60分钟测试。热身后20分钟全力输出。</string>
-    <string name="tutorial_8min_desc">两个8分钟间歇，总计~50分钟。适合配速练习。</string>
-    <string name="tutorial_tips">建议</string>
-    <string name="tutorial_tip1">测试前充分热身</string>
-    <string name="tutorial_tip2">使用骑行台的ERG模式获得最佳效果</string>
-    <string name="tutorial_tip3">无法维持目标功率时停止</string>
+    <string name="tutorial_title">教程</string>
+
+    <!-- Page 1: What is FTP -->
+    <string name="tutorial_ftp_title">什么是FTP？</string>
+    <string name="tutorial_ftp_desc">FTP（功能性阈值功率）是您能维持约一小时的最大功率。它是测量骑行体能和设置训练区间的标准。</string>
+    <string name="tutorial_ftp_why">为什么要测试FTP？</string>
+    <string name="tutorial_ftp_reason1">设置准确的训练区间</string>
+    <string name="tutorial_ftp_reason2">追踪体能进步</string>
+    <string name="tutorial_ftp_reason3">比赛中的配速管理</string>
+
+    <!-- Page 2: RAMP Test -->
+    <string name="tutorial_ramp_title">递增测试</string>
+    <string name="tutorial_ramp_subtitle">快速高效</string>
+    <string name="tutorial_ramp_duration">约20分钟</string>
+    <string name="tutorial_ramp_formula">FTP = 最大 × 0.75</string>
+    <string name="tutorial_ramp_desc">功率每分钟增加20W直到力竭。FTP根据最高1分钟功率计算。</string>
+    <string name="tutorial_ramp_best">适合：快速评估、时间有限、定期测试</string>
+
+    <!-- Page 3: 20-MIN Test -->
+    <string name="tutorial_20min_title">20分钟测试</string>
+    <string name="tutorial_20min_subtitle">黄金标准</string>
+    <string name="tutorial_20min_duration">约55分钟</string>
+    <string name="tutorial_20min_formula">FTP = 平均 × 0.95</string>
+    <string name="tutorial_20min_desc">热身后，以最大可持续努力骑行20分钟。FTP = 平均功率的95%。</string>
+    <string name="tutorial_20min_best">适合：精确结果、经验丰富的骑手</string>
+
+    <!-- Page 4: 8-MIN Test -->
+    <string name="tutorial_8min_title">2×8分钟测试</string>
+    <string name="tutorial_8min_subtitle">配速练习</string>
+    <string name="tutorial_8min_duration">约45分钟</string>
+    <string name="tutorial_8min_formula">FTP = 平均 × 0.90</string>
+    <string name="tutorial_8min_desc">两次8分钟最大努力，中间恢复。使用两个间歇的平均值。</string>
+    <string name="tutorial_8min_best">适合：配速练习、初学者</string>
+
+    <!-- Page 5: Power Zones -->
+    <string name="tutorial_zones_title">功率区间</string>
+    <string name="tutorial_zones_desc">您的FTP定义7个训练区间：</string>
+    <string name="tutorial_zone1_desc">恢复 • 轻松骑行</string>
+    <string name="tutorial_zone2_desc">耐力 • 长距离基础</string>
+    <string name="tutorial_zone3_desc">节奏 • 中等强度</string>
+    <string name="tutorial_zone4_desc">阈值 • FTP训练</string>
+    <string name="tutorial_zone5_desc">VO2max • 高强度间歇</string>
+    <string name="tutorial_zone6_desc">无氧 • 短时爆发</string>
+    <string name="tutorial_zone7_desc">神经肌肉 • 冲刺</string>
+
+    <!-- Page 6: During Test -->
+    <string name="tutorial_during_title">测试期间</string>
+    <string name="tutorial_during_desc">理解测试屏幕：</string>
+    <string name="tutorial_during_power">当前功率 - 实时输出</string>
+    <string name="tutorial_during_target">目标功率 - 要达到的值</string>
+    <string name="tutorial_during_deviation">偏差 - 与目标的距离（+/-）</string>
+    <string name="tutorial_during_time">时间 - 当前阶段剩余</string>
+    <string name="tutorial_during_hr">心率 - 带区间指示</string>
+    <string name="tutorial_during_cadence">踏频 - 踩踏速度（rpm）</string>
+
+    <!-- Page 7: Results -->
+    <string name="tutorial_results_title">理解结果</string>
+    <string name="tutorial_results_desc">完成测试后，您将看到：</string>
+    <string name="tutorial_results_ftp">新FTP - 计算的阈值功率</string>
+    <string name="tutorial_results_wkg">W/kg - 功率体重比</string>
+    <string name="tutorial_results_np">NP - 标准化功率</string>
+    <string name="tutorial_results_vi">VI - 变异指数</string>
+    <string name="tutorial_results_ef">EF - 效率因子</string>
+    <string name="tutorial_results_save">点击保存以更新FTP和区间</string>
+
+    <!-- Page 8: Tips -->
+    <string name="tutorial_tips_title">成功秘诀</string>
+    <string name="tutorial_tip1">测试前校准功率计</string>
+    <string name="tutorial_tip2">10-15分钟热身</string>
+    <string name="tutorial_tip3">保持水分 - 准备好水</string>
+    <string name="tutorial_tip4">在智能骑行台上使用ERG模式</string>
+    <string name="tutorial_tip5">休息后测试，避免高强度训练后</string>
+    <string name="tutorial_tip6">递增测试：坚持到无法继续</string>
+    <string name="tutorial_tip7">每4-6周重新测试</string>
 
     <!-- Recovery Dialog -->
     <string name="recovery_title">发现会话</string>
