@@ -21,6 +21,11 @@
     <string name="protocol_8min_formula">MOY×0.90</string>
     <string name="protocol_8min_duration">~50m</string>
 
+    <!-- Short protocol names for cards -->
+    <string name="protocol_ramp_short">RAMPE</string>
+    <string name="protocol_20min_short">20-MIN</string>
+    <string name="protocol_8min_short">2×8-MIN</string>
+
     <!-- Result Screen -->
     <string name="result_complete">TEST TERMINÉ</string>
     <string name="result_new_ftp">NOUVEAU FTP</string>
@@ -32,6 +37,10 @@
     <string name="result_avg">MOY</string>
     <string name="result_prev">PRÉC</string>
     <string name="result_coeff">COEF</string>
+    <string name="result_np">NP</string>
+    <string name="result_vi">VI</string>
+    <string name="result_ef">EF</string>
+    <string name="result_hr">FC</string>
 
     <!-- History Screen -->
     <string name="history_title">HISTORIQUE</string>
@@ -95,6 +104,12 @@
     <string name="settings_clear_history_confirm">Réinitialiser les données?</string>
     <string name="settings_cancel">ANNULER</string>
     <string name="settings_clear">EFFACER</string>
+    <string name="settings_about">À PROPOS</string>
+    <string name="settings_version">VERSION</string>
+    <string name="settings_github">GitHub</string>
+    <string name="settings_privacy">Confidentialité</string>
+    <string name="settings_contact">Contact</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Running Screen -->
     <string name="running_warmup">ÉCHAUFFEMENT</string>
@@ -260,6 +275,14 @@
     <string name="datatype_progress_desc">Palier actuel ou progression temporelle du test</string>
     <string name="datatype_zone_name">Zone de Puissance</string>
     <string name="datatype_zone_desc">Indique si la puissance actuelle est dans la zone cible</string>
+    <string name="datatype_deviation_name">Écart de Puissance</string>
+    <string name="datatype_deviation_desc">Différence entre puissance actuelle et cible</string>
+    <string name="datatype_elapsed_name">Temps Écoulé</string>
+    <string name="datatype_elapsed_desc">Temps depuis le début du test</string>
+    <string name="datatype_avg_name">Puissance Moyenne</string>
+    <string name="datatype_avg_desc">Puissance moyenne pendant le test</string>
+    <string name="datatype_max_name">Puissance Max 1-min</string>
+    <string name="datatype_max_desc">Puissance moyenne maximale sur 1 minute</string>
     <string name="datatype_ftp_name">Prédiction FTP</string>
     <string name="datatype_ftp_desc">FTP estimé basé sur la performance actuelle</string>
 </resources>

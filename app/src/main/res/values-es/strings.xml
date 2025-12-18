@@ -21,6 +21,11 @@
     <string name="protocol_8min_formula">PROM×0.90</string>
     <string name="protocol_8min_duration">~50m</string>
 
+    <!-- Short protocol names for cards -->
+    <string name="protocol_ramp_short">RAMPA</string>
+    <string name="protocol_20min_short">20-MIN</string>
+    <string name="protocol_8min_short">2×8-MIN</string>
+
     <!-- Result Screen -->
     <string name="result_complete">TEST COMPLETADO</string>
     <string name="result_new_ftp">NUEVO FTP</string>
@@ -32,6 +37,10 @@
     <string name="result_avg">PROM</string>
     <string name="result_prev">ANT</string>
     <string name="result_coeff">COEF</string>
+    <string name="result_np">NP</string>
+    <string name="result_vi">VI</string>
+    <string name="result_ef">EF</string>
+    <string name="result_hr">FC</string>
 
     <!-- History Screen -->
     <string name="history_title">HISTORIAL</string>
@@ -95,10 +104,16 @@
     <string name="settings_clear_history_confirm">¿Restablecer datos?</string>
     <string name="settings_cancel">CANCELAR</string>
     <string name="settings_clear">BORRAR</string>
+    <string name="settings_about">ACERCA DE</string>
+    <string name="settings_version">VERSIÓN</string>
+    <string name="settings_github">GitHub</string>
+    <string name="settings_privacy">Privacidad</string>
+    <string name="settings_contact">Contacto</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Running Screen -->
     <string name="running_warmup">CALENTAMIENTO</string>
-    <string name="running_testing">TESTING</string>
+    <string name="running_testing">PRUEBA</string>
     <string name="running_cooldown">ENFRIAMIENTO</string>
     <string name="running_recovery">RECUPERACIÓN</string>
     <string name="running_blowout">EXPLOSIÓN</string>
@@ -260,6 +275,14 @@
     <string name="datatype_progress_desc">Paso actual o progreso de tiempo en el test</string>
     <string name="datatype_zone_name">Zona de Potencia</string>
     <string name="datatype_zone_desc">Muestra si la potencia actual está en la zona objetivo</string>
+    <string name="datatype_deviation_name">Desviación de Potencia</string>
+    <string name="datatype_deviation_desc">Diferencia entre potencia actual y objetivo</string>
+    <string name="datatype_elapsed_name">Tiempo Transcurrido</string>
+    <string name="datatype_elapsed_desc">Tiempo desde el inicio del test</string>
+    <string name="datatype_avg_name">Potencia Media</string>
+    <string name="datatype_avg_desc">Potencia media durante el test</string>
+    <string name="datatype_max_name">Potencia Máx 1-min</string>
+    <string name="datatype_max_desc">Potencia media máxima de 1 minuto</string>
     <string name="datatype_ftp_name">Predicción FTP</string>
     <string name="datatype_ftp_desc">FTP estimado basado en el rendimiento actual</string>
 </resources>

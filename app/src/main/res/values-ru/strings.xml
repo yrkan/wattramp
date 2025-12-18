@@ -5,25 +5,26 @@
 
     <!-- Home Screen -->
     <string name="home_ftp">FTP</string>
-    <string name="home_current_ftp">ТЕКУЩИЙ FTP</string>
     <string name="home_select_test">ВЫБРАТЬ ТЕСТ</string>
     <string name="home_start">СТАРТ</string>
 
     <!-- Protocol names and info -->
     <string name="protocol_ramp">РАМПА</string>
-    <string name="protocol_ramp_short">РАМПА</string>
     <string name="protocol_ramp_formula">МАКС×0.75</string>
     <string name="protocol_ramp_duration">~20м</string>
 
     <string name="protocol_20min">20-МИН</string>
-    <string name="protocol_20min_short">20-МИН</string>
     <string name="protocol_20min_formula">СР×0.95</string>
     <string name="protocol_20min_duration">~60м</string>
 
     <string name="protocol_8min">2×8-МИН</string>
-    <string name="protocol_8min_short">2×8-МИН</string>
     <string name="protocol_8min_formula">СР×0.90</string>
     <string name="protocol_8min_duration">~50м</string>
+
+    <!-- Short protocol names for cards -->
+    <string name="protocol_ramp_short">РАМПА</string>
+    <string name="protocol_20min_short">20-МИН</string>
+    <string name="protocol_8min_short">2×8-МИН</string>
 
     <!-- Result Screen -->
     <string name="result_complete">ТЕСТ ЗАВЕРШЁН</string>
@@ -36,9 +37,9 @@
     <string name="result_avg">СР</string>
     <string name="result_prev">ПРЕД</string>
     <string name="result_coeff">КОЭФ</string>
-    <string name="result_np">НМ</string>
-    <string name="result_vi">ИВ</string>
-    <string name="result_ef">ФЭ</string>
+    <string name="result_np">NP</string>
+    <string name="result_vi">VI</string>
+    <string name="result_ef">EF</string>
     <string name="result_hr">ЧСС</string>
 
     <!-- History Screen -->
@@ -87,7 +88,7 @@
     <string name="settings_cooldown_desc">Время восстановления</string>
     <string name="settings_alerts">ОПОВЕЩЕНИЯ И ЭКРАН</string>
     <string name="settings_sound_alerts">ЗВУКОВЫЕ ОПОВЕЩЕНИЯ</string>
-    <string name="settings_screen_on">ЭКРАН ВКЛЮЧЁН</string>
+    <string name="settings_screen_on">НЕ ГАСИТЬ ЭКРАН</string>
     <string name="settings_motivation">МОТИВАЦИЯ</string>
     <string name="settings_language">ЯЗЫК</string>
     <string name="settings_app_language">ЯЗЫК ПРИЛОЖЕНИЯ</string>
@@ -103,14 +104,11 @@
     <string name="settings_clear_history_confirm">Сбросить все данные?</string>
     <string name="settings_cancel">ОТМЕНА</string>
     <string name="settings_clear">СБРОС</string>
-
-    <!-- About Section -->
     <string name="settings_about">О ПРИЛОЖЕНИИ</string>
     <string name="settings_version">ВЕРСИЯ</string>
-    <string name="settings_github">ИСХОДНЫЙ КОД</string>
-    <string name="settings_github_desc">Смотреть на GitHub</string>
-    <string name="settings_privacy">ПОЛИТИКА КОНФ.</string>
-    <string name="settings_contact">КОНТАКТ</string>
+    <string name="settings_github">GitHub</string>
+    <string name="settings_privacy">Политика конфиденциальности</string>
+    <string name="settings_contact">Контакт</string>
     <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Running Screen -->
@@ -235,7 +233,7 @@
 
     <!-- Guide Tour Section -->
     <string name="settings_demo">ГАЙД</string>
-    <string name="settings_demo_mode">ГАЙД ПО APP</string>
+    <string name="settings_demo_mode">ГАЙД ПРИЛОЖЕНИЯ</string>
     <string name="settings_demo_desc">Тур по всем экранам</string>
 
     <!-- Guide Tour Steps -->

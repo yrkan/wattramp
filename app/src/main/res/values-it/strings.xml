@@ -21,6 +21,11 @@
     <string name="protocol_8min_formula">MED×0.90</string>
     <string name="protocol_8min_duration">~50m</string>
 
+    <!-- Short protocol names for cards -->
+    <string name="protocol_ramp_short">RAMPA</string>
+    <string name="protocol_20min_short">20-MIN</string>
+    <string name="protocol_8min_short">2×8-MIN</string>
+
     <!-- Result Screen -->
     <string name="result_complete">TEST COMPLETATO</string>
     <string name="result_new_ftp">NUOVO FTP</string>
@@ -32,6 +37,10 @@
     <string name="result_avg">MED</string>
     <string name="result_prev">PREC</string>
     <string name="result_coeff">COEF</string>
+    <string name="result_np">NP</string>
+    <string name="result_vi">VI</string>
+    <string name="result_ef">EF</string>
+    <string name="result_hr">FC</string>
 
     <!-- History Screen -->
     <string name="history_title">STORICO</string>
@@ -95,6 +104,12 @@
     <string name="settings_clear_history_confirm">Resettare tutti i dati?</string>
     <string name="settings_cancel">ANNULLA</string>
     <string name="settings_clear">CANCELLA</string>
+    <string name="settings_about">INFO</string>
+    <string name="settings_version">VERSIONE</string>
+    <string name="settings_github">GitHub</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_contact">Contatto</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Running Screen -->
     <string name="running_warmup">RISCALDAMENTO</string>
@@ -260,6 +275,14 @@
     <string name="datatype_progress_desc">Step attuale o progresso temporale nel test</string>
     <string name="datatype_zone_name">Zona di Potenza</string>
     <string name="datatype_zone_desc">Mostra se la potenza attuale è nella zona obiettivo</string>
+    <string name="datatype_deviation_name">Deviazione Potenza</string>
+    <string name="datatype_deviation_desc">Differenza tra potenza attuale e obiettivo</string>
+    <string name="datatype_elapsed_name">Tempo Trascorso</string>
+    <string name="datatype_elapsed_desc">Tempo dall\'inizio del test</string>
+    <string name="datatype_avg_name">Potenza Media</string>
+    <string name="datatype_avg_desc">Potenza media durante il test</string>
+    <string name="datatype_max_name">Potenza Max 1-min</string>
+    <string name="datatype_max_desc">Potenza media massima di 1 minuto</string>
     <string name="datatype_ftp_name">Previsione FTP</string>
     <string name="datatype_ftp_desc">FTP stimato basato sulla prestazione attuale</string>
 </resources>

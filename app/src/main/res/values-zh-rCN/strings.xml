@@ -21,6 +21,11 @@
     <string name="protocol_8min_formula">平均×0.90</string>
     <string name="protocol_8min_duration">约50分钟</string>
 
+    <!-- Short protocol names for cards -->
+    <string name="protocol_ramp_short">递增</string>
+    <string name="protocol_20min_short">20分钟</string>
+    <string name="protocol_8min_short">2×8分钟</string>
+
     <!-- Result Screen -->
     <string name="result_complete">测试完成</string>
     <string name="result_new_ftp">新FTP</string>
@@ -32,6 +37,10 @@
     <string name="result_avg">平均</string>
     <string name="result_prev">上次</string>
     <string name="result_coeff">系数</string>
+    <string name="result_np">NP</string>
+    <string name="result_vi">VI</string>
+    <string name="result_ef">EF</string>
+    <string name="result_hr">心率</string>
 
     <!-- History Screen -->
     <string name="history_title">历史记录</string>
@@ -95,6 +104,12 @@
     <string name="settings_clear_history_confirm">重置所有数据?</string>
     <string name="settings_cancel">取消</string>
     <string name="settings_clear">重置</string>
+    <string name="settings_about">关于</string>
+    <string name="settings_version">版本</string>
+    <string name="settings_github">GitHub</string>
+    <string name="settings_privacy">隐私政策</string>
+    <string name="settings_contact">联系方式</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Running Screen -->
     <string name="running_warmup">热身</string>
@@ -260,6 +275,14 @@
     <string name="datatype_progress_desc">测试中的当前阶段或时间进度</string>
     <string name="datatype_zone_name">功率区间</string>
     <string name="datatype_zone_desc">显示当前功率是否在目标区间</string>
+    <string name="datatype_deviation_name">功率偏差</string>
+    <string name="datatype_deviation_desc">当前功率与目标的差值</string>
+    <string name="datatype_elapsed_name">已用时间</string>
+    <string name="datatype_elapsed_desc">测试开始后的时间</string>
+    <string name="datatype_avg_name">平均功率</string>
+    <string name="datatype_avg_desc">测试期间的平均功率</string>
+    <string name="datatype_max_name">最大1分钟功率</string>
+    <string name="datatype_max_desc">最高1分钟平均功率</string>
     <string name="datatype_ftp_name">FTP预测</string>
     <string name="datatype_ftp_desc">基于当前表现的预估FTP</string>
 </resources>

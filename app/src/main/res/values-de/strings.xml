@@ -21,6 +21,11 @@
     <string name="protocol_8min_formula">MITT×0.90</string>
     <string name="protocol_8min_duration">~50m</string>
 
+    <!-- Short protocol names for cards -->
+    <string name="protocol_ramp_short">RAMPE</string>
+    <string name="protocol_20min_short">20-MIN</string>
+    <string name="protocol_8min_short">2×8-MIN</string>
+
     <!-- Result Screen -->
     <string name="result_complete">TEST ABGESCHLOSSEN</string>
     <string name="result_new_ftp">NEUE FTP</string>
@@ -32,6 +37,10 @@
     <string name="result_avg">MITT</string>
     <string name="result_prev">VORH</string>
     <string name="result_coeff">KOEF</string>
+    <string name="result_np">NP</string>
+    <string name="result_vi">VI</string>
+    <string name="result_ef">EF</string>
+    <string name="result_hr">HF</string>
 
     <!-- History Screen -->
     <string name="history_title">VERLAUF</string>
@@ -95,10 +104,16 @@
     <string name="settings_clear_history_confirm">Alle Daten zurücksetzen?</string>
     <string name="settings_cancel">ABBRECHEN</string>
     <string name="settings_clear">LÖSCHEN</string>
+    <string name="settings_about">ÜBER</string>
+    <string name="settings_version">VERSION</string>
+    <string name="settings_github">GitHub</string>
+    <string name="settings_privacy">Datenschutz</string>
+    <string name="settings_contact">Kontakt</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Running Screen -->
     <string name="running_warmup">AUFWÄRMEN</string>
-    <string name="running_testing">TESTING</string>
+    <string name="running_testing">TEST</string>
     <string name="running_cooldown">ABKÜHLEN</string>
     <string name="running_recovery">ERHOLUNG</string>
     <string name="running_blowout">AUSBELASTUNG</string>
@@ -260,6 +275,14 @@
     <string name="datatype_progress_desc">Aktuelle Stufe oder Zeitfortschritt im Test</string>
     <string name="datatype_zone_name">Leistungszone</string>
     <string name="datatype_zone_desc">Zeigt ob aktuelle Leistung in der Zielzone liegt</string>
+    <string name="datatype_deviation_name">Leistungsabweichung</string>
+    <string name="datatype_deviation_desc">Differenz zwischen aktueller und Zielleistung</string>
+    <string name="datatype_elapsed_name">Verstrichene Zeit</string>
+    <string name="datatype_elapsed_desc">Zeit seit Testbeginn</string>
+    <string name="datatype_avg_name">Durchschnittsleistung</string>
+    <string name="datatype_avg_desc">Durchschnittsleistung während des Tests</string>
+    <string name="datatype_max_name">Max 1-min Leistung</string>
+    <string name="datatype_max_desc">Höchste 1-Minuten-Durchschnittsleistung</string>
     <string name="datatype_ftp_name">FTP-Vorhersage</string>
     <string name="datatype_ftp_desc">Geschätzte FTP basierend auf aktueller Leistung</string>
 </resources>

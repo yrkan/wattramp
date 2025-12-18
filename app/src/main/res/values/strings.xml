@@ -5,25 +5,26 @@
 
     <!-- Home Screen -->
     <string name="home_ftp">FTP</string>
-    <string name="home_current_ftp">CURRENT FTP</string>
     <string name="home_select_test">SELECT TEST</string>
     <string name="home_start">START</string>
 
     <!-- Protocol names and info -->
     <string name="protocol_ramp">RAMP</string>
-    <string name="protocol_ramp_short">RAMP</string>
     <string name="protocol_ramp_formula">MAX×0.75</string>
     <string name="protocol_ramp_duration">~20m</string>
 
     <string name="protocol_20min">20-MIN</string>
-    <string name="protocol_20min_short">20-MIN</string>
     <string name="protocol_20min_formula">AVG×0.95</string>
     <string name="protocol_20min_duration">~60m</string>
 
     <string name="protocol_8min">2×8-MIN</string>
-    <string name="protocol_8min_short">2×8-MIN</string>
     <string name="protocol_8min_formula">AVG×0.90</string>
     <string name="protocol_8min_duration">~50m</string>
+
+    <!-- Short protocol names for cards -->
+    <string name="protocol_ramp_short">RAMP</string>
+    <string name="protocol_20min_short">20-MIN</string>
+    <string name="protocol_8min_short">2×8-MIN</string>
 
     <!-- Result Screen -->
     <string name="result_complete">TEST COMPLETE</string>
@@ -103,6 +104,12 @@
     <string name="settings_clear_history_confirm">Reset all data?</string>
     <string name="settings_cancel">CANCEL</string>
     <string name="settings_clear">RESET</string>
+    <string name="settings_about">ABOUT</string>
+    <string name="settings_version">VERSION</string>
+    <string name="settings_github">GitHub</string>
+    <string name="settings_privacy">Privacy Policy</string>
+    <string name="settings_contact">Contact</string>
+    <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Guide Tour Section -->
     <string name="settings_demo">GUIDE</string>
@@ -126,15 +133,6 @@
     <string name="guide_next">NEXT</string>
     <string name="guide_finish">DONE</string>
     <string name="guide_tap_hint">Tap anywhere to continue</string>
-
-    <!-- About Section -->
-    <string name="settings_about">ABOUT</string>
-    <string name="settings_version">VERSION</string>
-    <string name="settings_github">SOURCE CODE</string>
-    <string name="settings_github_desc">View on GitHub</string>
-    <string name="settings_privacy">PRIVACY POLICY</string>
-    <string name="settings_contact">CONTACT</string>
-    <string name="settings_contact_email">info@wattramp.com</string>
 
     <!-- Running Screen -->
     <string name="running_warmup">WARMUP</string>

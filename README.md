@@ -47,11 +47,25 @@ Results include advanced metrics:
 - **Variability Index (VI)**: NP / Avg Power (1.0 = steady, >1.05 = variable)
 - **Efficiency Factor (EF)**: NP / Avg HR (tracks aerobic fitness)
 
+### Power Zones
+
+WattRamp calculates 7 power zones based on your FTP:
+
+| Zone | Name | % FTP | Purpose |
+|------|------|-------|---------|
+| Z1 | Active Recovery | &lt;55% | Easy spinning, recovery rides |
+| Z2 | Endurance | 55-75% | Long base miles, fat burning |
+| Z3 | Tempo | 75-90% | Sustained moderate effort |
+| Z4 | Threshold | 90-105% | FTP work, race pace |
+| Z5 | VO2max | 105-120% | Hard intervals, 3-8 min efforts |
+| Z6 | Anaerobic | 120-150% | Short bursts, 30s-2min |
+| Z7 | Neuromuscular | &gt;150% | Sprints, max power |
+
 ### FTP History & Charts
 
-- **Progress Tracking**: View all past test results
-- **Chart Modes**: Toggle between Bar, Trend (smooth curves), and Protocol comparison views
-- **Statistics**: Best FTP, average, total gain
+- **Progress Tracking**: View all past test results with detailed analytics
+- **Chart Modes**: Toggle between Bar, Trend (smooth Bézier curves), and Protocol comparison views
+- **Statistics**: Best FTP, average, total gain, test count
 
 ### Pre-Test Checklist
 
@@ -61,12 +75,28 @@ Dedicated checklist screen before each test:
 - Hydration ready
 - FTP setting verified
 
+### Interactive Tutorial
+
+8-page tutorial accessible from Home Screen → Tutorial link:
+
+| Page | Topic | Content |
+|------|-------|---------|
+| 1 | What is FTP? | Definition, why it matters, benefits of testing |
+| 2 | Ramp Test | Protocol explanation with visual diagram |
+| 3 | 20-Minute Test | Classic protocol with timeline visualization |
+| 4 | 2×8-Minute Test | Dual effort protocol diagram |
+| 5 | Power Zones | All 7 zones with colors and descriptions |
+| 6 | During the Test | Screen layout guide with callouts |
+| 7 | Understanding Results | NP, VI, EF, W/kg explained |
+| 8 | Tips for Success | Best practices for accurate testing |
+
 ### App Guide Tour
 
 Interactive walkthrough accessible from Settings → Guide:
-- Step-by-step tour of all screens
+- Step-by-step tour of all screens (Home, Settings, History, Zones, Running, Results)
 - Explains test protocols, settings, and results
 - Perfect for first-time users
+- Tap anywhere to advance through the guide
 
 ### Session Recovery
 
@@ -92,8 +122,24 @@ Audible beep patterns using Karoo's internal beeper:
 ### From GitHub Releases (Recommended)
 
 1. Download `wattramp-x.x.x.apk` from [Releases](https://github.com/yrkan/wattramp/releases)
-2. Transfer to Karoo:
-   - **Option A**: Connect Karoo via USB, copy APK to device, install file
+2. Transfer to Karoo using one of these methods:
+
+   **Option A: USB Cable (Simplest)**
+   - Connect Karoo to computer via USB cable
+   - Enable file transfer mode on Karoo
+   - Copy APK to any folder on Karoo
+   - On Karoo: open Files app → navigate to APK → tap to install
+
+   **Option B: ADB Wireless (No Cable)**
+   - Enable Developer Options on Karoo (Settings → About → tap Build Number 7 times)
+   - Enable ADB Debugging and note IP address
+   - From computer: `adb connect <karoo-ip>:5555`
+   - Install: `adb install wattramp-x.x.x.apk`
+
+   **Option C: Web Server**
+   - Upload APK to any web server or cloud storage
+   - On Karoo: open web browser, download APK, tap to install
+
 3. Launch WattRamp from app drawer
 
 ### Build from Source
@@ -262,11 +308,40 @@ io.github.wattramp/
 - Ensure you gave maximum effort during test intervals
 - Compare with other FTP tests for validation
 
+### History not showing tests
+- Tests are only saved when you tap SAVE on the result screen
+- Maximum 100 tests stored (oldest removed when exceeded)
+- Clear History in Settings will remove all tests
+
+### App closes unexpectedly
+- Session recovery will detect abandoned tests on next launch
+- Check for low battery or overheating
+- Try reinstalling from latest release
+
+## Supported Languages
+
+WattRamp is fully translated into 10 languages:
+
+| Language | Code | Status |
+|----------|------|--------|
+| English | en | ✅ Complete (231 strings) |
+| German | de | ✅ Complete |
+| Spanish | es | ✅ Complete |
+| French | fr | ✅ Complete |
+| Italian | it | ✅ Complete |
+| Japanese | ja | ✅ Complete |
+| Dutch | nl | ✅ Complete |
+| Portuguese | pt | ✅ Complete |
+| Russian | ru | ✅ Complete |
+| Chinese (Simplified) | zh-CN | ✅ Complete |
+
+Language is automatically detected from your Karoo system settings, or can be changed manually in WattRamp Settings → Language.
+
 ## Requirements
 
 - **Device**: Hammerhead Karoo 2 or Karoo 3
 - **Sensors**: Power meter (required)
-- **Optional**: Heart rate monitor (for HR zone display)
+- **Optional**: Heart rate monitor (for HR zone display and EF calculation)
 
 ## Privacy
 
@@ -279,6 +354,12 @@ WattRamp respects your privacy:
 - **Open Source**: Verify everything yourself
 
 ## Changelog
+
+### v1.5.1
+- **Localization Sync**: All 10 languages now have identical string keys (231 strings each)
+- **String Cleanup**: Fixed missing translations for analytics metrics (NP, VI, EF, HR) in all locales
+- **About Section**: Added version, GitHub, Privacy, Contact links to Settings
+- **Protocol Cards**: Consistent localized short names across all languages
 
 ### v1.5.0
 - **HomeScreen Redesign**: Compact Garmin Edge-style layout
