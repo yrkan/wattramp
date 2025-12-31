@@ -266,6 +266,34 @@
     <string name="increase">Increase</string>
     <string name="decrease">Decrease</string>
 
+    <!-- Short labels for DataField layouts -->
+    <string name="df_target">Target</string>
+    <string name="df_tgt">Tgt</string>
+    <string name="df_power">Power</string>
+    <string name="df_pwr">Pwr</string>
+    <string name="df_avg">Avg</string>
+    <string name="df_max">Max</string>
+    <string name="df_ftp">FTP</string>
+    <string name="df_dev">Dev</string>
+    <string name="df_zone">Zone</string>
+    <string name="df_time">Time</string>
+    <string name="df_elapsed">Elapsed</string>
+    <string name="df_step">Step</string>
+    <string name="df_prog">Prog</string>
+    <string name="df_progress">Progress</string>
+    <string name="df_remaining">Remaining</string>
+    <string name="df_interval">Interval</string>
+    <string name="df_watt">W</string>
+    <string name="df_percent">%</string>
+    <string name="df_in_zone">IN ZONE</string>
+    <string name="df_too_low">TOO LOW</string>
+    <string name="df_too_high">TOO HIGH</string>
+    <string name="df_max_effort">MAX</string>
+    <string name="df_no_test">NO TEST</string>
+    <string name="df_paused">PAUSED</string>
+    <string name="df_complete">COMPLETE</string>
+    <string name="df_stopped">STOPPED</string>
+
     <!-- DataType names for Karoo -->
     <string name="datatype_interval_name">Current Interval</string>
     <string name="datatype_interval_desc">Shows current test interval with target power and time remaining</string>

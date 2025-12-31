@@ -1,31 +1,20 @@
 package io.github.wattramp.datatypes
 
+import android.widget.RemoteViews
+import io.github.wattramp.R
 import io.github.wattramp.WattRampExtension
 import io.github.wattramp.engine.TestState
-import io.hammerhead.karooext.extension.DataTypeImpl
-import io.hammerhead.karooext.internal.Emitter
-import io.hammerhead.karooext.models.DataPoint
-import io.hammerhead.karooext.models.StreamState
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
+import io.hammerhead.karooext.models.ViewConfig
 
 /**
- * Numeric data field (1x1) showing current power zone status.
- * Shows "IN ZONE", "TOO LOW", or "TOO HIGH" with deviation.
+ * Graphical data field showing current power zone status.
+ * Shows "IN ZONE", "TOO LOW", "TOO HIGH", or "MAX" based on target.
  */
 class PowerZoneDataType(
-    private val wattRampExtension: WattRampExtension
-) : DataTypeImpl("wattramp", "power-zone") {
+    wattRampExtension: WattRampExtension
+) : BaseDataType(wattRampExtension, "power-zone") {
 
-    private var streamScope: CoroutineScope? = null
-
-    // Store zone info for display
-    @Volatile
-    private var zoneStatus: ZoneStatus = ZoneStatus.NO_TEST
-    @Volatile
-    private var deviation: Int = 0
-
-    enum class ZoneStatus {
+    private enum class ZoneStatus {
         IN_ZONE,
         TOO_LOW,
         TOO_HIGH,
@@ -33,94 +22,121 @@ class PowerZoneDataType(
         NO_TEST
     }
 
-    override fun startStream(emitter: Emitter<StreamState>) {
-        // Cancel any existing scope first
-        streamScope?.cancel()
+    override fun getLayoutResId(size: LayoutSize) = when (size) {
+        LayoutSize.SMALL -> R.layout.datatype_power_zone_small
+        LayoutSize.SMALL_WIDE, LayoutSize.MEDIUM_WIDE -> R.layout.datatype_power_zone_small_wide
+        LayoutSize.MEDIUM, LayoutSize.NARROW -> R.layout.datatype_power_zone_medium
+        LayoutSize.LARGE -> R.layout.datatype_power_zone_large
+    }
 
-        // Create new scope with SupervisorJob for proper lifecycle management
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        streamScope = scope
+    override fun onViewCreated(views: RemoteViews, config: ViewConfig) {
+        views.setAdaptiveTextSize(R.id.value, config, TextSizeCalculator.Role.PRIMARY)
+        views.setAdaptiveTextSize(R.id.label, config, TextSizeCalculator.Role.LABEL)
 
-        scope.launch {
-            wattRampExtension.testEngine.state.collectLatest { state ->
-                if (isActive) {
-                    val value = when (state) {
-                        is TestState.Running -> {
-                            val target = state.targetPower
-
-                            if (target == null || target <= 0) {
-                                // Max effort interval
-                                zoneStatus = ZoneStatus.MAX_EFFORT
-                                deviation = 0
-                                0.0 // No target
-                            } else {
-                                deviation = state.currentPower - target
-                                zoneStatus = when {
-                                    state.isInTargetZone -> ZoneStatus.IN_ZONE
-                                    state.currentPower < target -> ZoneStatus.TOO_LOW
-                                    else -> ZoneStatus.TOO_HIGH
-                                }
-
-                                // Return deviation as the value
-                                deviation.toDouble()
-                            }
-                        }
-                        else -> {
-                            zoneStatus = ZoneStatus.NO_TEST
-                            deviation = 0
-                            0.0
-                        }
-                    }
-
-                    emitter.onNext(
-                        StreamState.Streaming(
-                            DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
-                        )
-                    )
-                }
+        // Set label based on size
+        when (currentLayoutSize) {
+            LayoutSize.SMALL, LayoutSize.SMALL_WIDE, LayoutSize.MEDIUM_WIDE -> {
+                views.setTextViewText(R.id.label, getString(R.string.df_zone))
+            }
+            else -> {
+                views.setTextViewText(R.id.label, getString(R.string.datatype_zone_name))
             }
         }
 
-        emitter.setCancellable {
-            streamScope?.cancel()
-            streamScope = null
+        // Deviation text for layouts that have it
+        if (currentLayoutSize != LayoutSize.SMALL) {
+            views.setAdaptiveTextSize(R.id.deviation, config, TextSizeCalculator.Role.SECONDARY)
+        }
+
+        // Target text for large layout
+        if (currentLayoutSize == LayoutSize.LARGE) {
+            views.setAdaptiveTextSize(R.id.target, config, TextSizeCalculator.Role.LABEL)
         }
     }
 
-    /**
-     * Get the current zone status string for display.
-     */
-    fun getZoneStatusString(): String {
-        return when (zoneStatus) {
-            ZoneStatus.IN_ZONE -> "IN ZONE"
-            ZoneStatus.TOO_LOW -> "TOO LOW"
-            ZoneStatus.TOO_HIGH -> "TOO HIGH"
-            ZoneStatus.MAX_EFFORT -> "MAX"
-            ZoneStatus.NO_TEST -> "--"
+    override fun updateViews(views: RemoteViews, state: TestState) {
+        when (state) {
+            is TestState.Idle -> {
+                showZoneStatus(views, ZoneStatus.NO_TEST, 0, 0)
+            }
+
+            is TestState.Running -> {
+                val target = state.targetPower
+                val current = state.currentPower
+
+                if (target == null || target <= 0) {
+                    // Max effort interval
+                    showZoneStatus(views, ZoneStatus.MAX_EFFORT, 0, 0)
+                } else {
+                    val deviation = current - target
+                    val zoneStatus = when {
+                        state.isInTargetZone -> ZoneStatus.IN_ZONE
+                        current < target -> ZoneStatus.TOO_LOW
+                        else -> ZoneStatus.TOO_HIGH
+                    }
+                    showZoneStatus(views, zoneStatus, deviation, target)
+                }
+            }
+
+            is TestState.Paused -> {
+                views.setTextViewText(R.id.value, getString(R.string.df_paused))
+                views.setTextColor(R.id.value, getColor(R.color.text_primary))
+                setDeviationText(views, "")
+                setTargetText(views, "")
+            }
+
+            is TestState.Completed -> {
+                views.setTextViewText(R.id.value, getString(R.string.df_complete))
+                views.setTextColor(R.id.value, getColor(R.color.status_optimal))
+                setDeviationText(views, "")
+                setTargetText(views, "")
+            }
+
+            is TestState.Failed -> {
+                views.setTextViewText(R.id.value, getString(R.string.df_stopped))
+                views.setTextColor(R.id.value, getColor(R.color.text_primary))
+                setDeviationText(views, "")
+                setTargetText(views, "")
+            }
         }
     }
 
-    /**
-     * Get deviation string with sign.
-     */
-    fun getDeviationString(): String {
-        if (zoneStatus == ZoneStatus.NO_TEST || zoneStatus == ZoneStatus.MAX_EFFORT) {
-            return ""
+    private fun showZoneStatus(views: RemoteViews, status: ZoneStatus, deviation: Int, target: Int) {
+        val (statusText, colorRes) = when (status) {
+            ZoneStatus.IN_ZONE -> getString(R.string.df_in_zone) to R.color.status_optimal
+            ZoneStatus.TOO_LOW -> getString(R.string.df_too_low) to R.color.status_attention
+            ZoneStatus.TOO_HIGH -> getString(R.string.df_too_high) to R.color.status_problem
+            ZoneStatus.MAX_EFFORT -> getString(R.string.df_max_effort) to R.color.status_problem
+            ZoneStatus.NO_TEST -> NO_DATA to R.color.text_primary
         }
-        val sign = if (deviation >= 0) "+" else ""
-        return "${sign}${deviation}W"
+
+        views.setTextViewText(R.id.value, statusText)
+        views.setTextColor(R.id.value, getColor(colorRes))
+
+        // Deviation text
+        if (status == ZoneStatus.NO_TEST || status == ZoneStatus.MAX_EFFORT) {
+            setDeviationText(views, "")
+            setTargetText(views, "")
+        } else {
+            val sign = if (deviation >= 0) "+" else ""
+            setDeviationText(views, "${sign}${deviation}W")
+
+            // Target info for large layout
+            if (target > 0) {
+                setTargetText(views, "Target: ${target}W")
+            }
+        }
     }
 
-    /**
-     * Get color resource for current zone status.
-     */
-    fun getZoneColorRes(): Int {
-        return when (zoneStatus) {
-            ZoneStatus.IN_ZONE -> io.github.wattramp.R.color.in_zone
-            ZoneStatus.TOO_LOW -> io.github.wattramp.R.color.out_of_zone
-            ZoneStatus.TOO_HIGH -> io.github.wattramp.R.color.warning
-            ZoneStatus.MAX_EFFORT -> io.github.wattramp.R.color.zone_6
-            ZoneStatus.NO_TEST -> io.github.wattramp.R.color.zone_1
+    private fun setDeviationText(views: RemoteViews, text: String) {
+        if (currentLayoutSize != LayoutSize.SMALL) {
+            views.setTextViewText(R.id.deviation, text)
+        }
+    }
+
+    private fun setTargetText(views: RemoteViews, text: String) {
+        if (currentLayoutSize == LayoutSize.LARGE) {
+            views.setTextViewText(R.id.target, text)
         }
     }
 }

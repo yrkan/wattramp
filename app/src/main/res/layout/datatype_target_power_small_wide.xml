@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TargetPower SMALL_WIDE: Horizontal layout - label left, value right -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/datafield_bg"
+    android:gravity="center"
+    android:baselineAligned="false">
+
+    <!-- Label section -->
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/df_target"
+        android:textSize="14sp"
+        android:textColor="@color/text_dim"
+        android:layout_marginEnd="12dp" />
+
+    <!-- Value + Unit -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="245"
+            android:textSize="44sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/df_watt"
+            android:textSize="20sp"
+            android:textColor="@color/text_dim"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+</LinearLayout>

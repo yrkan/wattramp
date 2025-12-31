@@ -23,6 +23,7 @@ class AlertManager(private val extension: WattRampExtension) {
     private val final30Shown = AtomicBoolean(false)
     private val getReadyShown = AtomicBoolean(false)
     private val lowCadenceWarningCount = AtomicInteger(0)
+    private val powerLostAlertShown = AtomicBoolean(false)
 
     companion object {
         private const val ALERT_INTERVAL_CHANGE = "wattramp_interval_change"
@@ -33,6 +34,10 @@ class AlertManager(private val extension: WattRampExtension) {
         private const val ALERT_COMPLETE = "wattramp_complete"
         private const val ALERT_PUSH_HARDER = "wattramp_push_harder"
         private const val ALERT_LOW_CADENCE = "wattramp_low_cadence"
+        private const val ALERT_POWER_LOST = "wattramp_power_lost"
+
+        // Power dropout threshold in milliseconds
+        private const val POWER_DROPOUT_THRESHOLD_MS = 5000L
     }
 
     /**
@@ -219,6 +224,37 @@ class AlertManager(private val extension: WattRampExtension) {
     }
 
     /**
+     * Check if power sensor data has been lost and show alert.
+     * Called from TestEngine with the timestamp of last received power data.
+     */
+    fun checkPowerSensorDropout(
+        lastPowerReceivedMs: Long,
+        soundEnabled: Boolean,
+        screenWakeEnabled: Boolean
+    ) {
+        if (lastPowerReceivedMs == 0L) return
+
+        val timeSinceLastPower = System.currentTimeMillis() - lastPowerReceivedMs
+
+        if (timeSinceLastPower > POWER_DROPOUT_THRESHOLD_MS) {
+            // Show alert only once until power returns
+            if (powerLostAlertShown.compareAndSet(false, true)) {
+                showAlert(
+                    id = ALERT_POWER_LOST,
+                    title = "⚠️ POWER LOST",
+                    detail = "Check your power meter connection",
+                    playSound = soundEnabled,
+                    wakeScreen = screenWakeEnabled,
+                    autoDismissMs = null // Don't auto-dismiss - important alert
+                )
+            }
+        } else {
+            // Power is back - reset the alert flag
+            powerLostAlertShown.set(false)
+        }
+    }
+
+    /**
      * Show test complete alert with results.
      */
     fun showCompleteAlert(
@@ -314,6 +350,7 @@ class AlertManager(private val extension: WattRampExtension) {
         final30Shown.set(false)
         getReadyShown.set(false)
         lowPowerWarningCount.set(0)
+        powerLostAlertShown.set(false)
     }
 
     /**

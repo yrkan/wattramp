@@ -1,99 +1,122 @@
 package io.github.wattramp.datatypes
 
+import android.widget.RemoteViews
+import io.github.wattramp.R
 import io.github.wattramp.WattRampExtension
 import io.github.wattramp.data.ProtocolType
 import io.github.wattramp.engine.TestState
-import io.hammerhead.karooext.extension.DataTypeImpl
-import io.hammerhead.karooext.internal.Emitter
-import io.hammerhead.karooext.models.DataPoint
-import io.hammerhead.karooext.models.StreamState
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
+import io.hammerhead.karooext.models.ViewConfig
 
 /**
- * Numeric data field (1x1) showing test progress.
- * For Ramp: "Step 7/~15"
- * For 20-min/8-min: "12:34 / 20:00" or percentage
+ * Graphical data field showing test progress.
+ * For Ramp: Shows step and percentage.
+ * For 20-min/8-min: Shows percentage with time info.
  */
 class TestProgressDataType(
-    private val wattRampExtension: WattRampExtension
-) : DataTypeImpl("wattramp", "test-progress") {
+    wattRampExtension: WattRampExtension
+) : BaseDataType(wattRampExtension, "test-progress") {
 
-    private var streamScope: CoroutineScope? = null
+    override fun getLayoutResId(size: LayoutSize) = when (size) {
+        LayoutSize.SMALL -> R.layout.datatype_test_progress_small
+        LayoutSize.SMALL_WIDE, LayoutSize.MEDIUM_WIDE -> R.layout.datatype_test_progress_small_wide
+        LayoutSize.MEDIUM, LayoutSize.NARROW -> R.layout.datatype_test_progress_medium
+        LayoutSize.LARGE -> R.layout.datatype_test_progress_large
+    }
 
-    // Store additional info for formatting
-    @Volatile
-    private var currentStep: Int = 0
-    @Volatile
-    private var estimatedSteps: Int = 0
-    @Volatile
-    private var elapsedSeconds: Int = 0
-    @Volatile
-    private var protocol: ProtocolType? = null
+    override fun onViewCreated(views: RemoteViews, config: ViewConfig) {
+        views.setAdaptiveTextSize(R.id.value, config, TextSizeCalculator.Role.PRIMARY)
+        views.setAdaptiveTextSize(R.id.label, config, TextSizeCalculator.Role.LABEL)
+        views.setAdaptiveTextSize(R.id.unit, config, TextSizeCalculator.Role.LABEL)
 
-    override fun startStream(emitter: Emitter<StreamState>) {
-        // Cancel any existing scope first
-        streamScope?.cancel()
-
-        // Create new scope with SupervisorJob for proper lifecycle management
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        streamScope = scope
-
-        scope.launch {
-            wattRampExtension.testEngine.state.collectLatest { state ->
-                if (isActive) {
-                    val value = when (state) {
-                        is TestState.Running -> {
-                            protocol = state.protocol
-                            currentStep = state.currentStep ?: 0
-                            estimatedSteps = state.estimatedTotalSteps ?: 15
-                            elapsedSeconds = (state.elapsedMs / 1000).toInt()
-
-                            // Return progress percentage for numeric display
-                            state.progressPercent
-                        }
-                        is TestState.Completed -> {
-                            100.0
-                        }
-                        else -> {
-                            protocol = null
-                            0.0
-                        }
-                    }
-
-                    emitter.onNext(
-                        StreamState.Streaming(
-                            DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
-                        )
-                    )
-                }
+        // Set label based on size
+        when (currentLayoutSize) {
+            LayoutSize.SMALL, LayoutSize.SMALL_WIDE, LayoutSize.MEDIUM_WIDE -> {
+                views.setTextViewText(R.id.label, getString(R.string.df_prog))
+            }
+            else -> {
+                views.setTextViewText(R.id.label, getString(R.string.datatype_progress_name))
             }
         }
 
-        emitter.setCancellable {
-            streamScope?.cancel()
-            streamScope = null
+        // Step text for medium/large
+        if (currentLayoutSize == LayoutSize.MEDIUM || currentLayoutSize == LayoutSize.LARGE) {
+            views.setAdaptiveTextSize(R.id.step, config, TextSizeCalculator.Role.TERTIARY)
+        }
+
+        // Phase text for large
+        if (currentLayoutSize == LayoutSize.LARGE) {
+            views.setAdaptiveTextSize(R.id.phase, config, TextSizeCalculator.Role.LABEL)
         }
     }
 
-    /**
-     * Get formatted progress string based on protocol.
-     */
-    fun getProgressString(): String {
-        return when (protocol) {
-            ProtocolType.RAMP -> {
-                if (currentStep > 0) {
-                    "Step $currentStep/~$estimatedSteps"
-                } else {
-                    "Warmup"
+    override fun updateViews(views: RemoteViews, state: TestState) {
+        when (state) {
+            is TestState.Idle -> {
+                views.setTextViewText(R.id.value, NO_DATA)
+                views.setTextViewText(R.id.unit, "")
+                setStepText(views, getString(R.string.df_no_test))
+                setPhaseText(views, "")
+            }
+
+            is TestState.Running -> {
+                val progress = state.progressPercent.toInt()
+                views.setTextViewText(R.id.value, progress.toString())
+                views.setTextViewText(R.id.unit, getString(R.string.df_percent))
+
+                // Step info based on protocol
+                val stepText = when (state.protocol) {
+                    ProtocolType.RAMP -> {
+                        val step = state.currentStep ?: 0
+                        val total = state.estimatedTotalSteps ?: 15
+                        if (step > 0) {
+                            "Step $step/~$total"
+                        } else {
+                            state.phase.displayName
+                        }
+                    }
+                    ProtocolType.TWENTY_MINUTE, ProtocolType.EIGHT_MINUTE -> {
+                        val elapsed = (state.elapsedMs / 1000).toInt()
+                        val minutes = elapsed / 60
+                        val seconds = elapsed % 60
+                        "${minutes}:${seconds.toString().padStart(2, '0')}"
+                    }
                 }
+                setStepText(views, stepText)
+                setPhaseText(views, state.phase.displayName)
             }
-            ProtocolType.TWENTY_MINUTE, ProtocolType.EIGHT_MINUTE -> {
-                val minutes = elapsedSeconds / 60
-                val seconds = elapsedSeconds % 60
-                "${minutes}:${seconds.toString().padStart(2, '0')}"
+
+            is TestState.Paused -> {
+                views.setTextViewText(R.id.value, NO_DATA)
+                views.setTextViewText(R.id.unit, "")
+                setStepText(views, getString(R.string.df_paused))
+                setPhaseText(views, "")
             }
-            null -> "--"
+
+            is TestState.Completed -> {
+                views.setTextViewText(R.id.value, "100")
+                views.setTextViewText(R.id.unit, getString(R.string.df_percent))
+                setStepText(views, getString(R.string.df_complete))
+                setPhaseText(views, "")
+            }
+
+            is TestState.Failed -> {
+                views.setTextViewText(R.id.value, NO_DATA)
+                views.setTextViewText(R.id.unit, "")
+                setStepText(views, getString(R.string.df_stopped))
+                setPhaseText(views, "")
+            }
+        }
+    }
+
+    private fun setStepText(views: RemoteViews, text: String) {
+        if (currentLayoutSize == LayoutSize.MEDIUM || currentLayoutSize == LayoutSize.LARGE) {
+            views.setTextViewText(R.id.step, text)
+        }
+    }
+
+    private fun setPhaseText(views: RemoteViews, text: String) {
+        if (currentLayoutSize == LayoutSize.LARGE) {
+            views.setTextViewText(R.id.phase, text)
         }
     }
 }

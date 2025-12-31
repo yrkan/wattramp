@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CurrentInterval SMALL: Phase name + progress -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/datafield_bg"
+    android:gravity="center"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/phase_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WARMUP"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:gravity="center" />
+
+    <ProgressBar
+        android:id="@+id/test_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="4dp"
+        android:progressDrawable="@drawable/progress_bar_drawable"
+        android:progress="30"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/progress_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="30%"
+        android:textSize="10sp"
+        android:textColor="@color/text_dim"
+        android:layout_marginTop="2dp" />
+
+</LinearLayout>

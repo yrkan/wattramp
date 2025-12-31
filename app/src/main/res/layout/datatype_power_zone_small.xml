@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PowerZone SMALL: Zone status text only -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/datafield_bg"
+    android:gravity="center"
+    android:padding="2dp">
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/df_zone"
+        android:textSize="10sp"
+        android:textColor="@color/text_dim" />
+
+    <TextView
+        android:id="@+id/value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IN ZONE"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/status_optimal"
+        android:gravity="center" />
+
+</LinearLayout>

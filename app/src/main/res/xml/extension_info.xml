@@ -13,61 +13,61 @@
         graphical="true"
         icon="@drawable/ic_wattramp" />
 
-    <!-- Numeric fields (1x1) -->
+    <!-- Graphical fields with adaptive layouts -->
     <DataType
         typeId="target-power"
         description="@string/datatype_target_desc"
         displayName="@string/datatype_target_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
     <DataType
         typeId="test-progress"
         description="@string/datatype_progress_desc"
         displayName="@string/datatype_progress_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
     <DataType
         typeId="power-zone"
         description="@string/datatype_zone_desc"
         displayName="@string/datatype_zone_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
     <DataType
         typeId="deviation"
         description="@string/datatype_deviation_desc"
         displayName="@string/datatype_deviation_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
     <DataType
         typeId="elapsed-time"
         description="@string/datatype_elapsed_desc"
         displayName="@string/datatype_elapsed_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
     <DataType
         typeId="average-power"
         description="@string/datatype_avg_desc"
         displayName="@string/datatype_avg_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
     <DataType
         typeId="max-power"
         description="@string/datatype_max_desc"
         displayName="@string/datatype_max_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
     <DataType
         typeId="ftp-prediction"
         description="@string/datatype_ftp_desc"
         displayName="@string/datatype_ftp_name"
-        graphical="false"
+        graphical="true"
         icon="@drawable/ic_wattramp" />
 
 </ExtensionInfo>

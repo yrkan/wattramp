@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TargetPower SMALL: Label + Value vertical compact -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/datafield_bg"
+    android:gravity="center"
+    android:padding="2dp">
+
+    <!-- Label -->
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/df_tgt"
+        android:textSize="10sp"
+        android:textColor="@color/text_dim" />
+
+    <!-- Value -->
+    <TextView
+        android:id="@+id/value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="245"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:gravity="center" />
+
+    <!-- Unit -->
+    <TextView
+        android:id="@+id/unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/df_watt"
+        android:textSize="10sp"
+        android:textColor="@color/text_dim" />
+
+</LinearLayout>

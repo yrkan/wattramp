@@ -1,69 +1,112 @@
 package io.github.wattramp.datatypes
 
+import android.widget.RemoteViews
+import io.github.wattramp.R
 import io.github.wattramp.WattRampExtension
 import io.github.wattramp.engine.TestState
-import io.hammerhead.karooext.extension.DataTypeImpl
-import io.hammerhead.karooext.internal.Emitter
-import io.hammerhead.karooext.models.DataPoint
-import io.hammerhead.karooext.models.StreamState
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
+import io.hammerhead.karooext.models.ViewConfig
 
 /**
- * Numeric data field (1x1) showing target power for current interval.
- * Shows "MAX" for max effort intervals or target wattage.
+ * Graphical data field showing target power for current interval.
+ * Shows target wattage or "MAX" for max effort intervals.
+ *
+ * Supports adaptive layouts based on field size.
  */
 class TargetPowerDataType(
-    private val wattRampExtension: WattRampExtension
-) : DataTypeImpl("wattramp", "target-power") {
+    wattRampExtension: WattRampExtension
+) : BaseDataType(wattRampExtension, "target-power") {
 
-    private var streamScope: CoroutineScope? = null
+    override fun getLayoutResId(size: LayoutSize) = when (size) {
+        LayoutSize.SMALL -> R.layout.datatype_target_power_small
+        LayoutSize.SMALL_WIDE, LayoutSize.MEDIUM_WIDE -> R.layout.datatype_target_power_small_wide
+        LayoutSize.MEDIUM, LayoutSize.NARROW -> R.layout.datatype_target_power_medium
+        LayoutSize.LARGE -> R.layout.datatype_target_power_large
+    }
 
-    override fun startStream(emitter: Emitter<StreamState>) {
-        // Cancel any existing scope first
-        streamScope?.cancel()
+    override fun onViewCreated(views: RemoteViews, config: ViewConfig) {
+        // Set adaptive text sizes based on ViewConfig
+        views.setAdaptiveTextSize(R.id.value, config, TextSizeCalculator.Role.PRIMARY)
+        views.setAdaptiveTextSize(R.id.label, config, TextSizeCalculator.Role.LABEL)
+        views.setAdaptiveTextSize(R.id.unit, config, TextSizeCalculator.Role.LABEL)
 
-        // Create new scope with SupervisorJob for proper lifecycle management
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        streamScope = scope
-
-        scope.launch {
-            wattRampExtension.testEngine.state.collectLatest { state ->
-                if (isActive) {
-                    val value = when (state) {
-                        is TestState.Running -> {
-                            state.targetPower?.toDouble() ?: -1.0 // -1 indicates MAX
-                        }
-                        is TestState.Completed -> {
-                            state.result.calculatedFtp.toDouble()
-                        }
-                        else -> 0.0
-                    }
-
-                    emitter.onNext(
-                        StreamState.Streaming(
-                            DataPoint(dataTypeId = dataTypeId, values = mapOf("single" to value))
-                        )
-                    )
-                }
+        // Set localized labels
+        when (currentLayoutSize) {
+            LayoutSize.SMALL -> {
+                views.setTextViewText(R.id.label, getString(R.string.df_tgt))
+            }
+            else -> {
+                views.setTextViewText(R.id.label, getString(R.string.df_target))
             }
         }
 
-        emitter.setCancellable {
-            streamScope?.cancel()
-            streamScope = null
+        // Status text for MEDIUM and LARGE
+        if (currentLayoutSize == LayoutSize.MEDIUM || currentLayoutSize == LayoutSize.LARGE) {
+            views.setAdaptiveTextSize(R.id.status, config, TextSizeCalculator.Role.TERTIARY)
+        }
+
+        // Phase text for LARGE only
+        if (currentLayoutSize == LayoutSize.LARGE) {
+            views.setAdaptiveTextSize(R.id.phase, config, TextSizeCalculator.Role.LABEL)
         }
     }
 
-    /**
-     * Format the value for display.
-     * Returns "MAX" for -1, otherwise shows watts.
-     */
-    fun formatValue(value: Double): String {
-        return when {
-            value < 0 -> "MAX"
-            value == 0.0 -> "--"
-            else -> "${value.toInt()}W"
+    override fun updateViews(views: RemoteViews, state: TestState) {
+        when (state) {
+            is TestState.Idle -> {
+                views.setTextViewText(R.id.value, NO_DATA)
+                views.setTextViewText(R.id.unit, "")
+                setStatusText(views, getString(R.string.df_no_test))
+                setPhaseText(views, "")
+            }
+
+            is TestState.Running -> {
+                val targetPower = state.targetPower
+                if (targetPower != null) {
+                    views.setTextViewText(R.id.value, targetPower.toString())
+                    views.setTextViewText(R.id.unit, getString(R.string.df_watt))
+                    setStatusText(views, "")
+                } else {
+                    // MAX effort
+                    views.setTextViewText(R.id.value, getString(R.string.df_max_effort))
+                    views.setTextViewText(R.id.unit, "")
+                    setStatusText(views, getString(R.string.running_max_effort))
+                }
+                setPhaseText(views, state.phase.displayName.uppercase())
+            }
+
+            is TestState.Paused -> {
+                views.setTextViewText(R.id.value, NO_DATA)
+                views.setTextViewText(R.id.unit, "")
+                setStatusText(views, getString(R.string.df_paused))
+                setPhaseText(views, "")
+            }
+
+            is TestState.Completed -> {
+                val ftp = state.result.calculatedFtp
+                views.setTextViewText(R.id.value, ftp.toString())
+                views.setTextViewText(R.id.unit, getString(R.string.df_watt))
+                setStatusText(views, getString(R.string.df_complete))
+                setPhaseText(views, "FTP")
+            }
+
+            is TestState.Failed -> {
+                views.setTextViewText(R.id.value, NO_DATA)
+                views.setTextViewText(R.id.unit, "")
+                setStatusText(views, getString(R.string.df_stopped))
+                setPhaseText(views, "")
+            }
+        }
+    }
+
+    private fun setStatusText(views: RemoteViews, text: String) {
+        if (currentLayoutSize == LayoutSize.MEDIUM || currentLayoutSize == LayoutSize.LARGE) {
+            views.setTextViewText(R.id.status, text)
+        }
+    }
+
+    private fun setPhaseText(views: RemoteViews, text: String) {
+        if (currentLayoutSize == LayoutSize.LARGE) {
+            views.setTextViewText(R.id.phase, text)
         }
     }
 }

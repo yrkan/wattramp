@@ -108,6 +108,11 @@ secrets.properties
 # Claude Code
 CLAUDE.md
 .claude/
+.mcp.json
+
+# Editor config
+.editorconfig
+config/
 
 # Website / docs (separate repo)
 wattramp.html

@@ -36,8 +36,27 @@
     <color name="alert_text">#FFFFFF</color>
 
     <!-- DataField colors -->
-    <color name="datafield_bg">#1A237E</color>
+    <color name="datafield_bg">#FF000000</color>
     <color name="datafield_text">#FFFFFF</color>
     <color name="progress_bar">#4CAF50</color>
     <color name="progress_bg">#424242</color>
+
+    <!-- Text colors for adaptive DataFields -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_dim">#FF666666</color>
+    <color name="text_muted">#FF333333</color>
+
+    <!-- Status colors for DataFields -->
+    <color name="status_optimal">#FF4CAF50</color>
+    <color name="status_attention">#FFFFC107</color>
+    <color name="status_problem">#FFF44336</color>
+
+    <!-- Dividers -->
+    <color name="divider">#FF222222</color>
+    <color name="divider_vertical">#FF333333</color>
+
+    <!-- Bar colors -->
+    <color name="bar_background">#FF222222</color>
+    <color name="bar_inactive">#FF666666</color>
+    <color name="bar_center">#FFFFFFFF</color>
 </resources>

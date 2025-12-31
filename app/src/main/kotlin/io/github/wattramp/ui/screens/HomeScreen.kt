@@ -212,25 +212,14 @@ private fun HeaderBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // App logo
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        Text(
+            text = "WattRamp",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            letterSpacing = 0.5.sp,
             modifier = Modifier.padding(start = 8.dp)
-        ) {
-            Icon(
-                Icons.Default.Bolt,
-                contentDescription = null,
-                tint = Color.Black,
-                modifier = Modifier.size(20.dp)
-            )
-            Text(
-                text = "WattRamp",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                letterSpacing = 0.5.sp
-            )
-        }
+        )
 
         // Navigation icons
         Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {

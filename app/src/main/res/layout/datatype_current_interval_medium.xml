@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CurrentInterval MEDIUM: Phase, interval progress, target power -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/datafield_bg"
+    android:padding="6dp">
+
+    <TextView
+        android:id="@+id/phase_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WARMUP"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:gravity="center" />
+
+    <ProgressBar
+        android:id="@+id/interval_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_marginTop="4dp"
+        android:progressDrawable="@drawable/progress_bar_drawable"
+        android:progress="50"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/target_power"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Target: 200W"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/time_remaining"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2:30 remaining"
+        android:textSize="12sp"
+        android:textColor="@color/text_dim"
+        android:gravity="center" />
+
+</LinearLayout>

@@ -650,6 +650,15 @@ class TestEngine(private val extension: WattRampExtension) {
             screenWakeEnabled = settings.screenWake,
             motivationEnabled = settings.showMotivation
         )
+
+        // Check for power sensor dropout (only during test phases)
+        if (currentPhase.isTestInterval) {
+            alertManager.checkPowerSensorDropout(
+                lastPowerReceivedMs = lastPowerReceivedMs.get(),
+                soundEnabled = settings.soundAlerts,
+                screenWakeEnabled = settings.screenWake
+            )
+        }
     }
 
     private fun getElapsedTimeMs(): Long {
