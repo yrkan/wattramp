@@ -103,6 +103,7 @@
     <string name="settings_clear_history">清除历史</string>
     <string name="settings_clear_history_confirm">重置所有数据?</string>
     <string name="settings_cancel">取消</string>
+    <string name="settings_range_hint">范围: %1$d – %2$d %3$s</string>
     <string name="settings_clear">重置</string>
     <string name="settings_about">关于</string>
     <string name="settings_version">版本</string>

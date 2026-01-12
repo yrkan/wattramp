@@ -103,6 +103,7 @@
     <string name="settings_clear_history">CLEAR HISTORY</string>
     <string name="settings_clear_history_confirm">Reset all data?</string>
     <string name="settings_cancel">CANCEL</string>
+    <string name="settings_range_hint">Range: %1$d – %2$d %3$s</string>
     <string name="settings_clear">RESET</string>
     <string name="settings_about">ABOUT</string>
     <string name="settings_version">VERSION</string>

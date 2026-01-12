@@ -103,6 +103,7 @@
     <string name="settings_clear_history">LIMPAR HISTÓRICO</string>
     <string name="settings_clear_history_confirm">Redefinir dados?</string>
     <string name="settings_cancel">CANCELAR</string>
+    <string name="settings_range_hint">Intervalo: %1$d – %2$d %3$s</string>
     <string name="settings_clear">LIMPAR</string>
     <string name="settings_about">SOBRE</string>
     <string name="settings_version">VERSÃO</string>

@@ -103,6 +103,7 @@
     <string name="settings_clear_history">履歴を消去</string>
     <string name="settings_clear_history_confirm">全データをリセット?</string>
     <string name="settings_cancel">キャンセル</string>
+    <string name="settings_range_hint">範囲: %1$d – %2$d %3$s</string>
     <string name="settings_clear">リセット</string>
     <string name="settings_about">アプリ情報</string>
     <string name="settings_version">バージョン</string>

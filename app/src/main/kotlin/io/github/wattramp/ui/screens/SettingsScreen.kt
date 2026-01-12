@@ -258,20 +258,149 @@ private fun SectionHeader(title: String) {
 }
 
 @Composable
+private fun NumericInputDialog(
+    title: String,
+    currentValue: String,
+    unit: String,
+    accentColor: Color,
+    minValue: Int,
+    maxValue: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit
+) {
+    var textValue by remember { mutableStateOf(currentValue) }
+    val isValid = textValue.toIntOrNull()?.let { it in minValue..maxValue } ?: false
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = SurfaceElevated,
+        title = {
+            Text(
+                text = title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = OnSurface
+            )
+        },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Input field with prominent background
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Background)
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        // Large editable value
+                        Box(
+                            modifier = Modifier
+                                .background(SurfaceVariant)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            androidx.compose.foundation.text.BasicTextField(
+                                value = textValue,
+                                onValueChange = { newValue ->
+                                    textValue = newValue.filter { it.isDigit() }.take(3)
+                                },
+                                modifier = Modifier.widthIn(min = 60.dp),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                singleLine = true,
+                                textStyle = LocalTextStyle.current.copy(
+                                    fontSize = 32.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = accentColor,
+                                    textAlign = TextAlign.Center
+                                ),
+                                cursorBrush = androidx.compose.ui.graphics.SolidColor(accentColor),
+                                decorationBox = { innerTextField ->
+                                    Box(contentAlignment = Alignment.Center) {
+                                        if (textValue.isEmpty()) {
+                                            Text(
+                                                text = "---",
+                                                fontSize = 32.sp,
+                                                fontWeight = FontWeight.Black,
+                                                color = OnSurfaceVariant
+                                            )
+                                        }
+                                        innerTextField()
+                                    }
+                                }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Text(
+                            text = unit,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = accentColor.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Range hint
+                Text(
+                    text = stringResource(R.string.settings_range_hint, minValue, maxValue, unit),
+                    fontSize = 12.sp,
+                    color = if (isValid) OnSurfaceVariant else Error
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    textValue.toIntOrNull()?.let { onConfirm(it) }
+                },
+                enabled = isValid,
+                modifier = Modifier
+                    .background(if (isValid) accentColor else SurfaceVariant)
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.result_save),
+                    color = if (isValid) Color.Black else OnSurfaceVariant,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = stringResource(R.string.settings_cancel),
+                    color = OnSurfaceVariant,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    )
+}
+
+@Composable
 private fun FtpRow(
     value: Int,
     onUpdate: (Int) -> Unit,
     borderColor: Color,
     isCompact: Boolean
 ) {
-    var isEditing by remember { mutableStateOf(false) }
-    var textValue by remember(value) { mutableStateOf(value.toString()) }
+    var showDialog by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .garminBorder(borderColor)
             .background(Background)
+            .clickable { showDialog = true }
             .height(if (isCompact) 48.dp else 56.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -297,68 +426,45 @@ private fun FtpRow(
                 color = OnSurface
             )
 
-            if (isEditing) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = textValue,
-                        onValueChange = { textValue = it.filter { c -> c.isDigit() }.take(3) },
-                        modifier = Modifier
-                            .width(if (isCompact) 56.dp else 64.dp)
-                            .height(if (isCompact) 36.dp else 40.dp),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        textStyle = LocalTextStyle.current.copy(
-                            fontSize = if (isCompact) 16.sp else 18.sp,
-                            fontWeight = FontWeight.Black,
-                            color = Primary,
-                            textAlign = TextAlign.Center
-                        ),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Primary,
-                            unfocusedBorderColor = SurfaceVariant
-                        ),
-                        shape = RectangleShape
-                    )
-                    IconButton(
-                        onClick = {
-                            textValue.toIntOrNull()?.let {
-                                if (it in 50..500) onUpdate(it)
-                            }
-                            isEditing = false
-                        },
-                        modifier = Modifier.size(if (isCompact) 32.dp else 36.dp)
-                    ) {
-                        Icon(Icons.Default.Check, null, tint = Success, modifier = Modifier.size(18.dp))
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier.clickable { isEditing = true },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "$value",
-                        fontSize = if (isCompact) 20.sp else 24.sp,
-                        fontWeight = FontWeight.Black,
-                        color = Primary
-                    )
-                    Text(
-                        text = "W",
-                        fontSize = if (isCompact) 12.sp else 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Primary.copy(alpha = 0.7f)
-                    )
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = null,
-                        tint = OnSurfaceVariant,
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .size(14.dp)
-                    )
-                }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "$value",
+                    fontSize = if (isCompact) 20.sp else 24.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Primary
+                )
+                Text(
+                    text = "W",
+                    fontSize = if (isCompact) 12.sp else 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Primary.copy(alpha = 0.7f)
+                )
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = OnSurfaceVariant,
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .size(14.dp)
+                )
             }
         }
+    }
+
+    if (showDialog) {
+        NumericInputDialog(
+            title = stringResource(R.string.settings_current_ftp),
+            currentValue = value.toString(),
+            unit = "W",
+            accentColor = Primary,
+            minValue = 50,
+            maxValue = 999,
+            onDismiss = { showDialog = false },
+            onConfirm = { newValue ->
+                onUpdate(newValue)
+                showDialog = false
+            }
+        )
     }
 }
 
@@ -369,14 +475,14 @@ private fun WeightRow(
     borderColor: Color,
     isCompact: Boolean
 ) {
-    var isEditing by remember { mutableStateOf(false) }
-    var textValue by remember(value) { mutableStateOf(value.toInt().toString()) }
+    var showDialog by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .garminBorder(borderColor)
             .background(Background)
+            .clickable { showDialog = true }
             .height(if (isCompact) 44.dp else 52.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -402,68 +508,45 @@ private fun WeightRow(
                 color = OnSurface
             )
 
-            if (isEditing) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = textValue,
-                        onValueChange = { textValue = it.filter { c -> c.isDigit() }.take(3) },
-                        modifier = Modifier
-                            .width(if (isCompact) 56.dp else 64.dp)
-                            .height(if (isCompact) 36.dp else 40.dp),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        textStyle = LocalTextStyle.current.copy(
-                            fontSize = if (isCompact) 16.sp else 18.sp,
-                            fontWeight = FontWeight.Black,
-                            color = Zone3,
-                            textAlign = TextAlign.Center
-                        ),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Zone3,
-                            unfocusedBorderColor = SurfaceVariant
-                        ),
-                        shape = RectangleShape
-                    )
-                    IconButton(
-                        onClick = {
-                            textValue.toIntOrNull()?.let {
-                                if (it in 30..200) onUpdate(it.toFloat())
-                            }
-                            isEditing = false
-                        },
-                        modifier = Modifier.size(if (isCompact) 32.dp else 36.dp)
-                    ) {
-                        Icon(Icons.Default.Check, null, tint = Success, modifier = Modifier.size(18.dp))
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier.clickable { isEditing = true },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "${value.toInt()}",
-                        fontSize = if (isCompact) 18.sp else 22.sp,
-                        fontWeight = FontWeight.Black,
-                        color = Zone3
-                    )
-                    Text(
-                        text = "kg",
-                        fontSize = if (isCompact) 11.sp else 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Zone3.copy(alpha = 0.7f)
-                    )
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = null,
-                        tint = OnSurfaceVariant,
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .size(14.dp)
-                    )
-                }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "${value.toInt()}",
+                    fontSize = if (isCompact) 18.sp else 22.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Zone3
+                )
+                Text(
+                    text = "kg",
+                    fontSize = if (isCompact) 11.sp else 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Zone3.copy(alpha = 0.7f)
+                )
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = OnSurfaceVariant,
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .size(14.dp)
+                )
             }
         }
+    }
+
+    if (showDialog) {
+        NumericInputDialog(
+            title = stringResource(R.string.settings_weight),
+            currentValue = value.toInt().toString(),
+            unit = "kg",
+            accentColor = Zone3,
+            minValue = 30,
+            maxValue = 200,
+            onDismiss = { showDialog = false },
+            onConfirm = { newValue ->
+                onUpdate(newValue.toFloat())
+                showDialog = false
+            }
+        )
     }
 }
 

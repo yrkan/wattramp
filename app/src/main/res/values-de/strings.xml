@@ -103,6 +103,7 @@
     <string name="settings_clear_history">VERLAUF LÖSCHEN</string>
     <string name="settings_clear_history_confirm">Alle Daten zurücksetzen?</string>
     <string name="settings_cancel">ABBRECHEN</string>
+    <string name="settings_range_hint">Bereich: %1$d – %2$d %3$s</string>
     <string name="settings_clear">LÖSCHEN</string>
     <string name="settings_about">ÜBER</string>
     <string name="settings_version">VERSION</string>

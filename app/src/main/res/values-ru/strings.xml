@@ -103,6 +103,7 @@
     <string name="settings_clear_history">ОЧИСТИТЬ ИСТОРИЮ</string>
     <string name="settings_clear_history_confirm">Сбросить все данные?</string>
     <string name="settings_cancel">ОТМЕНА</string>
+    <string name="settings_range_hint">Диапазон: %1$d – %2$d %3$s</string>
     <string name="settings_clear">СБРОС</string>
     <string name="settings_about">О ПРИЛОЖЕНИИ</string>
     <string name="settings_version">ВЕРСИЯ</string>

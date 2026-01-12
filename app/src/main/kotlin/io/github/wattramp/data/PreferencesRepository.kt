@@ -55,7 +55,7 @@ class PreferencesRepository(private val context: Context) {
 
         // Validation bounds
         const val MIN_FTP = 50
-        const val MAX_FTP = 500
+        const val MAX_FTP = 999
         const val MIN_RAMP_START = 50
         const val MAX_RAMP_START = 300
         const val MIN_RAMP_STEP = 5

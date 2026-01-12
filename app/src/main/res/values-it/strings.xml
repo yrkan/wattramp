@@ -103,6 +103,7 @@
     <string name="settings_clear_history">CANCELLA STORICO</string>
     <string name="settings_clear_history_confirm">Resettare tutti i dati?</string>
     <string name="settings_cancel">ANNULLA</string>
+    <string name="settings_range_hint">Intervallo: %1$d – %2$d %3$s</string>
     <string name="settings_clear">CANCELLA</string>
     <string name="settings_about">INFO</string>
     <string name="settings_version">VERSIONE</string>

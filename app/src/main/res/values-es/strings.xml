@@ -103,6 +103,7 @@
     <string name="settings_clear_history">BORRAR HISTORIAL</string>
     <string name="settings_clear_history_confirm">¿Restablecer datos?</string>
     <string name="settings_cancel">CANCELAR</string>
+    <string name="settings_range_hint">Rango: %1$d – %2$d %3$s</string>
     <string name="settings_clear">BORRAR</string>
     <string name="settings_about">ACERCA DE</string>
     <string name="settings_version">VERSIÓN</string>

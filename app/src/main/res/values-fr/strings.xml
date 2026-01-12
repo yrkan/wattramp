@@ -103,6 +103,7 @@
     <string name="settings_clear_history">EFFACER L\'HISTORIQUE</string>
     <string name="settings_clear_history_confirm">Réinitialiser les données?</string>
     <string name="settings_cancel">ANNULER</string>
+    <string name="settings_range_hint">Plage: %1$d – %2$d %3$s</string>
     <string name="settings_clear">EFFACER</string>
     <string name="settings_about">À PROPOS</string>
     <string name="settings_version">VERSION</string>

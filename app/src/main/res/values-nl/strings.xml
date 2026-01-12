@@ -103,6 +103,7 @@
     <string name="settings_clear_history">GESCHIEDENIS WISSEN</string>
     <string name="settings_clear_history_confirm">Alle data resetten?</string>
     <string name="settings_cancel">ANNULEER</string>
+    <string name="settings_range_hint">Bereik: %1$d – %2$d %3$s</string>
     <string name="settings_clear">WISSEN</string>
     <string name="settings_about">OVER</string>
     <string name="settings_version">VERSIE</string>
