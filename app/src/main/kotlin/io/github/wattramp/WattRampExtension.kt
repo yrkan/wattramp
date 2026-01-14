@@ -4,10 +4,6 @@ import io.hammerhead.karooext.KarooSystemService
 import io.hammerhead.karooext.extension.KarooExtension
 import io.github.wattramp.datatypes.*
 import io.github.wattramp.engine.TestEngine
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,8 +27,6 @@ class WattRampExtension : KarooExtension("wattramp", BuildConfig.VERSION_NAME) {
         TestEngine(this)
     }
 
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -53,7 +47,6 @@ class WattRampExtension : KarooExtension("wattramp", BuildConfig.VERSION_NAME) {
         instance = null
         _isConnected.value = false
         testEngine.destroy()
-        serviceScope.cancel()
         karooSystem.disconnect()
         super.onDestroy()
     }

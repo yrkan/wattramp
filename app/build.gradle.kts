@@ -14,8 +14,8 @@ android {
         applicationId = "io.github.wattramp"
         minSdk = 23
         targetSdk = 34
-        versionCode = 13
-        versionName = "1.5.4"
+        versionCode = 14
+        versionName = "1.5.5"
     }
 
     buildTypes {
@@ -33,7 +33,7 @@ android {
     applicationVariants.all {
         outputs.all {
             val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            output.outputFileName = "wattramp-${versionName}.apk"
+            output.outputFileName = "wattramp.apk"
         }
     }
 

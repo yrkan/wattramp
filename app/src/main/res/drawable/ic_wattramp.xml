@@ -4,8 +4,28 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <!-- Lightning bolt / ramp icon representing power increase -->
+
     <path
-        android:fillColor="#1565C0"
-        android:pathData="M7,2v11h3v9l7,-12h-4l4,-8z" />
+        android:fillColor="#FF6D00"
+        android:pathData="M2,0
+                          H22
+                          A2,2 0 0 1 24,2
+                          V22
+                          A2,2 0 0 1 22,24
+                          H2
+                          A2,2 0 0 1 0,22
+                          V2
+                          A2,2 0 0 1 2,0
+                          Z"/>
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,4
+                          V12
+                          H10.5
+                          V20
+                          L16,11
+                          H13
+                          L16,4
+                          Z"/>
 </vector>
