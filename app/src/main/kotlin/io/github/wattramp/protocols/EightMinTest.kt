@@ -107,22 +107,22 @@ class EightMinTest(
     }
 
     override fun calculateFtp(method: PreferencesRepository.FtpCalcMethod): Int {
-        if (firstTestPowerSamples.isEmpty() || secondTestPowerSamples.isEmpty()) {
-            // If only one test completed, use that
-            val samples = firstTestPowerSamples.ifEmpty { secondTestPowerSamples }
-            if (samples.isEmpty()) return 0
-            return (samples.average() * 0.90).toInt()
-        }
-
-        val avg1 = firstTestPowerSamples.average()
-        val avg2 = secondTestPowerSamples.average()
-        val combinedAvg = (avg1 + avg2) / 2
-
         val coefficient = when (method) {
             PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.88
             PreferencesRepository.FtpCalcMethod.STANDARD -> 0.90
             PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.92
         }
+
+        if (firstTestPowerSamples.isEmpty() || secondTestPowerSamples.isEmpty()) {
+            // If only one test completed, use that
+            val samples = firstTestPowerSamples.ifEmpty { secondTestPowerSamples }
+            if (samples.isEmpty()) return 0
+            return (samples.average() * coefficient).toInt()
+        }
+
+        val avg1 = firstTestPowerSamples.average()
+        val avg2 = secondTestPowerSamples.average()
+        val combinedAvg = (avg1 + avg2) / 2
 
         return (combinedAvg * coefficient).toInt()
     }

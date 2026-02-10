@@ -117,7 +117,7 @@ class TwentyMinTest(
         method: PreferencesRepository.FtpCalcMethod
     ): TestResult {
         val calculatedFtp = calculateFtp(method)
-        val avgPower = testPowerSamples.average().toInt()
+        val avgPower = if (testPowerSamples.isNotEmpty()) testPowerSamples.average().toInt() else 0
 
         val coefficient = when (method) {
             PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.93
