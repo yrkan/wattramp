@@ -66,11 +66,11 @@ class DeviationDataType(
                     views.setTextViewText(R.id.value, valueText)
                     views.setTextViewText(R.id.unit, getString(R.string.df_watt))
 
-                    // Determine zone status and color
+                    // Determine zone status and color using dynamic tolerance from settings
                     val (statusText, colorRes) = when {
-                        deviation < -10 -> getString(R.string.df_too_low) to R.color.status_attention
-                        deviation > 10 -> getString(R.string.df_too_high) to R.color.status_problem
-                        else -> getString(R.string.df_in_zone) to R.color.status_optimal
+                        state.isInTargetZone -> getString(R.string.df_in_zone) to R.color.status_optimal
+                        deviation < 0 -> getString(R.string.df_too_low) to R.color.status_attention
+                        else -> getString(R.string.df_too_high) to R.color.status_problem
                     }
 
                     setStatusText(views, statusText)

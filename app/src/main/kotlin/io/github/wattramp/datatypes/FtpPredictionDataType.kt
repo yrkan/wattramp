@@ -3,6 +3,7 @@ package io.github.wattramp.datatypes
 import android.widget.RemoteViews
 import io.github.wattramp.R
 import io.github.wattramp.WattRampExtension
+import io.github.wattramp.data.PreferencesRepository
 import io.github.wattramp.data.ProtocolType
 import io.github.wattramp.engine.TestState
 import io.hammerhead.karooext.models.ViewConfig
@@ -10,10 +11,7 @@ import io.hammerhead.karooext.models.ViewConfig
 /**
  * Graphical data field showing predicted FTP based on current test data.
  *
- * For Ramp test: Max 1-min power × 0.75
- * For 20-min test: Current average × 0.95
- * For 8-min test: Current average × 0.90
- *
+ * Coefficients depend on user's FTP calculation method setting.
  * Updates in real-time so athlete can see projected result.
  */
 class FtpPredictionDataType(
@@ -101,24 +99,40 @@ class FtpPredictionDataType(
     }
 
     private fun calculatePredictedFtp(state: TestState.Running): Double {
+        val method = state.ftpCalcMethod
         return when (state.protocol) {
             ProtocolType.RAMP -> {
+                val coefficient = when (method) {
+                    PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.72
+                    PreferencesRepository.FtpCalcMethod.STANDARD -> 0.75
+                    PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.77
+                }
                 if (state.maxOneMinutePower > 0) {
-                    state.maxOneMinutePower * 0.75
+                    state.maxOneMinutePower * coefficient
                 } else {
                     0.0
                 }
             }
             ProtocolType.TWENTY_MINUTE -> {
+                val coefficient = when (method) {
+                    PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.93
+                    PreferencesRepository.FtpCalcMethod.STANDARD -> 0.95
+                    PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.97
+                }
                 if (state.averagePower > 0) {
-                    state.averagePower * 0.95
+                    state.averagePower * coefficient
                 } else {
                     0.0
                 }
             }
             ProtocolType.EIGHT_MINUTE -> {
+                val coefficient = when (method) {
+                    PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.88
+                    PreferencesRepository.FtpCalcMethod.STANDARD -> 0.90
+                    PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.92
+                }
                 if (state.averagePower > 0) {
-                    state.averagePower * 0.90
+                    state.averagePower * coefficient
                 } else {
                     0.0
                 }

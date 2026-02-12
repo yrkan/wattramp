@@ -14,8 +14,8 @@ android {
         applicationId = "io.github.wattramp"
         minSdk = 23
         targetSdk = 34
-        versionCode = 14
-        versionName = "1.5.5"
+        versionCode = 15
+        versionName = "1.5.6"
     }
 
     buildTypes {

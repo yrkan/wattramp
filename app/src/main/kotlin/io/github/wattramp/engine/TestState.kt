@@ -1,6 +1,7 @@
 package io.github.wattramp.engine
 
 import io.github.wattramp.data.Interval
+import io.github.wattramp.data.PreferencesRepository
 import io.github.wattramp.data.ProtocolType
 import io.github.wattramp.data.TestPhase
 import io.github.wattramp.data.TestResult
@@ -36,7 +37,9 @@ sealed class TestState {
         // User's max HR from Karoo profile for accurate zone calculations
         val userMaxHr: Int = 190,
         // Zone tolerance percentage from settings (0-20%)
-        val zoneTolerance: Int = 5
+        val zoneTolerance: Int = 5,
+        // FTP calculation method from settings
+        val ftpCalcMethod: PreferencesRepository.FtpCalcMethod = PreferencesRepository.FtpCalcMethod.STANDARD
     ) : TestState() {
 
         // HR zone calculation based on user's actual max HR from Karoo profile

@@ -501,7 +501,7 @@ class TestEngine(private val extension: WattRampExtension) {
                 }
 
                 // Update max 1-minute power atomically
-                if (lastMinutePowerSamples.size >= 30) { // At least 30 seconds of data
+                if (lastMinutePowerSamples.size >= ROLLING_WINDOW_SIZE) { // Full 60-second window
                     val currentMinuteAvg = lastMinutePowerSamples.average().toInt()
                     maxOneMinutePower.updateAndGet { current ->
                         maxOf(current, currentMinuteAvg)
@@ -634,7 +634,8 @@ class TestEngine(private val extension: WattRampExtension) {
             heartRate = currentHeartRate.get(),
             cadence = currentCadence.get(),
             userMaxHr = userMaxHr.get(),
-            zoneTolerance = settings.zoneTolerance
+            zoneTolerance = settings.zoneTolerance,
+            ftpCalcMethod = settings.ftpCalcMethod
         )
 
         // Only update if state actually changed (reduces unnecessary recompositions)
@@ -662,7 +663,8 @@ class TestEngine(private val extension: WattRampExtension) {
     }
 
     private fun getElapsedTimeMs(): Long {
-        return System.currentTimeMillis() - testStartTimeMs.get() - totalPausedMs.get()
+        return (System.currentTimeMillis() - testStartTimeMs.get() - totalPausedMs.get())
+            .coerceAtLeast(0L)
     }
 
     /**

@@ -181,18 +181,18 @@ class RampTest(
     }
 
     override fun calculateFtp(method: PreferencesRepository.FtpCalcMethod): Int {
+        val coefficient = when (method) {
+            PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.72
+            PreferencesRepository.FtpCalcMethod.STANDARD -> 0.75
+            PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.77
+        }
+
         val maxPower = maxOneMinutePower.get()
         if (maxPower <= 0) {
             // Fallback: use max power from samples
             val maxSamplePower = getPowerSamplesAfter(warmupDurationMs)
                 .maxOfOrNull { it.power } ?: 0
-            return (maxSamplePower * 0.75).toInt()
-        }
-
-        val coefficient = when (method) {
-            PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.72
-            PreferencesRepository.FtpCalcMethod.STANDARD -> 0.75
-            PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.77
+            return (maxSamplePower * coefficient).toInt()
         }
 
         return (maxPower * coefficient).toInt()

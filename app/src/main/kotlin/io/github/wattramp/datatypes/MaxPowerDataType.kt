@@ -3,6 +3,7 @@ package io.github.wattramp.datatypes
 import android.widget.RemoteViews
 import io.github.wattramp.R
 import io.github.wattramp.WattRampExtension
+import io.github.wattramp.data.PreferencesRepository
 import io.github.wattramp.data.ProtocolType
 import io.github.wattramp.engine.TestState
 import io.hammerhead.karooext.models.ViewConfig
@@ -66,7 +67,12 @@ class MaxPowerDataType(
 
                     // Show FTP estimate for Ramp test
                     if (state.protocol == ProtocolType.RAMP && currentLayoutSize == LayoutSize.LARGE) {
-                        val ftpEstimate = (maxPower * 0.75).toInt()
+                        val coefficient = when (state.ftpCalcMethod) {
+                            PreferencesRepository.FtpCalcMethod.CONSERVATIVE -> 0.72
+                            PreferencesRepository.FtpCalcMethod.STANDARD -> 0.75
+                            PreferencesRepository.FtpCalcMethod.AGGRESSIVE -> 0.77
+                        }
+                        val ftpEstimate = (maxPower * coefficient).toInt()
                         setFtpText(views, "FTP: ~${ftpEstimate}W")
                     } else {
                         setFtpText(views, "")

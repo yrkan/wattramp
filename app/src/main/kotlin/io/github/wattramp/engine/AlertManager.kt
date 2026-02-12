@@ -94,8 +94,15 @@ class AlertManager(private val extension: WattRampExtension) {
             else -> return
         }
 
+        // Use ALERT_GO for test start phases to trigger distinctive double-beep
+        val alertId = if (state.phase == TestPhase.TESTING || state.phase == TestPhase.TESTING_2) {
+            ALERT_GO
+        } else {
+            ALERT_INTERVAL_CHANGE
+        }
+
         showAlert(
-            id = ALERT_INTERVAL_CHANGE,
+            id = alertId,
             title = title,
             detail = detail,
             playSound = soundEnabled && state.phase.isTestInterval,

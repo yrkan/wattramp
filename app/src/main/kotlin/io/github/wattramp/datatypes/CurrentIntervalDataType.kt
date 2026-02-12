@@ -95,7 +95,11 @@ class CurrentIntervalDataType(
         val testProgress = state.progressPercent.toInt().coerceIn(0, 100)
         val intervalDuration = state.currentInterval.durationMs
         val intervalElapsed = intervalDuration - state.timeRemainingInInterval
-        val intervalProgress = ((intervalElapsed.toDouble() / intervalDuration) * 100).toInt()
+        val intervalProgress = if (intervalDuration > 0) {
+            ((intervalElapsed.toDouble() / intervalDuration) * 100).toInt().coerceIn(0, 100)
+        } else {
+            0
+        }
 
         when (currentLayoutSize) {
             LayoutSize.SMALL -> {
